@@ -9,42 +9,49 @@ import {
     Input,
     Container,
     Row,
-    Col,
+    Col, CardTitle,
 } from "reactstrap";
 import UserHeader from "components/Headers/UserHeader.js";
 
 const Contract = (props) => {
+
+    function numberFormat(number) {
+        if (number === "" || number === undefined){
+            return 0;
+        }
+        return String(number).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+
     return (
         <>
             <Row>
                 <Card className="shadow">
-                    <CardBody>
-                        <div className="text-center">
-                            <h3>
-                                Jessica Jones
-                                <span className="font-weight-light">, 27</span>
-                            </h3>
-                            <div className="h5 font-weight-300">
-                                <i className="ni location_pin mr-2" />
-                                Bucharest, Romania
+                    <CardHeader className="bg-transparent">
+                        <Row className="align-items-center">
+                            <div className="col">
+                                <h2 className="mb-0">{props.headerText}</h2>
                             </div>
+                        </Row>
+                    </CardHeader>
+                    <CardBody>
+                        <div className="">
+                            <h3>
+                                Account address
+                                <span className="font-weight-light">: {props.accountAddress}</span>
+                            </h3>
                             <div className="h5 mt-4">
-                                <i className="ni business_briefcase-24 mr-2" />
-                                Solution Manager - Creative Tim Officer
+                                <h3>
+                                    Total Balance
+                                    <span className="font-weight-light">: {numberFormat(props.accountBalance)}</span>
+                                </h3>
                             </div>
                             <div>
-                                <i className="ni education_hat mr-2" />
-                                University of Computer Science
+                                <h3>
+                                    Your chain
+                                    <span className="font-weight-light">: {props.accountChain}</span>
+                                </h3>
                             </div>
-                            <hr className="my-4" />
-                            <p>
-                                Ryan — the name taken by Melbourne-raised, Brooklyn-based
-                                Nick Murphy — writes, performs and records all of his own
-                                music.
-                            </p>
-                            <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                                Show more
-                            </a>
                         </div>
                     </CardBody>
                 </Card>

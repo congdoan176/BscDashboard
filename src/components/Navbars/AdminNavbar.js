@@ -17,18 +17,14 @@ import {
     Media, Button,
 } from "reactstrap";
 import Web3 from 'web3'
-import jsonFtx from "../../json/ftx/contract.json"
 const AdminNavbar = (props) => {
-    const [account, setAccount] = useState("")
-    const [chainId, setChain] = useState("")
-    const [balanceNumber, setBalanceNumber] = useState("")
 
     async function connectToMetaMask() {
         if (window.ethereum) {
             const web3 = new Web3(window.ethereum);
             try {
                 window.ethereum.enable().then(async function () {
-                    await getInfoAccount()
+
                 });
             } catch (e) {
 
@@ -41,40 +37,6 @@ const AdminNavbar = (props) => {
             alert('You have to install MetaMask !');
         }
     }
-
-    async function getInfoAccount() {
-        const web3 = new Web3(Web3.givenProvider || 'http://localhost:3000')
-        const accounts = await web3.eth.getAccounts()
-        if (accounts.length > 0){
-            setAccount(accounts[0])
-            const chain = await web3.eth.getChainId()
-            setChain(chain.toString())
-            const balance = (await web3.eth.getBalance(accounts[0]))
-            setBalanceNumber(balance)
-        }
-    }
-
-    async function getInfoContract(addressContract, addressWallet, jsonApi) {
-        const web3 = new Web3(Web3.givenProvider)
-        const daiToken = new web3.eth.Contract(jsonApi, addressContract);
-        daiToken.methods.balanceOf(addressWallet).call(function (err, res) {
-            if (err) {
-                console.log("An error occured", err)
-                return
-            }
-            console.log("The balance is: ", res)
-        })
-
-    }
-
-
-    useEffect(async () => {
-        await getInfoAccount();
-        if (account !== ""){
-            await getInfoContract("0x0957C89Bfa6A9F6737dACFB27389A1cCC22514e9", account, jsonFtx);
-            await getInfoContract("0x337610d27c682e347c9cd60bd4b3b107c9d34ddd", account, jsonFtx)
-        }
-    })
 
     return (
         <>
