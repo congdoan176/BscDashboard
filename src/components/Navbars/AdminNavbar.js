@@ -17,6 +17,8 @@ import {
     Media, Button,
 } from "reactstrap";
 import Web3 from 'web3'
+import Login from "../../share/login/index"
+
 const AdminNavbar = (props) => {
 
     async function connectToMetaMask() {
@@ -24,7 +26,9 @@ const AdminNavbar = (props) => {
             const web3 = new Web3(window.ethereum);
             try {
                 window.ethereum.enable().then(async function () {
-
+                    const web3 = new Web3(Web3.givenProvider || 'http://localhost:3000')
+                    const accounts = await web3.eth.getAccounts()
+                    await Login.login(accounts[0])
                 });
             } catch (e) {
 

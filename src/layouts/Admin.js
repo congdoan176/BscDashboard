@@ -100,7 +100,6 @@ const Admin = (props) => {
     }
 
     useEffect(async () => {
-        console.log(account)
         await getInfoAccount();
         if (account !== ""){
             await getInfoContract("0x0957C89Bfa6A9F6737dACFB27389A1cCC22514e9", account, jsonFtx, "FTXF");

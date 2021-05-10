@@ -18,8 +18,6 @@ import {
 } from "reactstrap";
 import Contract from "../share/contract";
 import Header from "components/Headers/Header.js";
-import Web3 from "web3";
-import jsonFtx from "../json/ftx/contract.json";
 import DataContext from "../context";
 
 const Index = (props) => {
