@@ -45,6 +45,7 @@
   ],
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.15.2",
+    "axios": "^0.21.1",
     "big-number": "^2.0.0",
     "bootstrap": "4.6.0",
     "chart.js": "2.9.4",

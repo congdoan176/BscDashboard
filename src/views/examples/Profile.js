@@ -13,7 +13,6 @@ import {
 } from "reactstrap";
 import UserHeader from "components/Headers/UserHeader.js";
 import DataContext from "../../context";
-import Verify from "../../share/verify/index"
 
 const Profile = () => {
 
@@ -22,7 +21,7 @@ const Profile = () => {
     const [Email, setEmail] = useState("");
     const [verifyCode, setVerifyCode] = useState("");
 
-    async function validateEmail(type) {
+    async function validateEmail(type, addressAccount) {
         if (type === "email"){
             const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             if (Email.length === 0) {
@@ -33,14 +32,14 @@ const Profile = () => {
                 setErrorText("Email is not valid.");
                 return;
             }
-            await sendData("email")
+            await sendData("email", addressAccount)
         }
     }
 
-    async function sendData(type){
+    async function sendData(type, addressAccount){
         if (type === 'email'){
             setInputVerifyCode(true);
-            // await Verify.sendEmail(Email);
+            // await Verify.sendEmail(Email, addressAccount);
         }else {
             // await Verify.sendCode(verifyCode);
         }
@@ -61,29 +60,20 @@ const Profile = () => {
                 {data => (
                     <Container className="mt--7" fluid>
                         <Row>
-                            <Col className="order-xl-2 mb-5 mb-xl-0" xl="5">
+                            <Col className="order-xl-1 mb-5 mb-xl-10 " xl="12">
                                 <Card className="card-profile shadow">
-                                    <Row className="justify-content-center">
-                                        <Col className="order-lg-2" lg="3">
-                                            <div className="card-profile-image">
-                                                <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                                                    <img
-                                                        alt="..."
-                                                        className="rounded-circle"
-                                                        src={
-                                                            require("../../assets/img/theme/team-4-800x800.jpg")
-                                                                .default
-                                                        }
-                                                    />
-                                                </a>
+                                    <CardHeader className="bg-transparent">
+                                        <Row className="align-items-center">
+                                            <div className="col text-center">
+                                                <h2 className="mb-0">Wallet Info</h2>
                                             </div>
-                                        </Col>
-                                    </Row>
-                                    <CardBody className="pt-0 pt-md-4 mt-5">
+                                        </Row>
+                                    </CardHeader>
+                                    <CardBody className="pt-0 md-4">
                                         <Row>
                                             <div className="col">
                                                 <div
-                                                    className="card-profile-stats d-flex justify-content-center mt-md-5">
+                                                    className="card-profile-stats d-flex justify-content-center md-5">
                                                     <div>
                                                         <span className="heading">{data.balanceFTXF}</span>
                                                         <span className="description">FTX</span>
@@ -103,29 +93,10 @@ const Profile = () => {
                                                 </div>
                                             </div>
                                         </Row>
-                                        <div className="text-center">
-                                            <h3>
-                                                Jessica Jones
-                                                <span className="font-weight-light">, 27</span>
-                                            </h3>
-                                            <div className="h5 font-weight-300">
-                                                <i className="ni location_pin mr-2"/>
-                                                Bucharest, Romania
-                                            </div>
-                                            <div className="h5 mt-4">
-                                                <i className="ni business_briefcase-24 mr-2"/>
-                                                Solution Manager - Creative Tim Officer
-                                            </div>
-                                            <div>
-                                                <i className="ni education_hat mr-2"/>
-                                                University of Computer Science
-                                            </div>
-
-                                        </div>
                                     </CardBody>
                                 </Card>
                             </Col>
-                            <Col className="order-xl-1" xl="7">
+                            <Col className="order-xl-2" xl="12">
                                 <Card className="bg-secondary shadow">
                                     <CardHeader className="bg-white border-0">
                                         <Row className="align-items-center">
@@ -136,10 +107,25 @@ const Profile = () => {
                                     </CardHeader>
                                     <CardBody>
                                         <Form>
-                                            <h6 className="heading-small text-muted mb-4">
-                                                User information
-                                            </h6>
                                             <div className="pl-lg-4">
+                                                <Row>
+                                                    <Col lg="12">
+                                                        <FormGroup>
+                                                            <label
+                                                                className="form-control-label"
+                                                                htmlFor="input-username"
+                                                            >
+                                                                Link Referent
+                                                            </label>
+                                                            <Input
+                                                                className="form-control-alternative"
+                                                                defaultValue={`https://ftxfdapps/ref=${data.accountAddress}`}
+                                                                disabled = {true}
+                                                                type="text"
+                                                            />
+                                                        </FormGroup>
+                                                    </Col>
+                                                </Row>
                                                 <Row>
                                                     <Col lg="6">
                                                         <FormGroup>
@@ -147,11 +133,12 @@ const Profile = () => {
                                                                 className="form-control-label"
                                                                 htmlFor="input-username"
                                                             >
-                                                                Username
+                                                                Wallet address
                                                             </label>
                                                             <Input
                                                                 className="form-control-alternative"
-                                                                defaultValue="lucky.jesse"
+                                                                defaultValue={data.accountAddress}
+                                                                disabled = {true}
                                                                 id="input-username"
                                                                 placeholder="Username"
                                                                 type="text"
@@ -169,8 +156,8 @@ const Profile = () => {
                                                             <Input
                                                                 className="form-control-alternative"
                                                                 id="input-email"
-                                                                placeholder="jesse@example.com"
-                                                                type="email"
+                                                                disabled = {true}
+                                                                type="text"
                                                             />
                                                         </FormGroup>
                                                     </Col>
@@ -182,11 +169,12 @@ const Profile = () => {
                                                                 className="form-control-label"
                                                                 htmlFor="input-first-name"
                                                             >
-                                                                First name
+                                                                Chain Id
                                                             </label>
                                                             <Input
                                                                 className="form-control-alternative"
-                                                                defaultValue="Lucky"
+                                                                defaultValue={data.accountChain}
+                                                                disabled = {true}
                                                                 id="input-first-name"
                                                                 placeholder="First name"
                                                                 type="text"
@@ -203,9 +191,9 @@ const Profile = () => {
                                                             </label>
                                                             <Input
                                                                 className="form-control-alternative"
-                                                                defaultValue="Jesse"
+                                                                defaultValue={''}
                                                                 id="input-last-name"
-                                                                placeholder="Last name"
+                                                                disabled = {true}
                                                                 type="text"
                                                             />
                                                         </FormGroup>
@@ -220,7 +208,7 @@ const Profile = () => {
                                                     <FormGroup>
                                                         <label>Email</label>
                                                         <Row>
-                                                            <Col lg={8}>
+                                                            <Col xl="10">
                                                                 <Input
                                                                     className="form-control-alternative"
                                                                     placeholder="Enter email"
@@ -228,11 +216,12 @@ const Profile = () => {
                                                                     onChange={async (e) =>  changeValue('email', e)}
                                                                 />
                                                             </Col>
-                                                            <Col lg={4}>
+                                                            <Col xl="1">
                                                                 <Button
                                                                     color="primary"
-                                                                    onClick={() => validateEmail('email') }
+                                                                    onClick={() => validateEmail('email', data.accountAddress) }
                                                                     size="lgs"
+                                                                    type={'reset'}
                                                                 >
                                                                     Submit
                                                                 </Button>
@@ -262,6 +251,7 @@ const Profile = () => {
                                                                     color="primary"
                                                                     onClick={(e) => e.preventDefault()}
                                                                     size="lgs"
+                                                                    type={'reset'}
                                                                 >
                                                                     Submit
                                                                 </Button>

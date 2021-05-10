@@ -9,10 +9,10 @@
 ### Deleted components
 ### Added components
 ### Deleted dependencies
-- @types/googlemaps (we'll use simple Google Maps API with Vanilla JS instead)
-- @types/markerclustererplus (we'll use simple Google Maps API with Vanilla JS instead)
-- @types/react (we'll use simple Google Maps API with Vanilla JS instead)
-- react-google-maps (we'll use simple Google Maps API with Vanilla JS instead)
+- @types/googlemaps (we'll use simple Google BuyToken API with Vanilla JS instead)
+- @types/markerclustererplus (we'll use simple Google BuyToken API with Vanilla JS instead)
+- @types/react (we'll use simple Google BuyToken API with Vanilla JS instead)
+- react-google-maps (we'll use simple Google BuyToken API with Vanilla JS instead)
 ### Added dependencies
 + bootstrap@4.6.0 (so that we can easily update bootstrap version)
 + jquery@3.5.1 (since bootstrap requires it - we are not using, we are only using bootstrap scss)

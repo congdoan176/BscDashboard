@@ -60,7 +60,7 @@ var routes = [
     layout: "/admin",
   },
   {
-    path: "/login",
+    path: "/auth",
     name: "Login",
     icon: "ni ni-key-25 text-info",
     component: Login,

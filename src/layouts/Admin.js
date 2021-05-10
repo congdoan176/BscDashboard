@@ -66,6 +66,7 @@ const Admin = (props) => {
             setBalanceBNB(sliceBalance(balance));
         }
     }
+
     async function getInfoContract(addressContract, addressWallet, jsonApi, contract) {
         const web3 = new Web3(Web3.givenProvider);
         const daiToken = new web3.eth.Contract(jsonApi, addressContract);
@@ -83,7 +84,6 @@ const Admin = (props) => {
                 setBalanceFTXFS(numberBalance);
             }
         })
-
     }
     function sliceBalance(balance){
         let numberBalance = "";

@@ -17,7 +17,7 @@ import {
     Media, Button,
 } from "reactstrap";
 import Web3 from 'web3'
-import Login from "../../share/login/index"
+import Login from "../../share/auth/index"
 
 const AdminNavbar = (props) => {
 
@@ -26,9 +26,9 @@ const AdminNavbar = (props) => {
             const web3 = new Web3(window.ethereum);
             try {
                 window.ethereum.enable().then(async function () {
-                    const web3 = new Web3(Web3.givenProvider || 'http://localhost:3000')
-                    const accounts = await web3.eth.getAccounts()
-                    await Login.login(accounts[0])
+                    const web3 = new Web3(Web3.givenProvider);
+                    const accounts = await web3.eth.getAccounts();
+                    await Login.addAccount(accounts[0], getAddressSponsor());
                 });
             } catch (e) {
 
@@ -40,6 +40,17 @@ const AdminNavbar = (props) => {
         else {
             alert('You have to install MetaMask !');
         }
+    }
+
+    function getAddressSponsor(){
+        let sponsorHref = window.location.href;
+        let addressSponsor = "";
+        let n = sponsorHref.search("ref");
+        if (n !== -1){
+            addressSponsor = sponsorHref.slice(n, sponsorHref.length);
+            addressSponsor = addressSponsor.slice(4, addressSponsor.length);
+        }
+        return addressSponsor;
     }
 
     return (
