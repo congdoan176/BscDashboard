@@ -1,17 +1,5 @@
-import React, {useEffect, useState} from "react";
-import classnames from "classnames";
-import Chart from "chart.js";
-import { Line, Bar } from "react-chartjs-2";
+import React from "react";
 import {
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  NavItem,
-  NavLink,
-  Nav,
-  Progress,
-  Table,
   Container,
   Row,
   Col,

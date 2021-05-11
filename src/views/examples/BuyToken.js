@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Button, Card, CardBody, Col, Container, Form, FormGroup, Input, Row} from "reactstrap";
+import {Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Row} from "reactstrap";
 import Header from "components/Headers/Header.js";
 import DataContext from "../../context";
 import Web3 from "web3";
@@ -12,22 +12,25 @@ const BuyToken = () => {
 
     async function getPrice() {
         const web3 = new Web3(Web3.givenProvider);
-        const daiToken = new web3.eth.Contract(jsonFtx, "0x017e8004c46e2e25E3B55D2656eBAf437ddD02C6");
-        daiToken.methods._salePrice().call(function (err, res) {
-            if (err) {
-                console.log("An error occured", err)
-                return
-            }
-            setSalePrice(res);
-        })
-        daiToken.methods._salePriceDiv().call(function (err, res) {
-            if (err) {
-                console.log("An error occured", err);
-                return;
-            }
-            setSalePriceDiv(res)
-        })
-        console.log()
+        try {
+            const daiToken = new web3.eth.Contract(jsonFtx, "0x017e8004c46e2e25E3B55D2656eBAf437ddD02C6");
+            daiToken.methods._salePrice().call(function (err, res) {
+                if (err) {
+                    console.log("An error occured", err)
+                    return
+                }
+                setSalePrice(res);
+            })
+            daiToken.methods._salePriceDiv().call(function (err, res) {
+                if (err) {
+                    console.log("An error occured", err);
+                    return;
+                }
+                setSalePriceDiv(res)
+            })
+        }catch (err){
+            console.log("get price sale price and sale price div error", err);
+        }
     }
 
     useEffect(async () => {
@@ -44,12 +47,18 @@ const BuyToken = () => {
     async function onBuyToken(){
         const web3 = new Web3(Web3.givenProvider);
         const accounts = await web3.eth.getAccounts()
-        let amount = numberBNB * 100000000
-        const daiToken = new web3.eth.Contract(jsonFtx, "0x017e8004c46e2e25E3B55D2656eBAf437ddD02C6");
-        daiToken.methods.buy().send({
-            from: accounts[0],
-            value: Math.floor(amount)
-        })
+        if (accounts.length > 0){
+            try {
+                let amount = numberBNB * 100000000
+                const daiToken = new web3.eth.Contract(jsonFtx, "0x017e8004c46e2e25E3B55D2656eBAf437ddD02C6");
+                daiToken.methods.buy().send({
+                    from: accounts[0],
+                    value: Math.floor(amount)
+                })
+            }catch (err){
+                console.log("Buy token error", err);
+            }
+        }
     }
 
     return (
@@ -59,13 +68,22 @@ const BuyToken = () => {
                 {data => (
                     <Container className="mt--7" fluid>
                         <Row>
+                            <Col lg={1}/>
                             <div className="col">
-                                <Card className="shadow border-0">
+                                <Card className="shadow" style={{backgroundImage: 'url()'}}>
+                                    <CardHeader className="bg-transparent">
+                                        <Row className="align-items-center">
+                                            <div className="col text-center">
+                                                <h2 className="mb-0">Buy FTX token</h2>
+                                            </div>
+                                        </Row>
+                                    </CardHeader>
                                     <CardBody>
                                         <Form>
                                             <div className="pl-lg-4">
                                                 <Row>
-                                                    <Col lg="6">
+                                                    <Col lg="2"/>
+                                                    <Col lg="8">
                                                         <FormGroup>
                                                             <label
                                                                 className="form-control-label"
@@ -84,7 +102,11 @@ const BuyToken = () => {
                                                             />
                                                         </FormGroup>
                                                     </Col>
-                                                    <Col lg="6">
+                                                    <Col lg="2"/>
+                                                </Row>
+                                                <Row>
+                                                    <Col lg="2"/>
+                                                    <Col lg="8">
                                                         <FormGroup>
                                                             <label
                                                                 className="form-control-label"
@@ -101,6 +123,7 @@ const BuyToken = () => {
                                                             />
                                                         </FormGroup>
                                                     </Col>
+                                                    <Col lg="2"/>
                                                 </Row>
                                             </div>
                                             <hr className="my-4"/>
@@ -125,6 +148,7 @@ const BuyToken = () => {
                                     </CardBody>
                                 </Card>
                             </div>
+                            <Col lg={1}/>
                         </Row>
                     </Container>
                 )}

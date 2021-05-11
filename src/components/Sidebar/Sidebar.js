@@ -1,55 +1,29 @@
 import React, {useState} from "react";
 import {NavLink as NavLinkRRD, Link} from "react-router-dom";
 import {PropTypes} from "prop-types";
-
-// reactstrap components
 import {
-    Button,
-    Card,
-    CardHeader,
-    CardBody,
-    CardTitle,
     Collapse,
-    DropdownMenu,
-    DropdownItem,
     UncontrolledDropdown,
     DropdownToggle,
-    FormGroup,
-    Form,
-    Input,
-    InputGroupAddon,
-    InputGroupText,
-    InputGroup,
-    Media,
     NavbarBrand,
     Navbar,
     NavItem,
     NavLink,
     Nav,
-    Progress,
-    Table,
     Container,
     Row,
-    Col,
+    Col, Button,
 } from "reactstrap";
-
-var ps;
-
+import Web3 from "web3";
+import DataContext from "../../context";
 const Sidebar = (props) => {
     const [collapseOpen, setCollapseOpen] = useState();
-    // verifies if routeName is the one active (in browser input)
-    const activeRoute = (routeName) => {
-        return props.location.pathname.indexOf(routeName) > -1 ? "active" : "";
-    };
-    // toggles collapse between opened and closed (true/false)
     const toggleCollapse = () => {
         setCollapseOpen((data) => !data);
     };
-    // closes the collapse
     const closeCollapse = () => {
         setCollapseOpen(false);
     };
-    // creates the links that appear in the left menu / Sidebar
     const createLinks = (routes) => {
         return routes.map((prop, key) => {
             return (
@@ -68,7 +42,7 @@ const Sidebar = (props) => {
         });
     };
 
-    const {bgColor, routes, logo} = props;
+    const {routes, logo} = props;
     let navbarBrandProps;
     if (logo && logo.innerLink) {
         navbarBrandProps = {
@@ -82,140 +56,94 @@ const Sidebar = (props) => {
         };
     }
 
+    async function connectToMetaMask(data) {
+        if (window.ethereum) {
+            const web3 = new Web3(window.ethereum);
+            try {
+                window.ethereum.enable().then(async function () {
+                    // const web3 = new Web3(Web3.givenProvider);
+                    // const accounts = await web3.eth.getAccounts();
+                    // await Login.addAccount(accounts[0], getAddressSponsor());
+                    await data.updateData();
+                });
+            } catch (e) {
+
+            }
+        }
+        else if (window.web3) {
+            const web3 = new Web3(window.web3.currentProvider);
+        }
+        else {
+            alert('You have to install MetaMask !');
+        }
+    }
+
     return (
-        <Navbar
-            className="navbar-vertical fixed-left navbar-light bg-white"
-            expand="md"
-            id="sidenav-main"
-        >
-            <Container fluid>
-                {/* Toggler */}
-                <button
-                    className="navbar-toggler"
-                    type="button"
-                    onClick={toggleCollapse}
+        <DataContext.Consumer>
+            {data => (
+                <Navbar
+                    className="navbar-vertical fixed-left navbar-light bg-white"
+                    expand="md"
+                    id="sidenav-main"
                 >
-                    <span className="navbar-toggler-icon"/>
-                </button>
-                {/* Brand */}
-                {logo ? (
-                    <NavbarBrand className="pt-0" {...navbarBrandProps}>
-                        <img
-                            alt={logo.imgAlt}
-                            className="navbar-brand-img"
-                            src={logo.imgSrc}
-                        />
-                    </NavbarBrand>
-                ) : null}
-                {/* User */}
-                <Nav className="align-items-center d-md-none">
-                    <UncontrolledDropdown nav>
-                        <DropdownToggle nav className="nav-link-icon">
-                            <i className="ni ni-bell-55"/>
-                        </DropdownToggle>
-                        <DropdownMenu
-                            aria-labelledby="navbar-default_dropdown_1"
-                            className="dropdown-menu-arrow"
-                            right
+                    <Container fluid>
+                        <button
+                            className="navbar-toggler"
+                            type="button"
+                            onClick={toggleCollapse}
                         >
-                            <DropdownItem>Action</DropdownItem>
-                            <DropdownItem>Another action</DropdownItem>
-                            <DropdownItem divider/>
-                            <DropdownItem>Something else here</DropdownItem>
-                        </DropdownMenu>
-                    </UncontrolledDropdown>
-                    <UncontrolledDropdown nav>
-                        <DropdownToggle nav>
-                            <Media className="align-items-center">
-                <span className="avatar avatar-sm rounded-circle">
-                  <img
-                      alt="..."
-                      src={
-                          require("../../assets/img/theme/team-1-800x800.jpg")
-                              .default
-                      }
-                  />
-                </span>
-                            </Media>
-                        </DropdownToggle>
-                        <DropdownMenu className="dropdown-menu-arrow" right>
-                            <DropdownItem className="noti-title" header tag="div">
-                                <h6 className="text-overflow m-0">Welcome!</h6>
-                            </DropdownItem>
-                            <DropdownItem to="/admin/user-profile" tag={Link}>
-                                <i className="ni ni-single-02"/>
-                                <span>My profile</span>
-                            </DropdownItem>
-                            <DropdownItem to="/admin/user-profile" tag={Link}>
-                                <i className="ni ni-settings-gear-65"/>
-                                <span>Settings</span>
-                            </DropdownItem>
-                            <DropdownItem to="/admin/user-profile" tag={Link}>
-                                <i className="ni ni-calendar-grid-58"/>
-                                <span>Activity</span>
-                            </DropdownItem>
-                            <DropdownItem to="/admin/user-profile" tag={Link}>
-                                <i className="ni ni-support-16"/>
-                                <span>Support</span>
-                            </DropdownItem>
-                            <DropdownItem divider/>
-                            <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
-                                <i className="ni ni-user-run"/>
-                                <span>Logout</span>
-                            </DropdownItem>
-                        </DropdownMenu>
-                    </UncontrolledDropdown>
-                </Nav>
-                {/* Collapse */}
-                <Collapse navbar isOpen={collapseOpen}>
-                    {/* Collapse header */}
-                    <div className="navbar-collapse-header d-md-none">
-                        <Row>
-                            {logo ? (
-                                <Col className="collapse-brand" xs="6">
-                                    {logo.innerLink ? (
-                                        <Link to={logo.innerLink}>
-                                            <img alt={logo.imgAlt} src={logo.imgSrc}/>
-                                        </Link>
-                                    ) : (
-                                        <a href={logo.outterLink}>
-                                            <img alt={logo.imgAlt} src={logo.imgSrc}/>
-                                        </a>
-                                    )}
-                                </Col>
-                            ) : null}
-                            <Col className="collapse-close" xs="6">
-                                <button
-                                    className="navbar-toggler"
-                                    type="button"
-                                    onClick={toggleCollapse}
-                                >
-                                    <span/>
-                                    <span/>
-                                </button>
-                            </Col>
-                        </Row>
-                    </div>
-                    {/* Form */}
-                    <Form className="mt-4 mb-3 d-md-none">
-                        <InputGroup className="input-group-rounded input-group-merge">
-                            <Input
-                                aria-label="Search"
-                                className="form-control-rounded form-control-prepended"
-                                placeholder="Search"
-                                type="search"
-                            />
-                            <InputGroupAddon addonType="prepend">
-                                <InputGroupText>
-                                    <span className="fa fa-search"/>
-                                </InputGroupText>
-                            </InputGroupAddon>
-                        </InputGroup>
-                    </Form>
-                    <Nav navbar>{createLinks(routes)}</Nav>
-                </Collapse>
-            </Container>
-        </Navbar>
+                            <span className="navbar-toggler-icon"/>
+                        </button>
+                        {logo ? (
+                            <NavbarBrand className="pt-0" {...navbarBrandProps}>
+                                <img
+                                    alt={logo.imgAlt}
+                                    className="navbar-brand-img"
+                                    src={logo.imgSrc}
+                                />
+                            </NavbarBrand>
+                        ) : null}
+                        <Nav className="align-items-center d-md-none">
+                            <UncontrolledDropdown nav>
+                                <DropdownToggle className="pr-0" nav>
+                                    <Button
+                                        color="white"
+                                        onClick={async () => {
+                                            await connectToMetaMask(data);
+                                        }}
+                                        size="sm"
+                                    >
+                                        Connect
+                                    </Button>
+                                </DropdownToggle>
+                            </UncontrolledDropdown>
+                        </Nav>
+                        {/* Collapse */}
+                        <Collapse navbar isOpen={collapseOpen}>
+                            {/* Collapse header */}
+                            <div className="navbar-collapse-header d-md-none">
+                                <Row>
+                                    <Col className="collapse-brand" xs="6">
+
+                                    </Col>
+                                    <Col className="collapse-close" xs="6">
+                                        <button
+                                            className="navbar-toggler"
+                                            type="button"
+                                            onClick={toggleCollapse}
+                                        >
+                                            <span/>
+                                            <span/>
+                                        </button>
+                                    </Col>
+                                </Row>
+                            </div>
+                            <Nav navbar>{createLinks(routes)}</Nav>
+                        </Collapse>
+                    </Container>
+                </Navbar>
+            )}
+        </DataContext.Consumer>
     );
 };
 

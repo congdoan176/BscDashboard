@@ -7,7 +7,7 @@ import Sidebar from "components/Sidebar/Sidebar.js";
 import routes from "routes.js";
 import DataContext from "../context";
 import Web3 from "web3";
-import jsonFtx from "../json/ftx/contract.json";
+import jsonFtx from "../json/contract/contract.json";
 
 const Admin = (props) => {
     const mainContent = React.useRef(null);
@@ -56,7 +56,7 @@ const Admin = (props) => {
 
 
     async function getInfoAccount() {
-        const web3 = new Web3(Web3.givenProvider || 'http://localhost:3000')
+        const web3 = new Web3(Web3.givenProvider)
         const accounts = await web3.eth.getAccounts()
         if (accounts.length > 0){
             setAccount(accounts[0])
@@ -75,7 +75,7 @@ const Admin = (props) => {
                 console.log("An error occured", err)
                 return
             }
-            let numberBalance = sliceBalance(res)
+            let numberBalance = res
             if (contract === "FTXF"){
                 setBalanceFTXF(numberBalance);
             }else if (contract === "USDT"){
@@ -85,6 +85,7 @@ const Admin = (props) => {
             }
         })
     }
+
     function sliceBalance(balance){
         let numberBalance = "";
         if (balance === "0"){
@@ -94,9 +95,23 @@ const Admin = (props) => {
             while (numberBalance.endsWith('0')) {
                 numberBalance = numberBalance.slice(0, numberBalance.length - 1)
             }
-            numberBalance = numberBalance.replace(".","");
         }
         return numberBalance;
+    }
+
+    async function updateData(){
+        const web3 = new Web3(Web3.givenProvider)
+        const accounts = await web3.eth.getAccounts()
+        if (accounts.length > 0){
+            setAccount(accounts[0])
+            const chain = await web3.eth.getChainId()
+            setChain(chain.toString())
+            const balance = (await web3.eth.getBalance(accounts[0]))
+            setBalanceBNB(sliceBalance(balance));
+            await getInfoContract("0x0957C89Bfa6A9F6737dACFB27389A1cCC22514e9", accounts[0], jsonFtx, "FTXF");
+            await getInfoContract("0xf11FFA5612cd127b362902e3443b974fc13EF1F9", accounts[0], jsonFtx, "FTXShare");
+            await getInfoContract("0x337610d27c682e347c9cd60bd4b3b107c9d34ddd", accounts[0], jsonFtx, "USDT");
+        }
     }
 
     useEffect(async () => {
@@ -117,14 +132,15 @@ const Admin = (props) => {
                 balanceUSDT: balanceUSDT,
                 balanceBNB: balanceBNB,
                 balanceFTXF: balanceFTXF,
-                balanceFTXFS: balanceFTXFS
+                balanceFTXFS: balanceFTXFS,
+                updateData: updateData
             }}>
                 <Sidebar
                     {...props}
                     routes={routes}
                     logo={{
                         innerLink: "/admin/index",
-                        imgSrc: require("../assets/img/brand/argon-react.png").default,
+                        imgSrc: require("../assets/img/icons/ftxf-dapps.png").default,
                         imgAlt: "...",
                     }}
                 />
@@ -145,6 +161,5 @@ const Admin = (props) => {
             </DataContext.Provider>
         </>
     );
-};
-
+}
 export default Admin;

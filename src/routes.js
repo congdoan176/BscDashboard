@@ -1,10 +1,9 @@
 import Index from "views/Index.js";
 import Profile from "views/examples/Profile.js";
 import BuyToken from "views/examples/BuyToken.js";
-import Register from "views/examples/Register.js";
-import Login from "views/examples/Login.js";
-import Tables from "views/examples/Tables.js";
+import ShareToken from "views/examples/ShareToken.js";
 import Icons from "views/examples/Icons.js";
+import Stake from "./views/examples/Stake";
 
 var routes = [
   {
@@ -14,13 +13,13 @@ var routes = [
     component: Index,
     layout: "/admin",
   },
-  {
-    path: "/icons",
-    name: "Stake",
-    icon: "ni ni-planet text-blue",
-    component: Icons,
-    layout: "/admin",
-  },
+  // {
+  //   path: "/icons",
+  //   name: "Stake",
+  //   icon: "ni ni-planet text-blue",
+  //   component: Icons,
+  //   layout: "/admin",
+  // },
   {
     path: "/maps",
     name: "Buy Token",
@@ -36,10 +35,17 @@ var routes = [
     layout: "/admin",
   },
   {
+    path: "/stake",
+    name: "Stake",
+    icon: "ni ni-planet text-blue",
+    component: Stake,
+    layout: "/admin",
+  },
+  {
     path: "/tables",
     name: "Share",
     icon: "ni ni-bullet-list-67 text-red",
-    component: Tables,
+    component: ShareToken,
     layout: "/admin",
   },
     // {

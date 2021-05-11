@@ -1,34 +1,26 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {Link} from "react-router-dom";
 import {
-    DropdownMenu,
-    DropdownItem,
     UncontrolledDropdown,
     DropdownToggle,
-    Form,
-    FormGroup,
-    InputGroupAddon,
-    InputGroupText,
-    Input,
-    InputGroup,
     Navbar,
     Nav,
-    Container,
-    Media, Button,
+    Container, Button,
 } from "reactstrap";
 import Web3 from 'web3'
-import Login from "../../share/auth/index"
+import DataContext from "../../context";
 
 const AdminNavbar = (props) => {
 
-    async function connectToMetaMask() {
+    async function connectToMetaMask(data) {
         if (window.ethereum) {
             const web3 = new Web3(window.ethereum);
             try {
                 window.ethereum.enable().then(async function () {
-                    const web3 = new Web3(Web3.givenProvider);
-                    const accounts = await web3.eth.getAccounts();
-                    await Login.addAccount(accounts[0], getAddressSponsor());
+                    // const web3 = new Web3(Web3.givenProvider);
+                    // const accounts = await web3.eth.getAccounts();
+                    // await Login.addAccount(accounts[0], getAddressSponsor());
+                    await data.updateData();
                 });
             } catch (e) {
 
@@ -55,43 +47,35 @@ const AdminNavbar = (props) => {
 
     return (
         <>
-            <Navbar className="navbar-top navbar-dark" expand="md" id="navbar-main">
-                <Container fluid>
-                    <Link
-                        className="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block"
-                        to="/"
-                    >
-                        {props.brandText}
-                    </Link>
-                    <Form className="navbar-search navbar-search-dark form-inline mr-3 d-none d-md-flex ml-lg-auto">
-                        <FormGroup className="mb-0">
-                            <InputGroup className="input-group-alternative">
-                                <InputGroupAddon addonType="prepend">
-                                    <InputGroupText>
-                                        <i className="fas fa-search"/>
-                                    </InputGroupText>
-                                </InputGroupAddon>
-                                <Input placeholder="Search" type="text"/>
-                            </InputGroup>
-                        </FormGroup>
-                    </Form>
-                    <Nav className="align-items-center d-none d-md-flex" navbar>
-                        <UncontrolledDropdown nav>
-                            <DropdownToggle className="pr-0" nav>
-                                <Button
-                                    color="white"
-                                    onClick={async () => {
-                                        await connectToMetaMask()
-                                    }}
-                                    size="lg"
-                                >
-                                    Connect to Metamask
-                                </Button>
-                            </DropdownToggle>
-                        </UncontrolledDropdown>
-                    </Nav>
-                </Container>
-            </Navbar>
+            <DataContext.Consumer>
+                {data => (
+                    <Navbar className="navbar-top navbar-dark" expand="md" id="navbar-main">
+                        <Container fluid>
+                            <Link
+                                className="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block"
+                                to="/"
+                            >
+                                {props.brandText}
+                            </Link>
+                            <Nav className="align-items-center d-none d-md-flex" navbar>
+                                <UncontrolledDropdown nav>
+                                    <DropdownToggle className="pr-0" nav>
+                                        <Button
+                                            color="white"
+                                            onClick={async () => {
+                                                await connectToMetaMask(data);
+                                            }}
+                                            size="lg"
+                                        >
+                                            Connect to Metamask
+                                        </Button>
+                                    </DropdownToggle>
+                                </UncontrolledDropdown>
+                            </Nav>
+                        </Container>
+                    </Navbar>
+                )}
+            </DataContext.Consumer>
         </>
     );
 };

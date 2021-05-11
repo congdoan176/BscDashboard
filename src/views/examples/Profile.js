@@ -13,6 +13,7 @@ import {
 } from "reactstrap";
 import UserHeader from "components/Headers/UserHeader.js";
 import DataContext from "../../context";
+import Verify from "../../share/verify/index"
 
 const Profile = () => {
 
@@ -39,7 +40,7 @@ const Profile = () => {
     async function sendData(type, addressAccount){
         if (type === 'email'){
             setInputVerifyCode(true);
-            // await Verify.sendEmail(Email, addressAccount);
+            await Verify.sendEmail(Email, addressAccount);
         }else {
             // await Verify.sendCode(verifyCode);
         }

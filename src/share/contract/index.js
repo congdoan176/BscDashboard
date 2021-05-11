@@ -43,7 +43,7 @@ const Contract = (props) => {
                             <div className="h5 mt-4">
                                 <h3>
                                     Total Balance
-                                    <span className="font-weight-light">: {numberFormat(props.accountBalance)}</span>
+                                    <span className="font-weight-light">: {props.accountBalance}</span>
                                 </h3>
                             </div>
                             <div>
