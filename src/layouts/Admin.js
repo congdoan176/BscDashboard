@@ -19,6 +19,7 @@ const Admin = (props) => {
     const [balanceFTXF, setBalanceFTXF] = useState("")
     const [balanceUSDT, setBalanceUSDT] = useState("")
     const [balanceFTXFS, setBalanceFTXFS] = useState("")
+    const [addressSponsor, setAddressSponsor] = useState("")
 
     useEffect(() => {
         document.documentElement.scrollTop = 0;
@@ -63,7 +64,9 @@ const Admin = (props) => {
             const chain = await web3.eth.getChainId()
             setChain(chain.toString())
             const balance = (await web3.eth.getBalance(accounts[0]))
-            setBalanceBNB(sliceBalance(balance));
+            let numberBalance = balance / 1000000000000000000;
+
+            setBalanceBNB(numberBalance.toFixed(4));
         }
     }
 
@@ -75,13 +78,13 @@ const Admin = (props) => {
                 console.log("An error occured", err)
                 return
             }
-            let numberBalance = res
+            let numberBalance = res / 1000000000000000000
             if (contract === "FTXF"){
-                setBalanceFTXF(numberBalance);
+                setBalanceFTXF(numberBalance.toFixed(4));
             }else if (contract === "USDT"){
-                setBalanceUSDT(numberBalance);
+                setBalanceUSDT(numberBalance.toFixed(4));
             }else if (contract === "FTXShare"){
-                setBalanceFTXFS(numberBalance);
+                setBalanceFTXFS(numberBalance.toFixed(4));
             }
         })
     }
@@ -114,7 +117,19 @@ const Admin = (props) => {
         }
     }
 
+    function getAddressSponsor(){
+        let sponsorHref = window.location.href;
+        let addressSponsor = "";
+        let n = sponsorHref.search("ref");
+        if (n !== -1){
+            addressSponsor = sponsorHref.slice(n, sponsorHref.length);
+            addressSponsor = addressSponsor.slice(4, addressSponsor.length);
+        }
+        setAddressSponsor(addressSponsor);
+    }
+
     useEffect(async () => {
+        getAddressSponsor();
         await getInfoAccount();
         if (account !== ""){
             await getInfoContract("0x0957C89Bfa6A9F6737dACFB27389A1cCC22514e9", account, jsonFtx, "FTXF");
@@ -133,7 +148,8 @@ const Admin = (props) => {
                 balanceBNB: balanceBNB,
                 balanceFTXF: balanceFTXF,
                 balanceFTXFS: balanceFTXFS,
-                updateData: updateData
+                addressSponsor: addressSponsor,
+                updateData: updateData,
             }}>
                 <Sidebar
                     {...props}

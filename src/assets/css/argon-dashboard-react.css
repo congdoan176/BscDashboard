@@ -10505,12 +10505,12 @@ main {
   overflow: hidden; }
 
 .bg-blue {
-  background-color: #5e72e4 !important; }
+  background-color: #29b6f6 !important; }
 
 a.bg-blue:hover, a.bg-blue:focus,
 button.bg-blue:hover,
 button.bg-blue:focus {
-  background-color: #324cdd !important; }
+  background-color: #29b6f6 !important; }
 
 .bg-indigo {
   background-color: #5603ad !important; }

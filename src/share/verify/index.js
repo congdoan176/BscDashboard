@@ -2,7 +2,7 @@ import React from 'react';
 
 class Verify {
     sendEmail = async (email, address) => {
-        return await fetch(`https://us-central1-ftxtoken.cloudfunctions.net/sendEMailCodeVerify`, {
+        return await fetch("https://us-central1-ftxtoken.cloudfunctions.net/sendEMailCodeVerify", {
             mode: 'no-cors',
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -10,11 +10,11 @@ class Verify {
                 email: email,
                 address: address
             })
-        }).then(res => {
-            console.log(res.text());
-        }).then(data => {
-            console.log(data)
-        });
+        }).then(response => response.text()).then(data => console.log(data));
+    }
+
+    test = async () => {
+        return await fetch("https://us-central1-ftxtoken.cloudfunctions.net/helloWord").then(response => response.text()).then(data => console.log(data));
     }
 
     sendCode = async (code) => {

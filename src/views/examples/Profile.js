@@ -39,7 +39,7 @@ const Profile = () => {
 
     async function sendData(type, addressAccount){
         if (type === 'email'){
-            setInputVerifyCode(true);
+            // setInputVerifyCode(true);
             await Verify.sendEmail(Email, addressAccount);
         }else {
             // await Verify.sendCode(verifyCode);
@@ -76,19 +76,55 @@ const Profile = () => {
                                                 <div
                                                     className="card-profile-stats d-flex justify-content-center md-5">
                                                     <div>
-                                                        <span className="heading">{data.balanceFTXF}</span>
+                                                        <span className="heading">~{data.balanceFTXF}
+                                                            <span>
+                                                                {" "}
+                                                                <img
+                                                                    className="navbar-brand-img"
+                                                                    src={require("../../assets/img/icons/ftxf-dapps.png").default}
+                                                                    style={{width: 19, height: 19}}
+                                                                />
+                                                            </span>
+                                                        </span>
                                                         <span className="description">FTX</span>
                                                     </div>
                                                     <div>
-                                                        <span className="heading">{data.balanceFTXFS}</span>
+                                                        <span className="heading">~{data.balanceFTXFS}
+                                                            <span>
+                                                                {" "}
+                                                                <img
+                                                                    className="navbar-brand-img"
+                                                                    src={require("../../assets/img/icons/ftxf-dapps.png").default}
+                                                                    style={{width: 19, height: 19}}
+                                                                />
+                                                            </span>
+                                                        </span>
                                                         <span className="description">FTX Eshare</span>
                                                     </div>
                                                     <div>
-                                                        <span className="heading">{data.balanceBNB}</span>
+                                                        <span className="heading">~{data.balanceBNB}
+                                                            <span>
+                                                                {" "}
+                                                                <img
+                                                                    className="navbar-brand-img"
+                                                                    src={require("../../assets/img/icons/Binance-Coin-BNB-icon.png").default}
+                                                                    style={{width: 19, height: 19}}
+                                                                />
+                                                            </span>
+                                                        </span>
                                                         <span className="description">BNB</span>
                                                     </div>
                                                     <div>
-                                                        <span className="heading">{data.balanceUSDT}</span>
+                                                        <span className="heading">~{data.balanceUSDT}
+                                                            <span>
+                                                                {" "}
+                                                                <img
+                                                                    className="navbar-brand-img"
+                                                                    src={require("../../assets/img/icons/Tether-USDT-icon.png").default}
+                                                                    style={{width: 19, height: 19}}
+                                                                />
+                                                            </span>
+                                                        </span>
                                                         <span className="description">USDT</span>
                                                     </div>
                                                 </div>
@@ -182,23 +218,7 @@ const Profile = () => {
                                                             />
                                                         </FormGroup>
                                                     </Col>
-                                                    <Col lg="6">
-                                                        <FormGroup>
-                                                            <label
-                                                                className="form-control-label"
-                                                                htmlFor="input-last-name"
-                                                            >
-                                                                Last name
-                                                            </label>
-                                                            <Input
-                                                                className="form-control-alternative"
-                                                                defaultValue={''}
-                                                                id="input-last-name"
-                                                                disabled = {true}
-                                                                type="text"
-                                                            />
-                                                        </FormGroup>
-                                                    </Col>
+
                                                 </Row>
                                             </div>
                                             <hr className="my-4"/>

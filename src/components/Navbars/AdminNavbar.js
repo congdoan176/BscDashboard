@@ -5,21 +5,21 @@ import {
     DropdownToggle,
     Navbar,
     Nav,
-    Container, Button,
+    Container, Button,Form,
 } from "reactstrap";
 import Web3 from 'web3'
 import DataContext from "../../context";
-
+import Login from "../../share/auth/index";
 const AdminNavbar = (props) => {
 
-    async function connectToMetaMask(data) {
+    async function connectToMetaMask(data, addressSponsor) {
         if (window.ethereum) {
             const web3 = new Web3(window.ethereum);
             try {
                 window.ethereum.enable().then(async function () {
-                    // const web3 = new Web3(Web3.givenProvider);
-                    // const accounts = await web3.eth.getAccounts();
-                    // await Login.addAccount(accounts[0], getAddressSponsor());
+                    const web3 = new Web3(Web3.givenProvider);
+                    const accounts = await web3.eth.getAccounts();
+                    await Login.addAccount(accounts[0], addressSponsor);
                     await data.updateData();
                 });
             } catch (e) {
@@ -34,17 +34,6 @@ const AdminNavbar = (props) => {
         }
     }
 
-    function getAddressSponsor(){
-        let sponsorHref = window.location.href;
-        let addressSponsor = "";
-        let n = sponsorHref.search("ref");
-        if (n !== -1){
-            addressSponsor = sponsorHref.slice(n, sponsorHref.length);
-            addressSponsor = addressSponsor.slice(4, addressSponsor.length);
-        }
-        return addressSponsor;
-    }
-
     return (
         <>
             <DataContext.Consumer>
@@ -57,17 +46,22 @@ const AdminNavbar = (props) => {
                             >
                                 {props.brandText}
                             </Link>
+                            <div style={{border: 1, borderRadius: 30, backgroundColor: 'white'}}>
+                                <div className="pl-5 pr-5 pt-2">
+                                    <h4 style={{fontWeight: "bold"}}>Account address: <span>{data.accountAddress}</span></h4>
+                                </div>
+                            </div>
                             <Nav className="align-items-center d-none d-md-flex" navbar>
                                 <UncontrolledDropdown nav>
                                     <DropdownToggle className="pr-0" nav>
                                         <Button
                                             color="white"
                                             onClick={async () => {
-                                                await connectToMetaMask(data);
+                                                await connectToMetaMask(data, data.addressSponsor);
                                             }}
                                             size="lg"
                                         >
-                                            Connect to Metamask
+                                            Connect
                                         </Button>
                                     </DropdownToggle>
                                 </UncontrolledDropdown>
