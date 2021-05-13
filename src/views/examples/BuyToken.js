@@ -5,6 +5,9 @@ import DataContext from "../../context";
 import Web3 from "web3";
 import jsonFtx from "../../json/founder/contract.json";
 import Address from "../../json/addressContract/address.json"
+import {BigNumber} from "@ethersproject/bignumber";
+
+
 const BuyToken = () => {
     const [salePrice, setSalePrice] = useState(0);
     const [salePriceDiv, setSalePriceDiv] = useState(0);

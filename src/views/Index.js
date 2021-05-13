@@ -12,6 +12,7 @@ import fdJson from "../json/founder/contract.json";
 import Web3 from "web3";
 import Address from "../json/addressContract/address.json";
 
+
 const Index = (props) => {
 
     const [lookedFullAmount, setLookedFullAmount] = useState(0);
@@ -23,22 +24,36 @@ const Index = (props) => {
         const account = await web3.eth.getAccounts();
         if (account.length > 0){
             const data = new web3.eth.Contract(fdJson, Address.FounderAddress);
-            // data.methods.getLockedAmount().call(function (err, res){
-            //     if (err){
-            //         console.log("get ");
-            //         return
-            //     }
-            // })
+            data.methods.getLockedFullAmount(account[0]).call(function (err, res){
+                if (err){
+                    console.log("get full amount looked fail", err);
+                    return;
+                }
+                setLookedFullAmount(res);
+            })
         }
     }
 
-    async function getAmountLookedAmount() {
-
+    async function getAmountUnLockAmount() {
+        const web3 = new Web3(Web3.givenProvider);
+        const account = await web3.eth.getAccounts();
+        if (account.length > 0){
+            const data = new web3.eth.Contract(fdJson, Address.FounderAddress);
+            data.methods.getLockedAmount(account[0]).call(function (err, res){
+                if (err){
+                    console.log("get full amount looked fail", err);
+                    return;
+                }
+                setAmountUnLook(res);
+            })
+        }
     }
 
     useEffect(async () => {
         await getAmountLookedFullAmount()
-        await getAmountLookedAmount()
+        await getAmountUnLockAmount()
+        setAmountLooked(lookedFullAmount - amountUnLook);
+
     })
 
 
@@ -71,7 +86,7 @@ const Index = (props) => {
                         <Row className={"mt-5"}>
                             <Col className="mb-5 mb-xl-0" xl="6">
                                 <Contract {...props} headerText={"Token Look"}
-                                          accountChain={data.accountChain} accountBalance={0} amountLook={0} amountUnlook={0}/>
+                                          accountChain={data.accountChain} totalAmountLooked={lookedFullAmount} amountLooked={amountLooked} amountUnlook={amountUnLook}/>
                             </Col>
                             <Col xl="6">
 

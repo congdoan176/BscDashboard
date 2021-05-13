@@ -7,9 +7,26 @@ import {
     Row,
     Col,
 } from "reactstrap";
+import Web3 from "web3";
+import fdJson from "../../json/founder/contract.json";
+import Address from "../../json/addressContract/address.json";
 
 const Contract = (props) => {
 
+    async function withdrawBlockUnLook(){
+        const web3 = new Web3(Web3.givenProvider);
+        const account = await web3.eth.getAccounts();
+        if (account.length > 0){
+            const data = new web3.eth.Contract(fdJson, Address.FounderAddress);
+            try {
+                data.methods.releaseAllMyToken().send({
+                    from: account[0]
+                })
+            }catch (e) {
+                console.log("call function releaseAllMyToken fail", e)
+            }
+        }
+    }
 
     return (
         <>
@@ -75,44 +92,35 @@ const Contract = (props) => {
                                     <div>
                                         <Row className="mt-5">
                                             <Col lg="8">
-                                                <h3 className="mt-2">
-                                                    Quantity stake
+                                                <h3 className="mt-2 font-weight-light" style={{color: 'white', fontSize:20}}>
+                                                    Total amount looked
                                                     <span
-                                                        className="font-weight-light">: {0}</span>
+                                                        className="">: {props.totalAmountLooked / 1000000000000000000}</span>
                                                 </h3>
-                                            </Col>
-                                            <Col lg="4">
-                                                <Button
-                                                    color="white"
-                                                    onClick={() => {
-
-                                                    }}
-                                                    size="lgs"
-                                                    type={'reset'}
-                                                >
-                                                    Withdraw
-                                                </Button>
                                             </Col>
                                         </Row>
-                                        <Row className="mt-4">
+                                        <Row className="mt-2">
                                             <Col lg="8">
-                                                <h3 className="mt-2">
-                                                    Reward stake:
+                                                <h3 className="mt-2 font-weight-light" style={{color: 'white', fontSize:20}}>
+                                                    Amount un look:
                                                     <span
-                                                        className="font-weight-light"> {0}</span>
+                                                        className="font-weight-light"> {props.amountUnlook / 1000000000000000000}</span>
                                                 </h3>
                                             </Col>
                                             <Col lg="4">
-                                                <Button
-                                                    color="white"
-                                                    onClick={async () => {
-
-                                                    }}
-                                                    size="lgs"
-                                                    type={'reset'}
-                                                >
-                                                    Withdraw
-                                                </Button>
+                                                {
+                                                    props.amountUnlook > 0 ?
+                                                        <Button
+                                                            color="white"
+                                                            onClick={async () => {
+                                                                await withdrawBlockUnLook();
+                                                            }}
+                                                            size="lgs"
+                                                            type={'reset'}
+                                                        >
+                                                            Withdraw
+                                                        </Button> : null
+                                                }
                                             </Col>
                                         </Row>
                                     </div>

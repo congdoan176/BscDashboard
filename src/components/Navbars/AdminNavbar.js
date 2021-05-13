@@ -1,4 +1,4 @@
-import React from "react";
+import React, {ChildContextProvider} from "react";
 import {Link} from "react-router-dom";
 import {
     UncontrolledDropdown,
@@ -19,8 +19,10 @@ const AdminNavbar = (props) => {
                 window.ethereum.enable().then(async function () {
                     const web3 = new Web3(Web3.givenProvider);
                     const accounts = await web3.eth.getAccounts();
-                    await Login.addAccount(accounts[0], addressSponsor);
-                    await data.updateData();
+                    let dataJson = JSON.parse(await Login.addAccount(accounts[0], addressSponsor))
+                    data.UpdateInfoUser(dataJson.linkRef, dataJson.statusVerify, dataJson.email)
+                    // await Login.addAccount(accounts[0], addressSponsor);
+                    // await data.updateData();
                 });
             } catch (e) {
 

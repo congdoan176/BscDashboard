@@ -5,6 +5,7 @@ import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import AdminFooter from "components/Footers/AdminFooter.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 import routes from "routes.js";
+import routesUser from "routeUser";
 import DataContext from "../context";
 import Web3 from "web3";
 import jsonFtx from "../json/contract/readContract.json";
@@ -21,6 +22,10 @@ const Admin = (props) => {
     const [balanceUSDT, setBalanceUSDT] = useState("")
     const [balanceFTXFS, setBalanceFTXFS] = useState("")
     const [addressSponsor, setAddressSponsor] = useState("")
+
+    const [userVerifyStatus, setUserVerifyStatus] = useState("")
+    const [userLinkRef, setUserLinkRef] = useState("")
+    const [userEmail, setUserEmail] = useState("")
 
     useEffect(() => {
         document.documentElement.scrollTop = 0;
@@ -44,6 +49,12 @@ const Admin = (props) => {
         });
     };
 
+    function UpdateInfoUser(linkRef, verifyStatus, UserEmail){
+        setUserVerifyStatus(verifyStatus);
+        setUserLinkRef(linkRef);
+        setUserEmail(UserEmail);
+    }
+
     const getBrandText = (path) => {
         for (let i = 0; i < routes.length; i++) {
             if (
@@ -55,7 +66,6 @@ const Admin = (props) => {
         }
         return "Brand";
     };
-
 
     async function getInfoAccount() {
         const web3 = new Web3(Web3.givenProvider)
@@ -150,17 +160,34 @@ const Admin = (props) => {
                 balanceFTXF: balanceFTXF,
                 balanceFTXFS: balanceFTXFS,
                 addressSponsor: addressSponsor,
+                userVerifyStatus: userVerifyStatus,
+                userEmail: userEmail,
+                userLinkRef: userLinkRef,
                 updateData: updateData,
+                UpdateInfoUser: UpdateInfoUser,
+
             }}>
-                <Sidebar
-                    {...props}
-                    routes={routes}
-                    logo={{
-                        innerLink: "/admin/index",
-                        imgSrc: require("../assets/img/icons/ftxf-dapps.png").default,
-                        imgAlt: "...",
-                    }}
-                />
+                {
+                    account === Address.AdminAddress ?
+                        <Sidebar
+                            {...props}
+                            routes={routes}
+                            logo={{
+                                innerLink: "/admin/index",
+                                imgSrc: require("../assets/img/icons/ftxf-dapps.png").default,
+                                imgAlt: "...",
+                            }}
+                        /> :
+                        <Sidebar
+                            {...props}
+                            routes={routesUser}
+                            logo={{
+                                innerLink: "/admin/index",
+                                imgSrc: require("../assets/img/icons/ftxf-dapps.png").default,
+                                imgAlt: "...",
+                            }}
+                        />
+                }
                 <div className="main-content" ref={mainContent}>
                     <AdminNavbar
                         {...props}

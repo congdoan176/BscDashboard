@@ -12,25 +12,29 @@ import Web3 from "web3";
 import jsonFtx from "../../json/contract/readContract.json";
 import eshareJson from "../../json/eshare/contract.json"
 import Address from "../../json/addressContract/address.json"
+import {BigNumber} from "@ethersproject/bignumber";
 
 const ShareToken = () => {
 
     const [amountShare, setAmountShare] = useState(0);
-    const [addressToken, setAddressToken] = useState("");
+    const [addressToken, setAddressToken] = useState(Address.USDTAddess);
     const [totalUsdtEshare, setTotalUsdtEshare] = useState(0);
     const [errText, setErrText] = useState("");
 
     async function getUsdtInEshare() {
         const web3 = new Web3(Web3.givenProvider);
-        const data = new web3.eth.Contract(jsonFtx, Address.USDTAddess);
-        data.methods.balanceOf(Address.FTXFEshareAddress).call(function (err, res) {
-            if (err) {
-                console.log("get balance of eshare error.");
-                return;
-            }
-            let usdt = res / 1000000000000000000
-            setTotalUsdtEshare(usdt);
-        })
+        const account = await web3.eth.getAccounts();
+        if (account.length > 0){
+            const data = new web3.eth.Contract(jsonFtx, Address.USDTAddess);
+            data.methods.balanceOf(account[0]).call(function (err, res) {
+                if (err) {
+                    console.log("get balance of eshare error.");
+                    return;
+                }
+                let usdt = res / 1000000000000000000
+                setTotalUsdtEshare(usdt);
+            })
+        }
     }
 
     useEffect(async () => {
@@ -54,9 +58,9 @@ const ShareToken = () => {
         let account = await web3.eth.getAccounts();
         if (account.length > 0) {
             try {
+                console.log(addressToken)
                 const data = new web3.eth.Contract(eshareJson, Address.FTXFEshareAddress);
-                let amount = amountShare * 1000000000000000000;
-                data.methods.payDividend(Math.floor(amount), addressToken).send({
+                data.methods.payDividend(BigNumber.from(10).pow(18).mul(amountShare).toString(), addressToken).send({
                     from: account[0],
                 })
             } catch (err) {
@@ -120,6 +124,7 @@ const ShareToken = () => {
                                                         <Input
                                                             className="form-control-alternative"
                                                             onChange={(e) => changeAddressToken(e)}
+                                                            defaultValue={Address.USDTAddess}
                                                             type="select"
                                                             style={{
                                                                 width: '100%',

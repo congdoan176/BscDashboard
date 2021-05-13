@@ -44,9 +44,9 @@
     "not op_mini all"
   ],
   "dependencies": {
+    "@ethersproject/bignumber": "^5.1.1",
     "@fortawesome/fontawesome-free": "5.15.2",
     "axios": "^0.21.1",
-    "big-number": "^2.0.0",
     "bootstrap": "4.6.0",
     "classnames": "2.2.6",
     "eslint-plugin-flowtype": "5.2.0",

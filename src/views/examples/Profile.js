@@ -169,7 +169,7 @@ const Profile = () => {
                                                             </label>
                                                             <Input
                                                                 className="form-control-alternative"
-                                                                defaultValue={`https://ftxfdapps/ref=${data.accountAddress}`}
+                                                                defaultValue={data.userLinkRef}
                                                                 disabled = {true}
                                                                 type="text"
                                                             />
@@ -206,6 +206,7 @@ const Profile = () => {
                                                             <Input
                                                                 className="form-control-alternative"
                                                                 id="input-email"
+                                                                defaultValue={data.userEmail}
                                                                 disabled = {true}
                                                                 type="text"
                                                             />
@@ -231,7 +232,23 @@ const Profile = () => {
                                                             />
                                                         </FormGroup>
                                                     </Col>
-
+                                                    <Col lg="6">
+                                                        <FormGroup>
+                                                            <label
+                                                                className="form-control-label"
+                                                                htmlFor="input-first-name"
+                                                            >
+                                                                Verify Status
+                                                            </label>
+                                                            <Input
+                                                                className="form-control-alternative"
+                                                                defaultValue={data.userVerifyStatus}
+                                                                disabled = {true}
+                                                                id="input-first-name"
+                                                                type="text"
+                                                            />
+                                                        </FormGroup>
+                                                    </Col>
                                                 </Row>
                                             </div>
                                             <hr className="my-4"/>

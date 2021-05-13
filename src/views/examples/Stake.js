@@ -12,7 +12,7 @@ import jsonFtx from "../../json/contract/readContract.json";
 import fdJson from "../../json/founder/contract.json";
 import DataContext from "../../context";
 import Address from "../../json/addressContract/address.json"
-
+import {BigNumber} from "@ethersproject/bignumber"
 const Stake = () => {
     const [totalAmountFTXF, setTotalAmountFTXF] = useState(0);
     const [totalAmountApprove, setTotalAmountApprove] = useState(0);
@@ -23,7 +23,8 @@ const Stake = () => {
     const [rewardStake, setRewardStake] = useState(0);
     const [quantityUnStake, setQuantityUnStake] = useState(0);
 
-    const [nextFromStake, setNextFromStake] = useState(true);
+    const [backFromApprove, setBackFromApprove] = useState(false);
+    const [nextFromStake, setNextFromStake] = useState(false);
     const [modal, setModal] = useState(false);
 
     const toggle = () => setModal(!modal);
@@ -43,22 +44,33 @@ const Stake = () => {
         }
     }
 
-    useEffect(async () => {
-        await getTotalAmountFTXF();
-        await getTotalStakeReward();
-        await getTotalAmountApprove()
-        if (quantityStake > 0) {
-            setNextFromStake(true);
-        }
-    })
-
     async function geTotalQuantityStake() {
         const web3 = new Web3(Web3.givenProvider);
         const account = await web3.eth.getAccounts();
         if (account.length > 0) {
             const data = new web3.eth.Contract(fdJson, Address.FounderAddress);
+            data.methods._stakers(account[0]).call(function (err, res){
+                if(err){
+                    console.log("get quantity stake fail", err);
+                    return;
+                }
+                setQuantityStake(res.amount)
+            })
         }
     }
+
+    useEffect(async () => {
+        await getTotalAmountFTXF();
+        await getTotalStakeReward();
+        await geTotalQuantityStake();
+        await getTotalAmountApprove()
+        if (!backFromApprove){
+            if (quantityStake > 0) {
+                setNextFromStake(true);
+            }
+        }
+    })
+
 
     async function getTotalStakeReward() {
         const web3 = new Web3(Web3.givenProvider);
@@ -123,8 +135,8 @@ const Stake = () => {
             const web3 = new Web3(Web3.givenProvider);
             const account = await web3.eth.getAccounts();
             const data = new web3.eth.Contract(fdJson, Address.FounderAddress);
-            let amount = amountStake * 1000000000000000000;
-            data.methods.stake(Math.floor(amount)).send({
+
+            data.methods.stake(BigNumber.from(10).pow(18).mul(amountStake).toString()).send({
                 from: account[0]
             })
 
@@ -160,7 +172,8 @@ const Stake = () => {
         if (account.length > 0) {
             const data = new web3.eth.Contract(fdJson, Address.FounderAddress);
             try {
-                await data.methods.unstake(quantityUnStake).send({
+
+                await data.methods.unstake(BigNumber.from(10).pow(18).mul(quantityUnStake).toString()).send({
                     from: account[0],
                 })
             } catch (err) {
@@ -279,10 +292,22 @@ const Stake = () => {
                                                 <Card className="shadow border-0">
                                                     <CardHeader className="bg-transparent">
                                                         <Row className="align-items-center">
-                                                            <div className="col text-center">
+                                                            <Col lg={10} className="text-center pl-6 ml-6">
                                                                 <h2 className="mb-0">{"Stake"}
                                                                 </h2>
-                                                            </div>
+                                                            </Col>
+                                                            <Col lg={1} className="text-center">
+                                                                <Button
+                                                                    color="primary"
+                                                                    onClick={async () => {
+                                                                        await setBackFromApprove(true)
+                                                                        await setNextFromStake(false)
+                                                                    }}
+                                                                    size="lgs"
+                                                                    type={'reset'}>
+                                                                    Approve
+                                                                </Button>
+                                                            </Col>
                                                         </Row>
                                                     </CardHeader>
                                                     <CardBody>
@@ -383,7 +408,7 @@ const Stake = () => {
                                                                                         <h3 className="mt-2">
                                                                                             Quantity stake
                                                                                             <span
-                                                                                                className="font-weight-light">: {quantityStake}</span>
+                                                                                                className="font-weight-light">: {quantityStake / 1000000000000000000}</span>
                                                                                         </h3>
                                                                                     </Col>
                                                                                     <Col lg="4">

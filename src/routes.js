@@ -4,7 +4,7 @@ import BuyToken from "views/examples/BuyToken.js";
 import ShareToken from "views/examples/ShareToken.js";
 import Icons from "views/examples/Icons.js";
 import Stake from "./views/examples/Stake";
-
+import DataContext from "./context";
 var routes = [
   {
     path: "/index",
@@ -13,13 +13,6 @@ var routes = [
     component: Index,
     layout: "/admin",
   },
-  // {
-  //   path: "/icons",
-  //   name: "Stake",
-  //   icon: "ni ni-planet text-blue",
-  //   component: Icons,
-  //   layout: "/admin",
-  // },
   {
     path: "/maps",
     name: "Buy Token",
@@ -48,19 +41,5 @@ var routes = [
     component: ShareToken,
     layout: "/admin",
   },
-    // {
-    //   path: "/auth",
-    //   name: "Login",
-    //   icon: "ni ni-key-25 text-info",
-    //   component: Login,
-    //   layout: "/auth",
-    // },
-    // {
-    //   path: "/register",
-    //   name: "Register",
-    //   icon: "ni ni-circle-08 text-pink",
-    //   component: Register,
-    //   layout: "/auth",
-    // },
 ];
 export default routes;
