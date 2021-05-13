@@ -7,7 +7,8 @@ import Sidebar from "components/Sidebar/Sidebar.js";
 import routes from "routes.js";
 import DataContext from "../context";
 import Web3 from "web3";
-import jsonFtx from "../json/contract/contract.json";
+import jsonFtx from "../json/contract/readContract.json";
+import Address from "../json/addressContract/address.json"
 
 const Admin = (props) => {
     const mainContent = React.useRef(null);
@@ -111,9 +112,9 @@ const Admin = (props) => {
             setChain(chain.toString())
             const balance = (await web3.eth.getBalance(accounts[0]))
             setBalanceBNB(sliceBalance(balance));
-            await getInfoContract("0x0957C89Bfa6A9F6737dACFB27389A1cCC22514e9", accounts[0], jsonFtx, "FTXF");
-            await getInfoContract("0xf11FFA5612cd127b362902e3443b974fc13EF1F9", accounts[0], jsonFtx, "FTXShare");
-            await getInfoContract("0x337610d27c682e347c9cd60bd4b3b107c9d34ddd", accounts[0], jsonFtx, "USDT");
+            await getInfoContract(Address.FTXFTokenAddress, accounts[0], jsonFtx, "FTXF");
+            await getInfoContract(Address.FTXFEshareAddress, accounts[0], jsonFtx, "FTXShare");
+            await getInfoContract(Address.USDTAddess, accounts[0], jsonFtx, "USDT");
         }
     }
 
@@ -132,9 +133,9 @@ const Admin = (props) => {
         getAddressSponsor();
         await getInfoAccount();
         if (account !== ""){
-            await getInfoContract("0x0957C89Bfa6A9F6737dACFB27389A1cCC22514e9", account, jsonFtx, "FTXF");
-            await getInfoContract("0xf11FFA5612cd127b362902e3443b974fc13EF1F9", account, jsonFtx, "FTXShare");
-            await getInfoContract("0x337610d27c682e347c9cd60bd4b3b107c9d34ddd", account, jsonFtx, "USDT");
+            await getInfoContract(Address.FTXFTokenAddress, account, jsonFtx, "FTXF");
+            await getInfoContract(Address.FTXFEshareAddress, account, jsonFtx, "FTXShare");
+            await getInfoContract(Address.USDTAddess, account, jsonFtx, "USDT");
         }
     })
 

@@ -1,35 +1,15 @@
 import React from 'react';
+import axios from "axios";
 
 class Verify {
     sendEmail = async (email, address) => {
-        return await fetch("https://us-central1-ftxtoken.cloudfunctions.net/sendEMailCodeVerify", {
-            mode: 'no-cors',
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                email: email,
-                address: address
-            })
-        }).then(response => response.text()).then(data => console.log(data));
+        return await fetch(`https://us-central1-ftxtoken.cloudfunctions.net/sendEMailCodeVerify?email=${email}&address=${address}`)
+            .then(response => response.text())
     }
 
-    test = async () => {
-        return await fetch("https://us-central1-ftxtoken.cloudfunctions.net/helloWord").then(response => response.text()).then(data => console.log(data));
-    }
-
-    sendCode = async (code) => {
-        return await fetch(`https://us-central1-ftxtoken.cloudfunctions.net/sendEMailCodeVerify`, {
-            mode: 'no-cors',
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                code: code,
-            })
-        }).then(res => {
-            console.log(res.text());
-        }).then(data => {
-            console.log(data)
-        });
+    sendCode = async (code, address) => {
+        return await fetch(`https://us-central1-ftxtoken.cloudfunctions.net/confirmVerifyEmail?address=${address}&codeVerify=${code}`)
+            .then(res => res.text())
     }
 }
 

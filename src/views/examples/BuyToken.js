@@ -4,17 +4,18 @@ import Header from "components/Headers/Header.js";
 import DataContext from "../../context";
 import Web3 from "web3";
 import jsonFtx from "../../json/founder/contract.json";
-
+import Address from "../../json/addressContract/address.json"
 const BuyToken = () => {
     const [salePrice, setSalePrice] = useState(0);
     const [salePriceDiv, setSalePriceDiv] = useState(0);
     const [numberToken, setNumberToken] = useState("");
     const [numberBNB, setNumberBNB] = useState(0);
+    const [errText, setErrText] = useState("");
 
     async function getPrice() {
         const web3 = new Web3(Web3.givenProvider);
         try {
-            const daiToken = new web3.eth.Contract(jsonFtx, "0x017e8004c46e2e25E3B55D2656eBAf437ddD02C6");
+            const daiToken = new web3.eth.Contract(jsonFtx, Address.FounderAddress);
             daiToken.methods._salePrice().call(function (err, res) {
                 if (err) {
                     console.log("An error occured", err)
@@ -41,13 +42,13 @@ const BuyToken = () => {
     function changeSaleValue(e) {
         let a = e.target.value;
         setNumberToken(a);
-        let number = a / salePriceDiv * salePrice;
+        let number = a / salePrice * salePriceDiv;
         setNumberBNB(number);
     }
 
     async function onBuyToken(totalAmountBNB) {
         if (totalAmountBNB < numberBNB) {
-            alert("Number BNB must be less than or equal total BNB assets");
+            setErrText("Number BNB must be less than or equal total BNB assets")
             return;
         }
         const web3 = new Web3(Web3.givenProvider);
@@ -55,7 +56,7 @@ const BuyToken = () => {
         if (accounts.length > 0) {
             try {
                 let amount = numberBNB * 1000000000000000000;
-                const daiToken = new web3.eth.Contract(jsonFtx, "0x017e8004c46e2e25E3B55D2656eBAf437ddD02C6");
+                const daiToken = new web3.eth.Contract(jsonFtx, Address.FounderAddress);
                 daiToken.methods.buy().send({
                     from: accounts[0],
                     value: Math.floor(amount)
@@ -141,6 +142,8 @@ const BuyToken = () => {
                                                             </FormGroup>
                                                         </div>
                                                         <small>Total BNB assets: ~{data.balanceBNB}</small>
+                                                        <br/>
+                                                        <small style={{color: "red"}}>{errText}</small>
                                                     </Col>
                                                     <Col lg="1"/>
                                                 </Row>

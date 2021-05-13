@@ -8,10 +8,10 @@ import {
 } from "reactstrap";
 import Header from "components/Headers/Header.js";
 import Web3 from "web3";
-import jsonFtx from "../../json/contract/contract.json";
+import jsonFtx from "../../json/contract/readContract.json";
 import fdJson from "../../json/founder/contract.json";
 import DataContext from "../../context";
-import BigNumber from "big-number"
+import Address from "../../json/addressContract/address.json"
 
 const Stake = () => {
     const [totalAmountFTXF, setTotalAmountFTXF] = useState(0);
@@ -23,7 +23,7 @@ const Stake = () => {
     const [rewardStake, setRewardStake] = useState(0);
     const [quantityUnStake, setQuantityUnStake] = useState(0);
 
-    const [nextFromStake, setNextFromStake] = useState(false);
+    const [nextFromStake, setNextFromStake] = useState(true);
     const [modal, setModal] = useState(false);
 
     const toggle = () => setModal(!modal);
@@ -32,7 +32,7 @@ const Stake = () => {
         const web3 = new Web3(Web3.givenProvider);
         const account = await web3.eth.getAccounts();
         if (account.length > 0) {
-            const data = new web3.eth.Contract(jsonFtx, "0x0957C89Bfa6A9F6737dACFB27389A1cCC22514e9");
+            const data = new web3.eth.Contract(jsonFtx, Address.FTXFTokenAddress);
             data.methods.balanceOf(account[0]).call(function (err, res) {
                 if (err) {
                     console.log("get balance FTXT of user fail", err);
@@ -56,7 +56,7 @@ const Stake = () => {
         const web3 = new Web3(Web3.givenProvider);
         const account = await web3.eth.getAccounts();
         if (account.length > 0) {
-            const data = new web3.eth.Contract(fdJson, "0x017e8004c46e2e25E3B55D2656eBAf437ddD02C6");
+            const data = new web3.eth.Contract(fdJson, Address.FounderAddress);
         }
     }
 
@@ -64,7 +64,7 @@ const Stake = () => {
         const web3 = new Web3(Web3.givenProvider);
         const account = await web3.eth.getAccounts();
         if (account.length > 0) {
-            const data = new web3.eth.Contract(fdJson, "0x017e8004c46e2e25E3B55D2656eBAf437ddD02C6");
+            const data = new web3.eth.Contract(fdJson, Address.FounderAddress);
             data.methods.getStakeReward(account[0]).call(function (err, res) {
                 if (err) {
                     console.log("get reward stake error");
@@ -81,8 +81,8 @@ const Stake = () => {
             const web3 = new Web3(Web3.givenProvider);
             const account = await web3.eth.getAccounts();
             if (account.length > 0) {
-                const data = new web3.eth.Contract(jsonFtx, "0x0957C89Bfa6A9F6737dACFB27389A1cCC22514e9");
-                data.methods.allowance(account[0], "0x017e8004c46e2e25E3B55D2656eBAf437ddD02C6").call(function (err, res) {
+                const data = new web3.eth.Contract(jsonFtx, Address.FTXFTokenAddress);
+                data.methods.allowance(account[0], Address.FounderAddress).call(function (err, res) {
                     if (err) {
                         console.log("get amount approved of user fail", err)
                         return;
@@ -98,9 +98,9 @@ const Stake = () => {
         const web3 = new Web3(Web3.givenProvider);
         const account = await web3.eth.getAccounts();
         if (account.length > 0) {
-            const data = new web3.eth.Contract(jsonFtx, "0x0957C89Bfa6A9F6737dACFB27389A1cCC22514e9");
+            const data = new web3.eth.Contract(jsonFtx, Address.FTXFTokenAddress);
             try {
-                await data.methods.approve("0x017e8004c46e2e25E3B55D2656eBAf437ddD02C6", totalAmountFTXF).send({
+                await data.methods.approve(Address.FounderAddress, totalAmountFTXF).send({
                     from: account[0]
                 })
                 await setNextFromStake(true);
@@ -122,7 +122,7 @@ const Stake = () => {
         try {
             const web3 = new Web3(Web3.givenProvider);
             const account = await web3.eth.getAccounts();
-            const data = new web3.eth.Contract(fdJson, "0x017e8004c46e2e25E3B55D2656eBAf437ddD02C6");
+            const data = new web3.eth.Contract(fdJson, Address.FounderAddress);
             let amount = amountStake * 1000000000000000000;
             data.methods.stake(Math.floor(amount)).send({
                 from: account[0]
@@ -138,7 +138,7 @@ const Stake = () => {
         const web3 = new Web3(Web3.givenProvider);
         const account = await web3.eth.getAccounts();
         if (account.length > 0) {
-            const data = new web3.eth.Contract(fdJson, "0x017e8004c46e2e25E3B55D2656eBAf437ddD02C6");
+            const data = new web3.eth.Contract(fdJson, Address.FounderAddress);
             try {
                 await data.methods.redeemStakeReward().send({
                     from: account[0],
@@ -158,7 +158,7 @@ const Stake = () => {
         const web3 = new Web3(Web3.givenProvider);
         const account = await web3.eth.getAccounts();
         if (account.length > 0) {
-            const data = new web3.eth.Contract(fdJson, "0x017e8004c46e2e25E3B55D2656eBAf437ddD02C6");
+            const data = new web3.eth.Contract(fdJson, Address.FounderAddress);
             try {
                 await data.methods.unstake(quantityUnStake).send({
                     from: account[0],

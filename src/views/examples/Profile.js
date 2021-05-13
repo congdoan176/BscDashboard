@@ -21,6 +21,7 @@ const Profile = () => {
     const [errorText, setErrorText] = useState("");
     const [Email, setEmail] = useState("");
     const [verifyCode, setVerifyCode] = useState("");
+    const [errorMsg, setErrorMsg] = useState("");
 
     async function validateEmail(type, addressAccount) {
         if (type === "email"){
@@ -39,10 +40,22 @@ const Profile = () => {
 
     async function sendData(type, addressAccount){
         if (type === 'email'){
-            // setInputVerifyCode(true);
-            await Verify.sendEmail(Email, addressAccount);
+            let data =  JSON.parse(await Verify.sendEmail(Email, addressAccount));
+            if (data.message === "success"){
+                setInputVerifyCode(true)
+            }
+
         }else {
-            // await Verify.sendCode(verifyCode);
+            console.log(verifyCode)
+            let data = JSON.parse(await Verify.sendCode(verifyCode, addressAccount));
+            console.log(data)
+            if (data.msg === "The confirmation code is not correct, please check again."){
+                setErrorMsg(data.msg);
+            }
+            if (data.msg === "success"){
+                alert("Verify email success.");
+                setErrorMsg("")
+            }
         }
     }
 
@@ -50,7 +63,7 @@ const Profile = () => {
         if (type === 'email'){
             await setEmail(event.target.value);
         }else {
-            setVerifyCode(event.target.value);
+            await setVerifyCode(event.target.value);
         }
     }
 
@@ -264,13 +277,15 @@ const Profile = () => {
                                                                     className="form-control-alternative"
                                                                     placeholder="Enter Code"
                                                                     defaultValue={""}
+                                                                    onChange={async (e) =>  changeValue('codeVerify', e)}
                                                                     type="text"
                                                                 />
+                                                                <small style={{color: "red"}}>{errorMsg}</small>
                                                             </Col>
                                                             <Col lg={4}>
                                                                 <Button
                                                                     color="primary"
-                                                                    onClick={(e) => e.preventDefault()}
+                                                                    onClick={() => sendData("codeVerify", data.accountAddress)}
                                                                     size="lgs"
                                                                     type={'reset'}
                                                                 >

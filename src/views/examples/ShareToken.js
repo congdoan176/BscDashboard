@@ -9,19 +9,21 @@ import {
 } from "reactstrap";
 import Header from "components/Headers/Header.js";
 import Web3 from "web3";
-import jsonFtx from "../../json/contract/contract.json";
+import jsonFtx from "../../json/contract/readContract.json";
 import eshareJson from "../../json/eshare/contract.json"
+import Address from "../../json/addressContract/address.json"
 
 const ShareToken = () => {
 
     const [amountShare, setAmountShare] = useState(0);
     const [addressToken, setAddressToken] = useState("");
     const [totalUsdtEshare, setTotalUsdtEshare] = useState(0);
+    const [errText, setErrText] = useState("");
 
     async function getUsdtInEshare() {
         const web3 = new Web3(Web3.givenProvider);
-        const data = new web3.eth.Contract(jsonFtx, "0x337610d27c682e347c9cd60bd4b3b107c9d34ddd");
-        data.methods.balanceOf("0xf11FFA5612cd127b362902e3443b974fc13EF1F9").call(function (err, res) {
+        const data = new web3.eth.Contract(jsonFtx, Address.USDTAddess);
+        data.methods.balanceOf(Address.FTXFEshareAddress).call(function (err, res) {
             if (err) {
                 console.log("get balance of eshare error.");
                 return;
@@ -45,14 +47,14 @@ const ShareToken = () => {
 
     async function onShareToken() {
         if (totalUsdtEshare < amountShare){
-            alert("Amount Share must be less than or equal amount USDT");
+            setErrText("Amount Share must be less than or equal amount USDT")
             return;
         }
         const web3 = new Web3(Web3.givenProvider);
         let account = await web3.eth.getAccounts();
         if (account.length > 0) {
             try {
-                const data = new web3.eth.Contract(eshareJson, "0xf11FFA5612cd127b362902e3443b974fc13EF1F9");
+                const data = new web3.eth.Contract(eshareJson, Address.FTXFEshareAddress);
                 let amount = amountShare * 1000000000000000000;
                 data.methods.payDividend(Math.floor(amount), addressToken).send({
                     from: account[0],
@@ -127,7 +129,7 @@ const ShareToken = () => {
                                                                 boxShadow: 'none'
                                                             }}
                                                         >
-                                                            <option value="0x337610d27c682e347c9cd60bd4b3b107c9d34ddd">
+                                                            <option value={Address.USDTAddess}>
                                                                 USDT
                                                             </option>
                                                         </Input>
@@ -190,6 +192,8 @@ const ShareToken = () => {
                                                     </FormGroup>
                                                 </div>
                                                 <small>Total USDT assets: ~{totalUsdtEshare}</small>
+                                                <br/>
+                                                <small style={{color: "red"}}>{errText}</small>
                                             </Col>
                                             <Col lg="1"/>
                                         </Row>
