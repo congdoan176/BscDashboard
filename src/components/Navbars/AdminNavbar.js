@@ -48,11 +48,13 @@ const AdminNavbar = (props) => {
                             </Link>
                             {
                                 data.accountAddress === "" ?
-                                    <div style={{border: 1, borderRadius: 30, backgroundColor: 'white', marginLeft: 70}}>
-                                        <div className="pl-5 pr-5 pt-2">
-                                            <h4 style={{fontWeight: "bold"}}>Account address</h4>
+                                    <Col lg={6} sm={6}>
+                                        <div style={{border: 1, borderRadius: 30, backgroundColor: 'white'}}>
+                                            <div className="pt-2 text-center" style={{paddingBottom: 2}}>
+                                                <h4 style={{fontWeight: "bold"}}>Account address</h4>
+                                            </div>
                                         </div>
-                                    </div> :  data.accountAddress !== "" ?
+                                    </Col> :  data.accountAddress !== "" ?
                                     <Col lg={5} sm={12}>
                                         <div style={{border: 1, borderRadius: 30, backgroundColor: 'white'}}>
                                             <div className="pt-2 text-center" style={{paddingBottom: 2}}>
