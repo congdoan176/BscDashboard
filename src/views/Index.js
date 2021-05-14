@@ -62,14 +62,14 @@ const Index = (props) => {
             <Header/>
             <DataContext.Consumer>
                 {data => (
-                    <Container className="mt--7" fluid>
+                    <Container className="mt--5" fluid>
                         <Row>
                             <Col className="mb-5 mb-xl-0" xl="6">
                                 <Contract {...props} headerText={"FTX Eshare"}
                                           accountChain={data.accountChain} accountBalance={data.balanceFTXFS}/>
                             </Col>
                             <Col xl="6">
-                                <Contract {...props} headerText={"FTX"}
+                                <Contract {...props} headerText={"FTXF"}
                                           accountChain={data.accountChain} accountBalance={data.balanceFTXF}/>
                             </Col>
                         </Row>

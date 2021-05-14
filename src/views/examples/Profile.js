@@ -11,11 +11,11 @@ import {
     Row,
     Col,
 } from "reactstrap";
-import UserHeader from "../../components/Headers/UserHeader.js";
 import DataContext from "../../context";
 import Verify from "../../share/verify/index"
 import Web3 from "web3";
 import Login from "../../share/auth";
+import Header from "../../components/Headers/Header";
 
 const Profile = () => {
 
@@ -77,10 +77,10 @@ const Profile = () => {
 
     return (
         <>
-            <UserHeader/>
+            <Header/>
             <DataContext.Consumer>
                 {data => (
-                    <Container className="mt--7" fluid>
+                    <Container className="mt--5" fluid>
                         <Row>
                             <Col className="order-xl-1 mb-5 mb-xl-10 " xl="12">
                                 <Card className="card-profile shadow">
@@ -107,7 +107,7 @@ const Profile = () => {
                                                                 />
                                                             </span>
                                                         </span>
-                                                        <span className="description">FTX</span>
+                                                        <span className="description">FTXF</span>
                                                     </div>
                                                     <div>
                                                         <span className="heading">~{data.balanceFTXFS}
@@ -198,7 +198,6 @@ const Profile = () => {
                                                                 defaultValue={data.accountAddress}
                                                                 disabled = {true}
                                                                 id="input-username"
-                                                                placeholder="Username"
                                                                 type="text"
                                                             />
                                                         </FormGroup>
@@ -235,7 +234,6 @@ const Profile = () => {
                                                                 defaultValue={data.accountChain}
                                                                 disabled = {true}
                                                                 id="input-first-name"
-                                                                placeholder="First name"
                                                                 type="text"
                                                             />
                                                         </FormGroup>

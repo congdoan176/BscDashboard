@@ -28,25 +28,42 @@ const Admin = (props) => {
     const [userEmail, setUserEmail] = useState("")
 
     useEffect(() => {
+        console.log(props.location.pathname,1)
         document.documentElement.scrollTop = 0;
         document.scrollingElement.scrollTop = 0;
         mainContent.current.scrollTop = 0;
     }, [location]);
 
     const getRoutes = (routes) => {
-        return routes.map((prop, key) => {
-            if (prop.layout === "/admin") {
-                return (
-                    <Route
-                        path={prop.layout + prop.path}
-                        component={prop.component}
-                        key={key}
-                    />
-                );
-            } else {
-                return null;
-            }
-        });
+        if (account === Address.AdminAddress){
+            return routes.map((prop, key) => {
+                if (prop.layout === "/admin") {
+                    return (
+                        <Route
+                            path={prop.layout + prop.path}
+                            component={prop.component}
+                            key={key}
+                        />
+                    );
+                } else {
+                    return null;
+                }
+            });
+        }else {
+            return routes.map((prop, key) => {
+                if (prop.layout === "/user") {
+                    return (
+                        <Route
+                            path={prop.layout + prop.path}
+                            component={prop.component}
+                            key={key}
+                        />
+                    );
+                } else {
+                    return null;
+                }
+            });
+        }
     };
 
     function UpdateInfoUser(linkRef, verifyStatus, UserEmail){
@@ -58,7 +75,7 @@ const Admin = (props) => {
     const getBrandText = (path) => {
         for (let i = 0; i < routes.length; i++) {
             if (
-                props.location.pathname.indexOf(routes[i].layout + routes[i].path) !==
+                props.location.pathname.indexOf(routes[i].path) !==
                 -1
             ) {
                 return routes[i].name;
@@ -182,7 +199,7 @@ const Admin = (props) => {
                             {...props}
                             routes={routesUser}
                             logo={{
-                                innerLink: "/admin/index",
+                                innerLink: "/user/index",
                                 imgSrc: require("../assets/img/icons/ftxf-dapps.png").default,
                                 imgAlt: "...",
                             }}
@@ -194,8 +211,14 @@ const Admin = (props) => {
                         brandText={getBrandText(props.location.pathname)}
                     />
                     <Switch>
-                        {getRoutes(routes)}
-                        <Redirect from="*" to="/admin/index"/>
+                        {
+                            account === Address.AdminAddress ? getRoutes(routes) : getRoutes(routesUser)
+                        }
+                        {
+                            account === Address.AdminAddress ?
+                            <Redirect from="*" to="/admin/dashboard"/>:
+                            <Redirect from="*" to="/user/dashboard"/>
+                        }
                     </Switch>
 
                     <Container fluid>

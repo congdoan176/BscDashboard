@@ -5,11 +5,12 @@ import {
     DropdownToggle,
     Navbar,
     Nav,
-    Container, Button,Form,
+    Container, Button, Form, Col, Row
 } from "reactstrap";
 import Web3 from 'web3'
 import DataContext from "../../context";
 import Login from "../../share/auth/index";
+
 const AdminNavbar = (props) => {
 
     async function connectToMetaMask(data, addressSponsor) {
@@ -21,16 +22,14 @@ const AdminNavbar = (props) => {
                     const accounts = await web3.eth.getAccounts();
                     let dataJson = JSON.parse(await Login.addAccount(accounts[0], addressSponsor))
                     data.UpdateInfoUser(dataJson.linkRef, dataJson.statusVerify, dataJson.email)
-                    // await data.updateData();
+                    await data.updateData();
                 });
             } catch (e) {
 
             }
-        }
-        else if (window.web3) {
+        } else if (window.web3) {
             const web3 = new Web3(window.web3.currentProvider);
-        }
-        else {
+        } else {
             alert('You have to install MetaMask !');
         }
     }
@@ -45,13 +44,24 @@ const AdminNavbar = (props) => {
                                 className="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block"
                                 to="/"
                             >
-                                {props.brandText}
+                                FTXF Dapp
                             </Link>
-                            <div style={{border: 1, borderRadius: 30, backgroundColor: 'white'}}>
-                                <div className="pl-5 pr-5 pt-2">
-                                    <h4 style={{fontWeight: "bold"}}>Account address: <span>{data.accountAddress}</span></h4>
-                                </div>
-                            </div>
+                            {
+                                data.accountAddress === "" ?
+                                    <div style={{border: 1, borderRadius: 30, backgroundColor: 'white', marginLeft: 70}}>
+                                        <div className="pl-5 pr-5 pt-2">
+                                            <h4 style={{fontWeight: "bold"}}>Account address</h4>
+                                        </div>
+                                    </div> :  data.accountAddress !== "" ?
+                                    <Col lg={5} sm={12}>
+                                        <div style={{border: 1, borderRadius: 30, backgroundColor: 'white'}}>
+                                            <div className="pt-2 text-center" style={{paddingBottom: 2}}>
+                                                <h4 style={{fontWeight: "bold"}}>Account address</h4>
+                                                <p style={{fontSize: 12, fontWeight: "bold"}}>{data.accountAddress}</p>
+                                            </div>
+                                        </div>
+                                    </Col> : ""
+                            }
                             <Nav className="align-items-center d-none d-md-flex" navbar>
                                 <UncontrolledDropdown nav>
                                     <DropdownToggle className="pr-0" nav>

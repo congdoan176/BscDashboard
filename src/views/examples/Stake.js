@@ -188,7 +188,7 @@ const Stake = () => {
             <Header/>
             <DataContext.Consumer>
                 {data => (
-                    <Container className="mt--7" fluid>
+                    <Container className="mt--5" fluid>
                         <Row>
                             <div className="col">
                                 {
@@ -404,14 +404,14 @@ const Stake = () => {
                                                                                 left: '-50%'
                                                                             }}>
                                                                                 <Row className="mt-5">
-                                                                                    <Col lg="8">
-                                                                                        <h3 className="mt-2">
+                                                                                    <Col lg="9">
+                                                                                        <h3 className="mt-2" style={{color: 'white'}}>
                                                                                             Quantity stake
                                                                                             <span
                                                                                                 className="font-weight-light">: {quantityStake / 1000000000000000000}</span>
                                                                                         </h3>
                                                                                     </Col>
-                                                                                    <Col lg="4">
+                                                                                    <Col lg="3">
                                                                                         <Button
                                                                                             color="white"
                                                                                             onClick={toggle}
@@ -423,14 +423,14 @@ const Stake = () => {
                                                                                     </Col>
                                                                                 </Row>
                                                                                 <Row className="mt-4">
-                                                                                    <Col lg="8">
-                                                                                        <h3 className="mt-2">
+                                                                                    <Col lg="9">
+                                                                                        <h3 className="mt-2" style={{color: 'white'}}>
                                                                                             Reward stake:
                                                                                             <span
                                                                                                 className="font-weight-light"> {rewardStake}</span>
                                                                                         </h3>
                                                                                     </Col>
-                                                                                    <Col lg="4">
+                                                                                    <Col lg="3">
                                                                                         <Button
                                                                                             color="white"
                                                                                             onClick={async () => {

@@ -75,7 +75,7 @@ const BuyToken = () => {
             <Header/>
             <DataContext.Consumer>
                 {data => (
-                    <Container className="mt--7" fluid>
+                    <Container className="mt--5" fluid>
                         <Row>
                             <Col lg={3}/>
                             <Col lg={6}>
@@ -83,7 +83,7 @@ const BuyToken = () => {
                                     <CardHeader className="bg-transparent" style={{borderBottom: 'none'}}>
                                         <Row className="align-items-center">
                                             <div className="col text-center">
-                                                <h2 className="mb-0">Buy FTX token</h2>
+                                                <h2 className="mb-0">Buy FTXF token</h2>
                                             </div>
                                         </Row>
                                     </CardHeader>

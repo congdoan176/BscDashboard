@@ -72,7 +72,7 @@ const ShareToken = () => {
     return (
         <>
             <Header/>
-            <Container className="mt--7" fluid>
+            <Container className="mt--5" fluid>
                 <Row>
                     <Col lg="3"/>
                     <Col lg="6">

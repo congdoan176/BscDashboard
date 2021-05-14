@@ -7,21 +7,21 @@ import Stake from "./views/examples/Stake";
 import DataContext from "./context";
 var routes = [
   {
-    path: "/index",
+    path: "/dashboard",
     name: "Dashboard",
     icon: "fas fa-home text-blue",
     component: Index,
     layout: "/admin",
   },
   {
-    path: "/maps",
-    name: "Buy Token",
+    path: "/buy_public_sale",
+    name: "Buy public sale",
     icon: "fas fa-cart-arrow-down text-blue",
     component: BuyToken,
     layout: "/admin",
   },
   {
-    path: "/user-profile",
+    path: "/user_profile",
     name: "Profile",
     icon: "ni ni-single-02 text-blue",
     component: Profile,
@@ -35,8 +35,8 @@ var routes = [
     layout: "/admin",
   },
   {
-    path: "/tables",
-    name: "Share",
+    path: "/share_token_bonus",
+    name: "Share token bonus",
     icon: "fas fa-share-square text-blue",
     component: ShareToken,
     layout: "/admin",
