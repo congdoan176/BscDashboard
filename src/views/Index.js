@@ -6,7 +6,7 @@ import {
     Card
 } from "reactstrap";
 import Contract from "../share/contract";
-import Header from "components/Headers/Header.js";
+import Header from "../components/Headers/Header.js";
 import DataContext from "../context";
 import fdJson from "../json/founder/contract.json";
 import Web3 from "web3";
@@ -85,7 +85,7 @@ const Index = (props) => {
                         </Row>
                         <Row className={"mt-5"}>
                             <Col className="mb-5 mb-xl-0" xl="6">
-                                <Contract {...props} headerText={"Token Look"}
+                                <Contract {...props} headerText={"Token Lock"}
                                           accountChain={data.accountChain} totalAmountLooked={lookedFullAmount} amountLooked={amountLooked} amountUnlook={amountUnLook}/>
                             </Col>
                             <Col xl="6">

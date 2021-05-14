@@ -11,9 +11,11 @@ import {
     Row,
     Col,
 } from "reactstrap";
-import UserHeader from "components/Headers/UserHeader.js";
+import UserHeader from "../../components/Headers/UserHeader.js";
 import DataContext from "../../context";
 import Verify from "../../share/verify/index"
+import Web3 from "web3";
+import Login from "../../share/auth";
 
 const Profile = () => {
 
@@ -22,6 +24,13 @@ const Profile = () => {
     const [Email, setEmail] = useState("");
     const [verifyCode, setVerifyCode] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
+
+    async function getInfoUser(data){
+        const web3 = new Web3(Web3.givenProvider);
+        const accounts = await web3.eth.getAccounts();
+        let dataJson = JSON.parse(await Login.addAccount(accounts[0], data.addressSponsor))
+        data.UpdateInfoUser(dataJson.linkRef, dataJson.statusVerify, dataJson.email)
+    }
 
     async function validateEmail(type, addressAccount) {
         if (type === "email"){
@@ -38,7 +47,7 @@ const Profile = () => {
         }
     }
 
-    async function sendData(type, addressAccount){
+    async function sendData(type, addressAccount, context){
         if (type === 'email'){
             let data =  JSON.parse(await Verify.sendEmail(Email, addressAccount));
             if (data.message === "success"){
@@ -46,15 +55,14 @@ const Profile = () => {
             }
 
         }else {
-            console.log(verifyCode)
             let data = JSON.parse(await Verify.sendCode(verifyCode, addressAccount));
-            console.log(data)
             if (data.msg === "The confirmation code is not correct, please check again."){
                 setErrorMsg(data.msg);
             }
             if (data.msg === "success"){
                 alert("Verify email success.");
                 setErrorMsg("")
+                await getInfoUser(context)
             }
         }
     }
@@ -302,7 +310,7 @@ const Profile = () => {
                                                             <Col lg={4}>
                                                                 <Button
                                                                     color="primary"
-                                                                    onClick={() => sendData("codeVerify", data.accountAddress)}
+                                                                    onClick={() => sendData("codeVerify", data.accountAddress, data)}
                                                                     size="lgs"
                                                                     type={'reset'}
                                                                 >

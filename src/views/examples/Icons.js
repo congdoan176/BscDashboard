@@ -7,7 +7,7 @@ import {
   Row,
   Col,
 } from "reactstrap";
-import Header from "components/Headers/Header.js";
+import Header from "../../components/Headers/Header.js";
 
 const Icons = () => {
   return (

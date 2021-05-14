@@ -68,11 +68,11 @@ const Contract = (props) => {
                         </CardHeader>
                         <CardBody style={props.headerText === "BNB" ? {backgroundColor: 'rgb(251, 140, 0)',borderTopRightRadius: '50%',borderTopLeftRadius: '50%', width: '100%', top: -20, left: '-50%'} :
                                          props.headerText === "USDT" ? {backgroundColor: 'rgb(79, 161, 117)',borderTopRightRadius: '50%',borderTopLeftRadius: '50%', width: '100%', top: -20, left: '-50%'} :
-                                         props.headerText === "Token Look" ? {backgroundColor: 'rgb(150, 150, 150)',borderTopRightRadius: '50%',borderTopLeftRadius: '50%', width: '100%', top: -20, left: '-50%'} :
+                                         props.headerText === "Token Lock" ? {backgroundColor: 'rgb(150, 150, 150)',borderTopRightRadius: '50%',borderTopLeftRadius: '50%', width: '100%', top: -20, left: '-50%'} :
                                          props.headerText === "FTX" || "FTX Eshare" ? {backgroundColor: 'rgb(255, 213, 0)',borderTopRightRadius: '50%',borderTopLeftRadius: '50%', width: '100%', top: -20, left: '-50%'} : null
                         }>
                             {
-                                props.headerText !== "Token Look" ?
+                                props.headerText !== "Token Lock" ?
                                     <div>
                                         <div className="mt-5">
                                             <div className="col text-right">

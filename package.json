@@ -50,6 +50,7 @@
     "bootstrap": "4.6.0",
     "classnames": "2.2.6",
     "eslint-plugin-flowtype": "5.2.0",
+    "firebase": "^8.6.1",
     "jquery": "3.5.1",
     "moment": "2.29.1",
     "node-sass": "4.14.1",

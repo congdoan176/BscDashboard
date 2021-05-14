@@ -7,7 +7,7 @@ import {
     Row,
     CardBody, Form, Col, FormGroup, Input, Button,
 } from "reactstrap";
-import Header from "components/Headers/Header.js";
+import Header from "../../components/Headers/Header.js";
 import Web3 from "web3";
 import jsonFtx from "../../json/contract/readContract.json";
 import eshareJson from "../../json/eshare/contract.json"

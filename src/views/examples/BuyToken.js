@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Row} from "reactstrap";
-import Header from "components/Headers/Header.js";
+import Header from "../../components/Headers/Header.js";
 import DataContext from "../../context";
 import Web3 from "web3";
 import jsonFtx from "../../json/founder/contract.json";
