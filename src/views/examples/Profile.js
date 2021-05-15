@@ -92,11 +92,10 @@ const Profile = () => {
                                         </Row>
                                     </CardHeader>
                                     <CardBody className="pt-0 md-4">
-                                        <Row>
-                                            <div className="col">
-                                                <div
-                                                    className="card-profile-stats d-flex justify-content-center md-5">
-                                                    <div>
+                                        <Row lg="12" sm="12">
+                                            <Col className="card-profile-stats d-flex justify-content-center md-5">
+                                                <Row>
+                                                    <Col sm="6" className="mb-2">
                                                         <span className="heading">~{data.balanceFTXF}
                                                             <span>
                                                                 {" "}
@@ -108,8 +107,8 @@ const Profile = () => {
                                                             </span>
                                                         </span>
                                                         <span className="description">FTXF</span>
-                                                    </div>
-                                                    <div>
+                                                    </Col>
+                                                    <Col sm="6" className="mb-2">
                                                         <span className="heading">~{data.balanceFTXFS}
                                                             <span>
                                                                 {" "}
@@ -121,21 +120,23 @@ const Profile = () => {
                                                             </span>
                                                         </span>
                                                         <span className="description">FTX Eshare</span>
-                                                    </div>
-                                                    <div>
-                                                        <span className="heading">~{data.balanceBNB}
-                                                            <span>
-                                                                {" "}
-                                                                <img
-                                                                    className="navbar-brand-img"
-                                                                    src={require("../../assets/img/icons/Binance-Coin-BNB-icon.png").default}
-                                                                    style={{width: 19, height: 19}}
-                                                                />
+                                                    </Col>
+                                                    <Col sm="6" className="mb-2">
+                                                        <div>
+                                                            <span className="heading">~{data.balanceBNB}
+                                                                <span>
+                                                                    {" "}
+                                                                        <img
+                                                                            className="navbar-brand-img"
+                                                                            src={require("../../assets/img/icons/Binance-Coin-BNB-icon.png").default}
+                                                                            style={{width: 19, height: 19}}
+                                                                        />
+                                                                </span>
                                                             </span>
-                                                        </span>
-                                                        <span className="description">BNB</span>
-                                                    </div>
-                                                    <div>
+                                                            <span className="description">BNB</span>
+                                                        </div>
+                                                    </Col>
+                                                    <Col sm="6" className="mb-2">
                                                         <span className="heading">~{data.balanceUSDT}
                                                             <span>
                                                                 {" "}
@@ -147,9 +148,9 @@ const Profile = () => {
                                                             </span>
                                                         </span>
                                                         <span className="description">USDT</span>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                                    </Col>
+                                                </Row>
+                                            </Col>
                                         </Row>
                                     </CardBody>
                                 </Card>
@@ -173,7 +174,7 @@ const Profile = () => {
                                                                 className="form-control-label"
                                                                 htmlFor="input-username"
                                                             >
-                                                                Link Referent
+                                                                Link Reference
                                                             </label>
                                                             <Input
                                                                 className="form-control-alternative"
@@ -259,66 +260,71 @@ const Profile = () => {
                                             </div>
                                             <hr className="my-4"/>
                                             {/* Description */}
-                                            <h6 className="heading-small text-muted mb-4">Verify Email</h6>
-                                            <div className="pl-lg-4">
-                                                {!inputVerifyCode ?
-                                                    <FormGroup>
-                                                        <label>Email</label>
-                                                        <Row>
-                                                            <Col xl="10">
-                                                                <Input
-                                                                    className="form-control-alternative"
-                                                                    placeholder="Enter email"
-                                                                    type="email"
-                                                                    onChange={async (e) =>  changeValue('email', e)}
-                                                                />
-                                                            </Col>
-                                                            <Col xl="1">
-                                                                <Button
-                                                                    color="primary"
-                                                                    onClick={() => validateEmail('email', data.accountAddress) }
-                                                                    size="lgs"
-                                                                    type={'reset'}
-                                                                >
-                                                                    Submit
-                                                                </Button>
-                                                            </Col>
-                                                        </Row>
-                                                        {errorText.length !== 0 ?
-                                                            <Row>
-                                                                <div style={{marginLeft: 15,marginTop: 10}}>
-                                                                    <p style={{color: 'red'}}>{errorText}</p>
-                                                                </div>
-                                                            </Row> : ""
+                                            {
+                                                data.userVerifyStatus === "complete" ? "" : <h6 className="heading-small text-muted mb-4">Verify Email</h6>
+                                            }
+                                            {
+                                                data.userVerifyStatus === "complete" ? "" :
+                                                    <div className="pl-lg-4">
+                                                        {!inputVerifyCode ?
+                                                            <FormGroup>
+                                                                <label>Email</label>
+                                                                <Row>
+                                                                    <Col xl="10">
+                                                                        <Input
+                                                                            className="form-control-alternative"
+                                                                            placeholder="Enter email"
+                                                                            type="email"
+                                                                            onChange={async (e) =>  changeValue('email', e)}
+                                                                        />
+                                                                    </Col>
+                                                                    <Col xl="1">
+                                                                        <Button
+                                                                            color="primary"
+                                                                            onClick={() => validateEmail('email', data.accountAddress) }
+                                                                            size="lgs"
+                                                                            type={'reset'}
+                                                                        >
+                                                                            Submit
+                                                                        </Button>
+                                                                    </Col>
+                                                                </Row>
+                                                                {errorText.length !== 0 ?
+                                                                    <Row>
+                                                                        <div style={{marginLeft: 15,marginTop: 10}}>
+                                                                            <p style={{color: 'red'}}>{errorText}</p>
+                                                                        </div>
+                                                                    </Row> : ""
+                                                                }
+                                                            </FormGroup> :
+                                                            <FormGroup>
+                                                                <label>Verify Code</label>
+                                                                <Row>
+                                                                    <Col lg={8}>
+                                                                        <Input
+                                                                            className="form-control-alternative"
+                                                                            placeholder="Enter Code"
+                                                                            defaultValue={""}
+                                                                            onChange={async (e) =>  changeValue('codeVerify', e)}
+                                                                            type="text"
+                                                                        />
+                                                                        <small style={{color: "red"}}>{errorMsg}</small>
+                                                                    </Col>
+                                                                    <Col lg={4}>
+                                                                        <Button
+                                                                            color="primary"
+                                                                            onClick={() => sendData("codeVerify", data.accountAddress, data)}
+                                                                            size="lgs"
+                                                                            type={'reset'}
+                                                                        >
+                                                                            Submit
+                                                                        </Button>
+                                                                    </Col>
+                                                                </Row>
+                                                            </FormGroup>
                                                         }
-                                                    </FormGroup> :
-                                                    <FormGroup>
-                                                        <label>Verify Code</label>
-                                                        <Row>
-                                                            <Col lg={8}>
-                                                                <Input
-                                                                    className="form-control-alternative"
-                                                                    placeholder="Enter Code"
-                                                                    defaultValue={""}
-                                                                    onChange={async (e) =>  changeValue('codeVerify', e)}
-                                                                    type="text"
-                                                                />
-                                                                <small style={{color: "red"}}>{errorMsg}</small>
-                                                            </Col>
-                                                            <Col lg={4}>
-                                                                <Button
-                                                                    color="primary"
-                                                                    onClick={() => sendData("codeVerify", data.accountAddress, data)}
-                                                                    size="lgs"
-                                                                    type={'reset'}
-                                                                >
-                                                                    Submit
-                                                                </Button>
-                                                            </Col>
-                                                        </Row>
-                                                    </FormGroup>
-                                                }
-                                            </div>
+                                                    </div>
+                                            }
                                         </Form>
                                     </CardBody>
                                 </Card>

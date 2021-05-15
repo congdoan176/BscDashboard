@@ -292,11 +292,11 @@ const Stake = () => {
                                                 <Card className="shadow border-0">
                                                     <CardHeader className="bg-transparent">
                                                         <Row className="align-items-center">
-                                                            <Col lg={10} className="text-center pl-6 ml-6">
+                                                            <Col lg="10" xs="6" className="text-center pl-6 ml-6">
                                                                 <h2 className="mb-0">{"Stake"}
                                                                 </h2>
                                                             </Col>
-                                                            <Col lg={1} className="text-center">
+                                                            <Col lg="1" xs="3" className="text-center">
                                                                 <Button
                                                                     color="primary"
                                                                     onClick={async () => {
@@ -371,7 +371,7 @@ const Stake = () => {
                                                                             <small>Total FTXF assets: ~{totalAmountApprove}</small>
                                                                         </Row>
                                                                         <hr className="my-4"/>
-                                                                        <Row>
+                                                                        <Row className="mb-5">
                                                                             <Col lg="9"></Col>
                                                                             <Col lg="3">
                                                                                 <Button

@@ -18,8 +18,8 @@ const Header = () => {
                                         <Col lg="5" xs="6" className="header-body text-center" style={{marginLeft:40}}>
                                             {
                                                 data.accountAddress === Address.AdminAddress ?
-                                                <a href="/admin/user_profile" style={{color: '#eeff05', fontWeight: "bold", fontSize: 19}}>Verify email</a> :
-                                                <a href="/user/user_profile" style={{color: '#eeff05', fontWeight: "bold", fontSize: 19}}>Verify email</a>
+                                                <a href="/admin/user_profile" style={{color: '#eeff05', fontWeight: "bold", fontSize: 19}}>Please Verify email</a> :
+                                                <a href="/user/user_profile" style={{color: '#eeff05', fontWeight: "bold", fontSize: 19}}>Please verify email</a>
                                             }
                                         </Col>
                                         <Col lg="4" xs="4"/>
