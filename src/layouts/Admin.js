@@ -10,6 +10,7 @@ import DataContext from "../context";
 import Web3 from "web3";
 import jsonFtx from "../json/contract/readContract.json";
 import Address from "../json/addressContract/address.json"
+import Login from "../share/auth/index";
 
 const Admin = (props) => {
     const mainContent = React.useRef(null);
@@ -27,7 +28,7 @@ const Admin = (props) => {
     const [userLinkRef, setUserLinkRef] = useState("")
     const [userEmail, setUserEmail] = useState("")
 
-    useEffect(() => {
+    useEffect( () => {
         console.log(props.location.pathname,1)
         document.documentElement.scrollTop = 0;
         document.scrollingElement.scrollTop = 0;
@@ -163,6 +164,9 @@ const Admin = (props) => {
             await getInfoContract(Address.FTXFTokenAddress, account, jsonFtx, "FTXF");
             await getInfoContract(Address.FTXFEshareAddress, account, jsonFtx, "FTXShare");
             await getInfoContract(Address.USDTAddess, account, jsonFtx, "USDT");
+
+            let dataJson = JSON.parse(await Login.addAccount(account, addressSponsor))
+            UpdateInfoUser(dataJson.linkRef, dataJson.statusVerify, dataJson.email)
         }
     })
 
