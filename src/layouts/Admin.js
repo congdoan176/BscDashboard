@@ -18,18 +18,20 @@ const Admin = (props) => {
     const [account, setAccount] = useState("")
     const [chainId, setChain] = useState("")
 
-    const [balanceBNB, setBalanceBNB] = useState("")
-    const [balanceFTXF, setBalanceFTXF] = useState("")
-    const [balanceUSDT, setBalanceUSDT] = useState("")
-    const [balanceFTXFS, setBalanceFTXFS] = useState("")
+    const [balanceBNB, setBalanceBNB] = useState(0)
+    const [balanceFTXF, setBalanceFTXF] = useState(0)
+    const [balanceUSDT, setBalanceUSDT] = useState(0)
+    const [balanceFTXFS, setBalanceFTXFS] = useState(0)
     const [addressSponsor, setAddressSponsor] = useState("")
 
     const [userVerifyStatus, setUserVerifyStatus] = useState("")
     const [userLinkRef, setUserLinkRef] = useState("")
     const [userEmail, setUserEmail] = useState("")
+    const [userId, setUserId] = useState(0)
+    const [totalSales, setTotalSales] = useState(0)
+    const [referral, setReferral] = useState([])
 
     useEffect( () => {
-        console.log(props.location.pathname,1)
         document.documentElement.scrollTop = 0;
         document.scrollingElement.scrollTop = 0;
         mainContent.current.scrollTop = 0;
@@ -67,10 +69,17 @@ const Admin = (props) => {
         }
     };
 
-    function UpdateInfoUser(linkRef, verifyStatus, UserEmail){
+    function UpdateInfoUser(linkRef, verifyStatus, UserEmail, userId, totalSale, listReferral){
+        if (linkRef === "" || linkRef === undefined){
+            setUserLinkRef(setLinkRefUser())
+        }else {
+            setUserLinkRef(linkRef);
+        }
         setUserVerifyStatus(verifyStatus);
-        setUserLinkRef(linkRef);
         setUserEmail(UserEmail);
+        setUserId(userId);
+        setTotalSales(totalSale);
+        setReferral(listReferral);
     }
 
     const getBrandText = (path) => {
@@ -94,7 +103,6 @@ const Admin = (props) => {
             setChain(chain.toString())
             const balance = (await web3.eth.getBalance(accounts[0]))
             let numberBalance = balance / 1000000000000000000;
-
             setBalanceBNB(numberBalance.toFixed(4));
         }
     }
@@ -118,19 +126,6 @@ const Admin = (props) => {
         })
     }
 
-    function sliceBalance(balance){
-        let numberBalance = "";
-        if (balance === "0"){
-            numberBalance = balance;
-        }else {
-            numberBalance = balance.slice(0, balance.length - 18).concat('.').concat(balance.slice(balance.length - 18, balance.length))
-            while (numberBalance.endsWith('0')) {
-                numberBalance = numberBalance.slice(0, numberBalance.length - 1)
-            }
-        }
-        return numberBalance;
-    }
-
     async function updateData(){
         const web3 = new Web3(Web3.givenProvider)
         const accounts = await web3.eth.getAccounts()
@@ -139,7 +134,7 @@ const Admin = (props) => {
             const chain = await web3.eth.getChainId()
             setChain(chain.toString())
             const balance = (await web3.eth.getBalance(accounts[0]))
-            setBalanceBNB(sliceBalance(balance));
+            setBalanceBNB((balance/1000000000000000000).toFixed(4));
             await getInfoContract(Address.FTXFTokenAddress, accounts[0], jsonFtx, "FTXF");
             await getInfoContract(Address.FTXFEshareAddress, accounts[0], jsonFtx, "FTXShare");
             await getInfoContract(Address.USDTAddess, accounts[0], jsonFtx, "USDT");
@@ -157,6 +152,11 @@ const Admin = (props) => {
         setAddressSponsor(addressSponsor);
     }
 
+    function setLinkRefUser(){
+        let sponsorHref = window.location.href + "?ref=" + account;
+        return sponsorHref;
+    }
+
     useEffect(async () => {
         getAddressSponsor();
         await getInfoAccount();
@@ -164,11 +164,11 @@ const Admin = (props) => {
             await getInfoContract(Address.FTXFTokenAddress, account, jsonFtx, "FTXF");
             await getInfoContract(Address.FTXFEshareAddress, account, jsonFtx, "FTXShare");
             await getInfoContract(Address.USDTAddess, account, jsonFtx, "USDT");
-
             let dataJson = JSON.parse(await Login.addAccount(account, addressSponsor))
-            UpdateInfoUser(dataJson.linkRef, dataJson.statusVerify, dataJson.email)
+            UpdateInfoUser(dataJson.user.linkRef, dataJson.user.statusVerify,
+                dataJson.user.email, dataJson.user.id, dataJson.user.totalSales, dataJson.listChild);
         }
-    })
+    },[account])
 
 
     return (
@@ -184,6 +184,9 @@ const Admin = (props) => {
                 userVerifyStatus: userVerifyStatus,
                 userEmail: userEmail,
                 userLinkRef: userLinkRef,
+                userId: userId,
+                totalSales: totalSales,
+                referral: referral,
                 updateData: updateData,
                 UpdateInfoUser: UpdateInfoUser,
 

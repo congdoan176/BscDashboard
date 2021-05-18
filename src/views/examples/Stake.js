@@ -64,12 +64,13 @@ const Stake = () => {
         await getTotalStakeReward();
         await geTotalQuantityStake();
         await getTotalAmountApprove()
+        console.log(quantityStake,1)
         if (!backFromApprove){
             if (quantityStake > 0) {
                 setNextFromStake(true);
             }
         }
-    })
+    },[totalAmountFTXF, totalAmountApprove, quantityStake, rewardStake, nextFromStake])
 
 
     async function getTotalStakeReward() {
@@ -89,7 +90,9 @@ const Stake = () => {
     }
 
     async function getTotalAmountApprove() {
+        console.log(nextFromStake)
         if (nextFromStake) {
+            console.log(2)
             const web3 = new Web3(Web3.givenProvider);
             const account = await web3.eth.getAccounts();
             if (account.length > 0) {
@@ -100,6 +103,7 @@ const Stake = () => {
                         return;
                     }
                     let amountApprove = res / 1000000000000000000
+                    console.log(amountApprove.toFixed(4))
                     setTotalAmountApprove(amountApprove.toFixed(4));
                 })
             }
@@ -155,7 +159,6 @@ const Stake = () => {
                 await data.methods.redeemStakeReward().send({
                     from: account[0],
                 })
-                console.log(1)
             } catch (err) {
                 console.log("withdraw reward stake error", err)
             }
@@ -224,7 +227,7 @@ const Stake = () => {
                                                                         }}>
                                                                             <FormGroup>
                                                                                 <Row style={{position: 'relative'}}>
-                                                                                    <Col lg="2" sm="3" style={{
+                                                                                    <Col lg="2" xs="2" style={{
                                                                                         position: 'absolute',
                                                                                         top: 10,
                                                                                         left: 35,
@@ -232,14 +235,14 @@ const Stake = () => {
                                                                                     }}>
                                                                                         <img
                                                                                             className="navbar-brand-img"
-                                                                                            src={require("../../assets/img/icons/ftxf-dapps.png").default}
+                                                                                            src={require("../../assets/img/icons/coinF.png").default}
                                                                                             style={{
                                                                                                 width: 25,
                                                                                                 height: 25
                                                                                             }}
                                                                                         />
                                                                                     </Col>
-                                                                                    <Col lg="10" sm="9" style={{
+                                                                                    <Col lg="10" xs="9" style={{
                                                                                         position: 'absolute',
                                                                                         left: 87
                                                                                     }}>
@@ -330,7 +333,7 @@ const Stake = () => {
                                                                             }}>
                                                                                 <FormGroup>
                                                                                     <Row style={{position: 'relative'}}>
-                                                                                        <Col lg="2" sm="3" style={{
+                                                                                        <Col lg="2" xs="2" style={{
                                                                                             position: 'absolute',
                                                                                             top: 10,
                                                                                             left: 35,
@@ -345,7 +348,7 @@ const Stake = () => {
                                                                                                 }}
                                                                                             />
                                                                                         </Col>
-                                                                                        <Col lg="10" sm="9" style={{
+                                                                                        <Col lg="10" xs="9" style={{
                                                                                             position: 'absolute',
                                                                                             left: 87
                                                                                         }}>
@@ -396,7 +399,7 @@ const Stake = () => {
                                                                                 </Row>
                                                                             </CardHeader>
                                                                             <CardBody style={{
-                                                                                backgroundColor: 'rgb(255, 213, 0)',
+                                                                                background: 'linear-gradient( 315deg , #00d6ff 0%, #3ab5e3 100%)',
                                                                                 borderTopRightRadius: '50%',
                                                                                 borderTopLeftRadius: '50%',
                                                                                 width: '100%',
@@ -418,7 +421,7 @@ const Stake = () => {
                                                                                             size="lgs"
                                                                                             type={'reset'}
                                                                                         >
-                                                                                            Withdraw
+                                                                                            Unstake
                                                                                         </Button>
                                                                                     </Col>
                                                                                 </Row>
@@ -459,19 +462,19 @@ const Stake = () => {
                             </div>
                         </Row>
                         <Modal isOpen={modal} toggle={toggle}>
-                            <ModalHeader toggle={toggle}>Modal title</ModalHeader>
+                            <ModalHeader toggle={toggle}>Unstake</ModalHeader>
                             <ModalBody>
                                 <FormGroup>
                                     <label
                                         className="form-control-label"
                                         htmlFor="input-username"
                                     >
-                                        Quantity Withdraw
+                                        Quantity unstake
                                     </label>
                                     <Input
                                         className="form-control-alternative"
                                         id="input-username"
-                                        placeholder="Quantity Withdraw"
+                                        placeholder="Quantity unstake"
                                         type="number"
                                         onChange={(e) => changeQuantityUnStake(e)}
                                     />
@@ -480,7 +483,7 @@ const Stake = () => {
                             <ModalFooter>
                                 <Button color="secondary" onClick={async () => {
                                     await withdrawStake();
-                                }}>Withdraw</Button>
+                                }}>Unstake</Button>
                             </ModalFooter>
                         </Modal>
                     </Container>

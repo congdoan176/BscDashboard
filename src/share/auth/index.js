@@ -18,7 +18,9 @@ class Login {
 
     addAccount = async (address, sponsor) => {
         return await fetch(`https://us-central1-ftxtoken.cloudfunctions.net/addUser?address=${address}&sponsor=${sponsor}`)
-            .then(res => res.text())
+            .then(res => {
+                return res.text();
+            })
     }
 }
 

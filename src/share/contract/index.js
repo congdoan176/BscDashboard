@@ -50,7 +50,7 @@ const Contract = (props) => {
                                             /> : props.headerText === "FTXF" ?
                                             <img
                                                 className="navbar-brand-img"
-                                                src={require("../../assets/img/icons/ftxf-dapps.png").default}
+                                                src={require("../../assets/img/icons/coinF.png").default}
                                                 style={{width: 70, height: 70}}
                                             /> :
                                             <img
@@ -67,10 +67,10 @@ const Contract = (props) => {
                             {/*backgroundColor: 'rgb(251, 140, 0)',*/}
                         </CardHeader>
                         <CardBody style={props.headerText === "BNB" ? {backgroundColor: 'rgb(251, 140, 0)',borderTopRightRadius: '50%',borderTopLeftRadius: '50%', width: '100%', top: -20, left: '-50%'} :
-                                         props.headerText === "USDT" ? {backgroundColor: 'rgb(79, 161, 117)',borderTopRightRadius: '50%',borderTopLeftRadius: '50%', width: '100%', top: -20, left: '-50%'} :
-                                         props.headerText === "Token Lock" ? {backgroundColor: 'rgb(150, 150, 150)',borderTopRightRadius: '50%',borderTopLeftRadius: '50%', width: '100%', top: -20, left: '-50%'} :
-                                         props.headerText === "FTX Eshare" ? {backgroundColor: 'rgb(255, 213, 0)',borderTopRightRadius: '50%',borderTopLeftRadius: '50%', width: '100%', top: -20, left: '-50%'} :
-                                         props.headerText === "FTXF" ? {backgroundColor: 'rgb(255, 117, 48)',borderTopRightRadius: '50%',borderTopLeftRadius: '50%', width: '100%', top: -20, left: '-50%'} : null
+                                         props.headerText === "USDT" ? {backgroundColor: 'rgb(79, 161, 117)',borderTopLeftRadius: '50%', borderTopRightRadius: '50%', width: '100%', top: -20, left: '-50%'} :
+                                         props.headerText === "Token Lock" ? {background: 'linear-gradient( 315deg , #00d6ff 0%, #3ab5e3 100%)',borderTopRightRadius: '50%',borderTopLeftRadius: '50%', width: '100%', top: -20, left: '-50%'} :
+                                         props.headerText === "FTX Eshare" ? {backgroundColor: 'rgb(0, 214, 255)',borderTopRightRadius: '50%',borderTopLeftRadius: '50%', width: '100%', top: -20, left: '-50%'} :
+                                         props.headerText === "FTXF" ? {backgroundColor: 'rgb(58, 181, 227)',borderTopRightRadius: '50%',borderTopLeftRadius: '50%', width: '100%', top: -20, left: '-50%'} : null
                         }>
                             {
                                 props.headerText !== "Token Lock" ?
@@ -79,14 +79,6 @@ const Contract = (props) => {
                                             <div className="col text-right">
                                                 <h3 className="font-weight-light" style={{fontSize: 20, color:'white', fontWeight: "bold"}}>Amount:
                                                     <span> ~{props.accountBalance}</span>
-                                                </h3>
-                                            </div>
-                                        </div>
-
-                                        <div className="mt-2">
-                                            <div className="col text-right">
-                                                <h3 className="font-weight-light" style={{fontSize: 20, color:'white', fontWeight: "bold"}}>Chain Id:
-                                                    <span> {props.accountChain}</span>
                                                 </h3>
                                             </div>
                                         </div>
@@ -104,7 +96,7 @@ const Contract = (props) => {
                                         <Row className="mt-2">
                                             <Col lg="8">
                                                 <h3 className="mt-2 font-weight-light" style={{color: 'white', fontSize:20}}>
-                                                    Amount un lock:
+                                                    Amount unlock:
                                                     <span
                                                         className="font-weight-light"> {props.amountUnlook / 1000000000000000000}</span>
                                                 </h3>

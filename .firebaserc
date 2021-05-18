@@ -1,5 +1,20 @@
 {
   "projects": {
     "default": "ftxtoken"
+  },
+  "targets": {
+    "ftxtoken": {
+      "hosting": {
+        "ftxt-main-net": [
+          "ftxt-main-net"
+        ],
+        "ftxtoken": [
+          "ftxtoken"
+        ],
+        "blog": [
+          "abc"
+        ]
+      }
+    }
   }
 }

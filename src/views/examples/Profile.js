@@ -16,6 +16,7 @@ import Verify from "../../share/verify/index"
 import Web3 from "web3";
 import Login from "../../share/auth";
 import Header from "../../components/Headers/Header";
+import {DataGrid} from "@material-ui/data-grid";
 
 const Profile = () => {
 
@@ -75,6 +76,11 @@ const Profile = () => {
         }
     }
 
+    const columns = [
+        { field: 'address', headerName: 'Address', flex: 2},
+        { field: 'totalInvest', headerName: 'Total invest', flex: 0.5 },
+    ];
+
     return (
         <>
             <Header/>
@@ -101,7 +107,7 @@ const Profile = () => {
                                                                 {" "}
                                                                 <img
                                                                     className="navbar-brand-img"
-                                                                    src={require("../../assets/img/icons/ftxf-dapps.png").default}
+                                                                    src={require("../../assets/img/icons/coinF.png").default}
                                                                     style={{width: 19, height: 19}}
                                                                 />
                                                             </span>
@@ -228,11 +234,11 @@ const Profile = () => {
                                                                 className="form-control-label"
                                                                 htmlFor="input-first-name"
                                                             >
-                                                                Chain Id
+                                                                Total Sale
                                                             </label>
                                                             <Input
                                                                 className="form-control-alternative"
-                                                                defaultValue={data.accountChain}
+                                                                defaultValue={data.totalSales}
                                                                 disabled = {true}
                                                                 id="input-first-name"
                                                                 type="text"
@@ -258,8 +264,16 @@ const Profile = () => {
                                                     </Col>
                                                 </Row>
                                             </div>
+                                            {data.referral.length > 0 ?
+                                                <div>
+                                                    <hr className="my-4"/>
+
+                                                    <div style={{ height: 400, width: '100%'}}>
+                                                        <DataGrid rows={data.referral} columns={columns} pageSize={5}/>
+                                                    </div>
+                                                </div> : ""
+                                            }
                                             <hr className="my-4"/>
-                                            {/* Description */}
                                             {
                                                 data.userVerifyStatus === "complete" ? "" : <h6 className="heading-small text-muted mb-4">Verify Email</h6>
                                             }

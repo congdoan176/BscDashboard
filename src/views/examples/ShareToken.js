@@ -26,7 +26,7 @@ const ShareToken = () => {
         const account = await web3.eth.getAccounts();
         if (account.length > 0){
             const data = new web3.eth.Contract(jsonFtx, Address.USDTAddess);
-            data.methods.balanceOf(account[0]).call(function (err, res) {
+            data.methods.balanceOf(Address.FTXFEshareAddress).call(function (err, res) {
                 if (err) {
                     console.log("get balance of eshare error.");
                     return;
@@ -39,7 +39,7 @@ const ShareToken = () => {
 
     useEffect(async () => {
         await getUsdtInEshare();
-    })
+    },[amountShare, totalUsdtEshare, addressToken])
 
     function changeAmountShare(e) {
         setAmountShare(e.target.value);
@@ -58,7 +58,6 @@ const ShareToken = () => {
         let account = await web3.eth.getAccounts();
         if (account.length > 0) {
             try {
-                console.log(addressToken)
                 const data = new web3.eth.Contract(eshareJson, Address.FTXFEshareAddress);
                 data.methods.payDividend(BigNumber.from(10).pow(18).mul(amountShare).toString(), addressToken).send({
                     from: account[0],
@@ -104,7 +103,7 @@ const ShareToken = () => {
                                                     width: '100%',
                                                     borderRadius: 15,
                                                 }}>
-                                                    <Col lg="2" sm="2" style={{
+                                                    <Col lg="2" xs="2" style={{
                                                         position: 'absolute',
                                                         top: 43,
                                                         left: 35,
@@ -116,7 +115,7 @@ const ShareToken = () => {
                                                             style={{width: 25, height: 25}}
                                                         />
                                                     </Col>
-                                                    <Col lg="10" sm="10" style={{
+                                                    <Col lg="10" xs="9" style={{
                                                         position: 'absolute',
                                                         left: 87,
                                                         width: '100%'
@@ -160,7 +159,7 @@ const ShareToken = () => {
                                                 }}>
                                                     <FormGroup>
                                                         <Row style={{position: 'relative'}}>
-                                                            <Col lg="2" sm="2" style={{
+                                                            <Col lg="2" xs="2" style={{
                                                                 position: 'absolute',
                                                                 top: 10,
                                                                 left: 35,
@@ -172,7 +171,7 @@ const ShareToken = () => {
                                                                     style={{width: 25, height: 25}}
                                                                 />
                                                             </Col>
-                                                            <Col lg="10" sm="10" style={{
+                                                            <Col lg="10" xs="9" style={{
                                                                 position: 'absolute',
                                                                 left: 87,
                                                                 width: '100%'

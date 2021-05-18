@@ -21,7 +21,8 @@ const AdminNavbar = (props) => {
                     const web3 = new Web3(Web3.givenProvider);
                     const accounts = await web3.eth.getAccounts();
                     let dataJson = JSON.parse(await Login.addAccount(accounts[0], addressSponsor))
-                    data.UpdateInfoUser(dataJson.linkRef, dataJson.statusVerify, dataJson.email)
+                    data.UpdateInfoUser(dataJson.user.linkRef, dataJson.user.statusVerify,
+                        dataJson.user.email, dataJson.user.id, dataJson.user.totalSales, dataJson.listChild);
                     await data.updateData();
                 });
             } catch (e) {

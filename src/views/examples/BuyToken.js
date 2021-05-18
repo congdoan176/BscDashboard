@@ -24,6 +24,7 @@ const BuyToken = () => {
                     console.log("An error occured", err)
                     return
                 }
+
                 setSalePrice(res);
             })
             daiToken.methods._salePriceDiv().call(function (err, res) {
@@ -40,7 +41,7 @@ const BuyToken = () => {
 
     useEffect(async () => {
         await getPrice();
-    })
+    },[salePrice, salePriceDiv, numberBNB])
 
     function changeSaleValue(e) {
         let a = e.target.value;
@@ -107,7 +108,7 @@ const BuyToken = () => {
                                                         }}>
                                                             <FormGroup>
                                                                 <Row style={{position: 'relative'}}>
-                                                                    <Col lg="2" sm="2" style={{
+                                                                    <Col lg="2" xs="2" style={{
                                                                         position: 'absolute',
                                                                         top: 10,
                                                                         left: 35,
@@ -115,11 +116,11 @@ const BuyToken = () => {
                                                                     }}>
                                                                         <img
                                                                             className="navbar-brand-img"
-                                                                            src={require("../../assets/img/icons/ftxf-dapps.png").default}
+                                                                            src={require("../../assets/img/icons/coinF.png").default}
                                                                             style={{width: 25, height: 25}}
                                                                         />
                                                                     </Col>
-                                                                    <Col lg="10" sm="10" style={{
+                                                                    <Col lg="10" xs="9" style={{
                                                                         position: 'absolute',
                                                                         left: 87,
                                                                         width: '100%'
@@ -130,7 +131,7 @@ const BuyToken = () => {
                                                                             min="0"
                                                                             placeholder="Enter quantity token"
                                                                             style={{
-                                                                                width: '100%',
+
                                                                                 height: 48,
                                                                                 borderTopRightRadius: 15,
                                                                                 borderBottomRightRadius: 15,
@@ -168,7 +169,7 @@ const BuyToken = () => {
                                                         }}>
                                                             <FormGroup>
                                                                 <Row style={{position: 'relative'}}>
-                                                                    <Col lg="2" sm="3" style={{
+                                                                    <Col lg="2" xs="3" style={{
                                                                         position: 'absolute',
                                                                         top: 10,
                                                                         left: 35,
@@ -180,7 +181,7 @@ const BuyToken = () => {
                                                                             style={{width: 25, height: 25}}
                                                                         />
                                                                     </Col>
-                                                                    <Col lg="10" sm="9" style={{
+                                                                    <Col lg="10" xs="9" style={{
                                                                         position: 'absolute',
                                                                         left: 87
                                                                     }}>
