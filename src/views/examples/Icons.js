@@ -8,11 +8,12 @@ import {
   Col,
 } from "reactstrap";
 import Header from "../../components/Headers/Header.js";
+import HeaderFake from "../../components/Headers/HeaderFake";
 
 const Icons = () => {
   return (
     <>
-      <Header />
+      <HeaderFake />
       <Container className="mt--7" fluid>
         <Row>
           <div className="col">

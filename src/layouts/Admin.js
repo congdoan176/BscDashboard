@@ -11,8 +11,13 @@ import Web3 from "web3";
 import jsonFtx from "../json/contract/readContract.json";
 import Address from "../json/addressContract/address.json"
 import Login from "../share/auth/index";
+import fdJson from "../json/founder/contract.json";
+import { BigNumber } from "@ethersproject/bignumber";
+
+
 
 const Admin = (props) => {
+    const divBigNumber = BigNumber.from(10).pow(18)
     const mainContent = React.useRef(null);
     const location = useLocation();
     const [account, setAccount] = useState("")
@@ -22,6 +27,9 @@ const Admin = (props) => {
     const [balanceFTXF, setBalanceFTXF] = useState(0)
     const [balanceUSDT, setBalanceUSDT] = useState(0)
     const [balanceFTXFS, setBalanceFTXFS] = useState(0)
+    const [lookedFullAmount, setLookedFullAmount] = useState(0);
+    const [amountUnLook, setAmountUnLook] = useState(0);
+
     const [addressSponsor, setAddressSponsor] = useState("")
 
     const [userVerifyStatus, setUserVerifyStatus] = useState("")
@@ -29,7 +37,9 @@ const Admin = (props) => {
     const [userEmail, setUserEmail] = useState("")
     const [userId, setUserId] = useState(0)
     const [totalSales, setTotalSales] = useState(0)
+    const [totalSalesBranch, setTotalSalesBranch] = useState(0)
     const [referral, setReferral] = useState([])
+    const [directSale, setDirectSale] = useState(0)
 
     useEffect( () => {
         document.documentElement.scrollTop = 0;
@@ -69,17 +79,33 @@ const Admin = (props) => {
         }
     };
 
-    function UpdateInfoUser(linkRef, verifyStatus, UserEmail, userId, totalSale, listReferral){
-        if (linkRef === "" || linkRef === undefined){
-            setUserLinkRef(setLinkRefUser())
+    async function UpdateInfoUser(linkRef, verifyStatus, UserEmail, userId, totalSale, listReferral, totalSalesBranch){
+        await setUserVerifyStatus(verifyStatus);
+        await setUserEmail(UserEmail);
+        await setUserId(userId);
+        await setReferral(listReferral);
+        if (totalSale === "" || totalSale === undefined){
+            await setTotalSales(0);
         }else {
-            setUserLinkRef(linkRef);
+            await setTotalSales(totalSale);
         }
-        setUserVerifyStatus(verifyStatus);
-        setUserEmail(UserEmail);
-        setUserId(userId);
-        setTotalSales(totalSale);
-        setReferral(listReferral);
+        if (linkRef === "" || linkRef === undefined){
+            await setUserLinkRef(setLinkRefUser())
+        }else {
+            await setUserLinkRef(linkRef);
+        }
+        if (totalSalesBranch === "" || totalSalesBranch === undefined){
+            await setTotalSalesBranch(0)
+        }else {
+            await setTotalSalesBranch(totalSalesBranch)
+        }
+        if (listReferral > 0){
+            let directSale = 0
+            for (let i = 0; i < listReferral.length; i++) {
+                directSale += listReferral[i].totalSales
+            }
+            setDirectSale(directSale)
+        }
     }
 
     const getBrandText = (path) => {
@@ -102,8 +128,7 @@ const Admin = (props) => {
             const chain = await web3.eth.getChainId()
             setChain(chain.toString())
             const balance = (await web3.eth.getBalance(accounts[0]))
-            let numberBalance = balance / 1000000000000000000;
-            setBalanceBNB(numberBalance.toFixed(4));
+            setBalanceBNB(BigNumber.from(balance).div(divBigNumber).toString());
         }
     }
 
@@ -115,13 +140,13 @@ const Admin = (props) => {
                 console.log("An error occured", err)
                 return
             }
-            let numberBalance = res / 1000000000000000000
+
             if (contract === "FTXF"){
-                setBalanceFTXF(numberBalance.toFixed(4));
+                setBalanceFTXF(BigNumber.from(res).div(divBigNumber).toString());
             }else if (contract === "USDT"){
-                setBalanceUSDT(numberBalance.toFixed(4));
+                setBalanceUSDT(BigNumber.from(res).div(divBigNumber).toString());
             }else if (contract === "FTXShare"){
-                setBalanceFTXFS(numberBalance.toFixed(4));
+                setBalanceFTXFS(BigNumber.from(res).div(divBigNumber).toString());
             }
         })
     }
@@ -134,7 +159,7 @@ const Admin = (props) => {
             const chain = await web3.eth.getChainId()
             setChain(chain.toString())
             const balance = (await web3.eth.getBalance(accounts[0]))
-            setBalanceBNB((balance/1000000000000000000).toFixed(4));
+            setBalanceBNB(BigNumber.from(balance).div(divBigNumber).toString());
             await getInfoContract(Address.FTXFTokenAddress, accounts[0], jsonFtx, "FTXF");
             await getInfoContract(Address.FTXFEshareAddress, accounts[0], jsonFtx, "FTXShare");
             await getInfoContract(Address.USDTAddess, accounts[0], jsonFtx, "USDT");
@@ -153,22 +178,64 @@ const Admin = (props) => {
     }
 
     function setLinkRefUser(){
-        let sponsorHref = window.location.href + "?ref=" + account;
+        let sh = window.location.href;
+        let n = sh.indexOf("?");
+        let sponsorHref = ""
+        if (n !== -1){
+            let idSponsor =  sh.slice(n,  sh.length);
+            let baseurl =  sh.replace(idSponsor, "");
+            sponsorHref = baseurl + "?ref=" + userId;
+        }else {
+            sponsorHref = window.location.href + "?ref=" + userId;
+        }
         return sponsorHref;
     }
 
+    async function getAmountLookedFullAmount(){
+        const web3 = new Web3(Web3.givenProvider);
+        const account = await web3.eth.getAccounts();
+        if (account.length > 0){
+            const data = new web3.eth.Contract(fdJson, Address.FounderAddress);
+            data.methods.getLockedFullAmount(account[0]).call(function (err, res){
+                if (err){
+                    console.log("get full amount looked fail", err);
+                    return;
+                }
+                setLookedFullAmount(BigNumber.from(res).div(divBigNumber).toString());
+            })
+        }
+    }
+
+    async function getAmountUnLockAmount() {
+        const web3 = new Web3(Web3.givenProvider);
+        const account = await web3.eth.getAccounts();
+        if (account.length > 0){
+            const data = new web3.eth.Contract(fdJson, Address.FounderAddress);
+            data.methods.getAvailableAmount(account[0]).call(function (err, res){
+                if (err){
+                    console.log("get full amount looked fail", err);
+                    return;
+                }
+                setAmountUnLook(BigNumber.from(res).div(divBigNumber).toString());
+            })
+        }
+    }
+
     useEffect(async () => {
+        setLinkRefUser();
         getAddressSponsor();
         await getInfoAccount();
+        await getAmountLookedFullAmount()
+        await getAmountUnLockAmount()
         if (account !== ""){
             await getInfoContract(Address.FTXFTokenAddress, account, jsonFtx, "FTXF");
             await getInfoContract(Address.FTXFEshareAddress, account, jsonFtx, "FTXShare");
             await getInfoContract(Address.USDTAddess, account, jsonFtx, "USDT");
             let dataJson = JSON.parse(await Login.addAccount(account, addressSponsor))
             UpdateInfoUser(dataJson.user.linkRef, dataJson.user.statusVerify,
-                dataJson.user.email, dataJson.user.id, dataJson.user.totalSales, dataJson.listChild);
+                dataJson.user.email, dataJson.user.id, dataJson.user.totalSales, dataJson.listChild, dataJson.user.totalSalesBranch);
         }
-    },[account])
+    },[account, userId])
 
 
     return (
@@ -189,6 +256,10 @@ const Admin = (props) => {
                 referral: referral,
                 updateData: updateData,
                 UpdateInfoUser: UpdateInfoUser,
+                lookedFullAmount: lookedFullAmount,
+                amountUnLook: amountUnLook,
+                totalSalesBranch: totalSalesBranch,
+                directSale: directSale
 
             }}>
                 {
@@ -198,7 +269,7 @@ const Admin = (props) => {
                             routes={routes}
                             logo={{
                                 innerLink: "/admin/index",
-                                imgSrc: require("../assets/img/icons/ftxf-dapps.png").default,
+                                imgSrc: require("../assets/img/icons/img/Asset 1.png").default,
                                 imgAlt: "...",
                             }}
                         /> :
@@ -207,7 +278,7 @@ const Admin = (props) => {
                             routes={routesUser}
                             logo={{
                                 innerLink: "/user/index",
-                                imgSrc: require("../assets/img/icons/ftxf-dapps.png").default,
+                                imgSrc: require("../assets/img/icons/img/Asset 1.png").default,
                                 imgAlt: "...",
                             }}
                         />

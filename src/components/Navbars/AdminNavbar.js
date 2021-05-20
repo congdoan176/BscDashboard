@@ -22,7 +22,7 @@ const AdminNavbar = (props) => {
                     const accounts = await web3.eth.getAccounts();
                     let dataJson = JSON.parse(await Login.addAccount(accounts[0], addressSponsor))
                     data.UpdateInfoUser(dataJson.user.linkRef, dataJson.user.statusVerify,
-                        dataJson.user.email, dataJson.user.id, dataJson.user.totalSales, dataJson.listChild);
+                        dataJson.user.email, dataJson.user.id, dataJson.user.totalSales, dataJson.listChild, dataJson.user.totalSalesBranch);
                     await data.updateData();
                 });
             } catch (e) {
@@ -45,37 +45,26 @@ const AdminNavbar = (props) => {
                                 className="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block"
                                 to="/"
                             >
-                                FTXF Dapp
+                                {/*FTXF Dapp*/}
                             </Link>
-                            {
-                                data.accountAddress === "" ?
-                                    <Col lg={6} sm={6}>
-                                        <div style={{border: 1, borderRadius: 30, backgroundColor: 'white'}}>
-                                            <div className="pt-2 text-center" style={{paddingBottom: 2}}>
-                                                <h4 style={{fontWeight: "bold"}}>Account address</h4>
-                                            </div>
-                                        </div>
-                                    </Col> :  data.accountAddress !== "" ?
-                                    <Col lg={5} sm={12}>
-                                        <div style={{border: 1, borderRadius: 30, backgroundColor: 'white'}}>
-                                            <div className="pt-2 text-center" style={{paddingBottom: 2}}>
-                                                <h4 style={{fontWeight: "bold"}}>Account address</h4>
-                                                <p style={{fontSize: 12, fontWeight: "bold"}}>{data.accountAddress}</p>
-                                            </div>
-                                        </div>
-                                    </Col> : ""
-                            }
-                            <Nav className="align-items-center d-none d-md-flex" navbar>
+                            <Col lg={6} className="text-center d-none d-xl-block d-lg-block d-md-block">
+                                <img className="navbar-brand-img"
+                                     src={require("../../assets/img/icons/img/Asset 1.png").default}
+                                     style={{width: 250, height: 75, marginLeft: 140}}
+                                />
+                            </Col>
+                            <Nav className="align-items-center d-none d-md-flex" style={{marginRight: -30}} navbar>
                                 <UncontrolledDropdown nav>
-                                    <DropdownToggle className="pr-0" nav>
+                                    <DropdownToggle nav>
                                         <Button
-                                            color="white"
                                             onClick={async () => {
                                                 await connectToMetaMask(data, data.addressSponsor);
                                             }}
+                                            style={{background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",
+                                                borderColor: "#11cdef", color: "white", borderRadius: 10,}}
                                             size="lg"
                                         >
-                                            Connect
+                                            Connect Wallet
                                         </Button>
                                     </DropdownToggle>
                                 </UncontrolledDropdown>

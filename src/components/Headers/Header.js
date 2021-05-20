@@ -9,23 +9,31 @@ const Header = () => {
         <>
             <DataContext.Consumer>
                 {data => (
-                    <div className="header bg-gradient-info pb-7 pt-md-8 " style={{paddingTop: 110}}>
-                        {
-                            data.accountAddress !== "" && data.userVerifyStatus === "" ?
-                                <Container fluid>
-                                    <Row>
-                                        <Col lg="3" xs="2"/>
-                                        <Col lg="5" xs="6" className="header-body text-center" style={{marginLeft:40}}>
-                                            {
-                                                data.accountAddress === Address.AdminAddress ?
-                                                <a href="/admin/user_profile" style={{color: '#eeff05', fontWeight: "bold", fontSize: 19}}>Please Verify email</a> :
-                                                <a href="/user/user_profile" style={{color: '#eeff05', fontWeight: "bold", fontSize: 19}}>Please verify email</a>
-                                            }
-                                        </Col>
-                                        <Col lg="4" xs="4"/>
-                                    </Row>
-                                </Container> : null
-                        }
+                    <div>
+                        <div className="header pb-7 pt-md-8" style={{paddingTop: 50}}>
+                            <Container fluid>
+                                <Row>
+                                    <Col xs="1"/>
+                                    <Col lg="12" xs="10" className="header-body bg-gradient-info text-center"
+                                         style={{borderRadius: 10, marginTop: -15}}
+                                    >
+                                        <h4 style={{color: 'white', fontWeight: "bold", paddingTop: 5}}>
+                                            WELCOME TO FTXF DAPP PLATFORM
+                                        </h4>
+                                        {data.userVerifyStatus !== "complete" ?
+                                            <div>
+                                                {
+                                                    data.accountAddress === Address.AdminAddress ?
+                                                        <a href="/admin/user_profile" style={{color: 'rgb(238, 255, 5)', fontWeight: "bold", fontSize: 19}}>Please Verify email</a> :
+                                                        <a href="/user/user_profile" style={{color: 'rgb(238, 255, 5)', fontWeight: "bold", fontSize: 19}}>Please verify email</a>
+                                                }
+                                            </div> : ""
+                                        }
+                                    </Col>
+                                    <Col xs="10"/>
+                                </Row>
+                            </Container>
+                        </div>
                     </div>
                 )}
             </DataContext.Consumer>

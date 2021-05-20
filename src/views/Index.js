@@ -3,55 +3,41 @@ import {
     Container,
     Row,
     Col,
-    Card
+    Card, CardBody
 } from "reactstrap";
 import Contract from "../share/contract";
 import Header from "../components/Headers/Header.js";
 import DataContext from "../context";
-import fdJson from "../json/founder/contract.json";
-import Web3 from "web3";
 import Address from "../json/addressContract/address.json";
+import Round from "../share/roud";
 
 const Index = (props) => {
-    const [lookedFullAmount, setLookedFullAmount] = useState(0);
-    const [amountLooked, setAmountLooked] = useState(0);
-    const [amountUnLook, setAmountUnLook] = useState(0);
 
-    async function getAmountLookedFullAmount(){
-        const web3 = new Web3(Web3.givenProvider);
-        const account = await web3.eth.getAccounts();
-        if (account.length > 0){
-            const data = new web3.eth.Contract(fdJson, Address.FounderAddress);
-            data.methods.getLockedFullAmount(account[0]).call(function (err, res){
-                if (err){
-                    console.log("get full amount looked fail", err);
-                    return;
-                }
-                setLookedFullAmount(res);
-            })
-        }
+    const [amountBNB, setAmountBNB] = useState(0);
+    const [changePercent, setChangePercent] = useState(0);
+    const [currentRound, setCurrentRound] = useState(0);
+    const [amountFTXF, setAmountFTXF] = useState(0);
+
+    async function getAmountBNB(){
+        let data = await Round.getAmountBNB()
+        let dataJson = JSON.parse(data);
+        setAmountBNB(dataJson.lastPrice);
+        setChangePercent(dataJson.priceChangePercent)
     }
 
-    async function getAmountUnLockAmount() {
-        const web3 = new Web3(Web3.givenProvider);
-        const account = await web3.eth.getAccounts();
-        if (account.length > 0){
-            const data = new web3.eth.Contract(fdJson, Address.FounderAddress);
-            data.methods.getAvailableAmount(account[0]).call(function (err, res){
-                if (err){
-                    console.log("get full amount looked fail", err);
-                    return;
-                }
-                setAmountUnLook(res);
-            })
-        }
+    async function getCurrentRow(){
+        let arrayAmountFTXF = [0.6, 0.7, 0.75, 0.85 , 0.9, 0.95]
+        let data = await Round.getRound()
+        let dataJson = JSON.parse(data);
+        setCurrentRound(dataJson.currentRound);
+        setAmountFTXF(arrayAmountFTXF[currentRound-1])
+
     }
 
     useEffect(async () => {
-        await getAmountLookedFullAmount()
-        await getAmountUnLockAmount()
-        setAmountLooked(lookedFullAmount - amountUnLook);
-    },[lookedFullAmount, amountUnLook])
+        // await getAmountBNB();
+        await getCurrentRow();
+    })
 
 
     return (
@@ -60,58 +46,68 @@ const Index = (props) => {
             <DataContext.Consumer>
                 {data => (
                     <div>
-                        {(data.userId <= 1436 || data.accountAddress === Address.AdminAddress) && data.userId !== 0?
-                            <Container className="mt--5" fluid>
-                                <Row>
-                                    <Col className="mb-5 mb-xl-0" xl="6">
-                                        <Contract {...props} headerText={"FTX Eshare"}
-                                                  accountChain={data.accountChain} accountBalance={data.balanceFTXFS}/>
-                                    </Col>
-                                    <Col xl="6">
-                                        <Contract {...props} headerText={"FTXF"}
-                                                  accountChain={data.accountChain} accountBalance={data.balanceFTXF}/>
-                                    </Col>
-                                </Row>
-                                <Row className={"mt-5"}>
-                                    <Col className="mb-5 mb-xl-0" xl="6">
-                                        <Contract {...props} headerText={"BNB"}
-                                                  accountChain={data.accountChain} accountBalance={data.balanceBNB}/>
-                                    </Col>
-                                    <Col xl="6">
-                                        <Contract {...props} headerText={"USDT"}
-                                                  accountChain={data.accountChain} accountBalance={data.balanceUSDT}/>
-                                    </Col>
-                                </Row>
-                                <Row className={"mt-5"}>
-                                    <Col className="mb-5 mb-xl-0" xl="6">
-                                        <Contract {...props} headerText={"Token Lock"}
-                                                  accountChain={data.accountChain} totalAmountLooked={lookedFullAmount} amountLooked={amountLooked} amountUnlook={amountUnLook}/>
-                                    </Col>
-                                    <Col xl="6">
-
-                                    </Col>
-                                </Row>
+                        {(data.balanceFTXFS > 0) ?
+                            <Container className="mt-lg--5 mt--6"  fluid>
+                                <Card className="card-profile shadow">
+                                    <CardBody className="pt-0 text-center">
+                                        <Row className="mt-lg-5 mt-3">
+                                            <Col lg="11" xs="12">
+                                                <Contract {...props} headerText={"E-shares"} amount={0.1}
+                                                           accountBalance={data.balanceFTXFS}/>
+                                            </Col>
+                                        </Row>
+                                        <Row className="mt-lg-5 mt-3">
+                                            <Col lg="11" xs="12">
+                                                <Contract {...props} headerText={"FTXF"} amount={amountFTXF}
+                                                           accountBalance={data.balanceFTXF}/>
+                                            </Col>
+                                        </Row>
+                                        <Row className="mt-lg-5 mt-3">
+                                            <Col lg="11" xs="12">
+                                                <Contract {...props} headerText={"USDT"} amount={1}
+                                                           accountBalance={data.balanceUSDT}/>
+                                            </Col>
+                                        </Row>
+                                        <Row className="mt-lg-5 mt-3">
+                                            <Col lg="11" xs="12">
+                                                <Contract {...props} headerText={"BNB"} amount={amountBNB}
+                                                          accountBalance={data.balanceBNB}/>
+                                            </Col>
+                                        </Row>
+                                        <Row className="mt-lg-5 mt-3">
+                                            <Col lg="11" xs="12">
+                                                <Contract {...props} headerText={"FTXF Lock"}
+                                                          amount={amountFTXF}
+                                                          totalAmountLooked={data.lookedFullAmount} amountUnlook={data.amountUnLook}/>
+                                            </Col>
+                                        </Row>
+                                    </CardBody>
+                                </Card>
                             </Container> :
-                            <Container className="mt--5" fluid>
-                                <Row>
-                                    <Col className="mb-5 mb-xl-0" xl="6">
-                                        <Contract {...props} headerText={"BNB"}
-                                                  accountChain={data.accountChain} accountBalance={data.balanceBNB}/>
-                                    </Col>
-                                    <Col xl="6">
-                                        <Contract {...props} headerText={"FTXF"}
-                                                  accountChain={data.accountChain} accountBalance={data.balanceFTXF}/>
-                                    </Col>
-                                </Row>
-                                <Row className={"mt-5"}>
-                                    <Col className="mb-5 mb-xl-0" xl="6">
-                                        <Contract {...props} headerText={"USDT"}
-                                                  accountChain={data.accountChain} accountBalance={data.balanceUSDT}/>
-                                    </Col>
-                                    <Col xl="6">
-
-                                    </Col>
-                                </Row>
+                            <Container className="mt-lg--5 mt--6" fluid>
+                                <Card className="card-profile shadow">
+                                    <CardBody className="pt-0 text-center">
+                                        <Row className="mt-lg-5 mt-3">
+                                            <Col lg="11" xs="12">
+                                                <Contract {...props} headerText={"BNB"}
+                                                          amount={amountBNB} accountBalance={data.balanceBNB}/>
+                                            </Col>
+                                        </Row>
+                                        <Row className="mt-lg-5 mt-3">
+                                            <Col lg="11" xs="12">
+                                                <Contract {...props} headerText={"FTXF"}
+                                                          amount={amountFTXF} accountBalance={data.balanceFTXF}/>
+                                            </Col>
+                                        </Row>
+                                        <Row className="mt-lg-5 mt-3">
+                                            <Col lg="11" xs="12">
+                                                <Contract {...props} headerText={"USDT"}
+                                                          amount={1}
+                                                         accountBalance={data.balanceUSDT}/>
+                                            </Col>
+                                        </Row>
+                                    </CardBody>
+                                </Card>
                             </Container>
                         }
 

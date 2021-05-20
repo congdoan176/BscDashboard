@@ -6,14 +6,16 @@ import {
     Row,
     CardBody, Form, Col, FormGroup, Input, Button, Modal, ModalHeader, ModalBody, ModalFooter
 } from "reactstrap";
-import Header from "../../components/Headers/Header.js";
 import Web3 from "web3";
 import jsonFtx from "../../json/contract/readContract.json";
 import fdJson from "../../json/founder/contract.json";
 import DataContext from "../../context";
 import Address from "../../json/addressContract/address.json"
 import {BigNumber} from "@ethersproject/bignumber"
+import HeaderFake from "../../components/Headers/HeaderFake";
+import ReactLoading from "react-loading";
 const Stake = () => {
+    const divBigNumber = BigNumber.from(10).pow(18)
     const [totalAmountFTXF, setTotalAmountFTXF] = useState(0);
     const [totalAmountApprove, setTotalAmountApprove] = useState(0);
 
@@ -27,6 +29,13 @@ const Stake = () => {
     const [nextFromStake, setNextFromStake] = useState(false);
     const [modal, setModal] = useState(false);
 
+    const [isLoaded, setIsLoaded] = useState(false);
+    const handleIsLoadedToggle = () => {
+        setIsLoaded(currentIsLoaded => !currentIsLoaded)
+    };
+
+
+
     const toggle = () => setModal(!modal);
 
     async function getTotalAmountFTXF() {
@@ -39,7 +48,7 @@ const Stake = () => {
                     console.log("get balance FTXT of user fail", err);
                     return
                 }
-                setTotalAmountFTXF(res);
+                setTotalAmountFTXF(BigNumber.from(res).div(divBigNumber).toString());
             })
         }
     }
@@ -54,7 +63,7 @@ const Stake = () => {
                     console.log("get quantity stake fail", err);
                     return;
                 }
-                setQuantityStake(res.amount)
+                setQuantityStake(BigNumber.from(res.amount).div(divBigNumber).toString())
             })
         }
     }
@@ -64,13 +73,12 @@ const Stake = () => {
         await getTotalStakeReward();
         await geTotalQuantityStake();
         await getTotalAmountApprove()
-        console.log(quantityStake,1)
         if (!backFromApprove){
             if (quantityStake > 0) {
                 setNextFromStake(true);
             }
         }
-    },[totalAmountFTXF, totalAmountApprove, quantityStake, rewardStake, nextFromStake])
+    })
 
 
     async function getTotalStakeReward() {
@@ -83,16 +91,13 @@ const Stake = () => {
                     console.log("get reward stake error");
                     return;
                 }
-                let reward = res / 1000000000000000000
-                setRewardStake(reward.toFixed(4));
+                setRewardStake(BigNumber.from(res).div(divBigNumber).toString());
             })
         }
     }
 
     async function getTotalAmountApprove() {
-        console.log(nextFromStake)
         if (nextFromStake) {
-            console.log(2)
             const web3 = new Web3(Web3.givenProvider);
             const account = await web3.eth.getAccounts();
             if (account.length > 0) {
@@ -102,9 +107,7 @@ const Stake = () => {
                         console.log("get amount approved of user fail", err)
                         return;
                     }
-                    let amountApprove = res / 1000000000000000000
-                    console.log(amountApprove.toFixed(4))
-                    setTotalAmountApprove(amountApprove.toFixed(4));
+                    setTotalAmountApprove(BigNumber.from(res).div(divBigNumber).toString());
                 })
             }
         }
@@ -116,10 +119,12 @@ const Stake = () => {
         if (account.length > 0) {
             const data = new web3.eth.Contract(jsonFtx, Address.FTXFTokenAddress);
             try {
+                handleIsLoadedToggle()
                 await data.methods.approve(Address.FounderAddress, totalAmountFTXF).send({
                     from: account[0]
                 })
                 await setNextFromStake(true);
+                await setIsLoaded(false);
             } catch (err) {
                 console.log(err)
             }
@@ -188,309 +193,328 @@ const Stake = () => {
 
     return (
         <>
-            <Header/>
+            <HeaderFake/>
             <DataContext.Consumer>
                 {data => (
-                    <Container className="mt--5" fluid>
-                        <Row>
-                            <div className="col">
-                                {
-                                    !nextFromStake ?
-                                        <Row>
-                                            <Col lg="3"/>
-                                            <Col lg="6">
-                                                <Card className="shadow border-0">
-                                                    <CardHeader className="bg-transparent">
-                                                        <Row className="align-items-center">
-                                                            <div className="col text-center">
-                                                                <h2 className="mb-0">Approve amount</h2>
-                                                            </div>
-                                                        </Row>
-                                                    </CardHeader>
-                                                    <CardBody>
-                                                        <Form>
-                                                            <div className="pl-lg-4">
-                                                                <Row>
-                                                                    <Col lg="9">
-                                                                        <label
-                                                                            className="form-control-label"
-                                                                            htmlFor="input-username"
-                                                                        >
-                                                                            FTXF amount
-                                                                        </label>
-                                                                        <div style={{
-                                                                            border: '1px solid #e0e0e0',
-                                                                            height: 50,
-                                                                            width: '100%',
-                                                                            borderRadius: 15,
-                                                                            backgroundColor: '#e9ecef'
-                                                                        }}>
-                                                                            <FormGroup>
-                                                                                <Row style={{position: 'relative'}}>
-                                                                                    <Col lg="2" xs="2" style={{
-                                                                                        position: 'absolute',
-                                                                                        top: 10,
-                                                                                        left: 35,
-                                                                                        overflow: 'hidden'
+                    <Container className="mt-lg--5 mt--9" fluid>
+                        {
+                            !isLoaded ?
+                                <div>
+                                    <Row>
+                                        <div className="col">
+                                            {
+                                                !nextFromStake ?
+                                                    <Row>
+                                                        <Col lg="2"/>
+                                                        <Col lg="8">
+                                                            <Card className="shadow" style={{borderRadius: 15}}>
+                                                                <CardBody style={{border: "2px solid #11cdef", borderRadius: 15}}>
+                                                                    <div className="col text-center"
+                                                                         style={{
+                                                                             border: "1px solid #11cdef", width: 120,
+                                                                             height: 50, background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",
+                                                                             borderRadius:10, position: "absolute", top: -25
+                                                                         }}>
+                                                                        <h2 className="pt-2" style={{color: "white"}}>Stake</h2>
+                                                                    </div>
+                                                                    <Form>
+                                                                        <div className="mt-5">
+                                                                            <Row>
+                                                                                <Col lg="9">
+                                                                                    <label
+                                                                                        className="form-control-label"
+                                                                                        style={{fontSize: 20, color: "#1171ef"}}
+                                                                                    >
+                                                                                        FTXF amount
+                                                                                    </label>
+                                                                                    <div style={{
+                                                                                        border: '1px solid #11cdef',
+                                                                                        height: 60,
+                                                                                        width: '100%',
+                                                                                        borderRadius: 15,
+                                                                                        backgroundColor: 'white'
                                                                                     }}>
-                                                                                        <img
-                                                                                            className="navbar-brand-img"
-                                                                                            src={require("../../assets/img/icons/coinF.png").default}
-                                                                                            style={{
-                                                                                                width: 25,
-                                                                                                height: 25
-                                                                                            }}
-                                                                                        />
-                                                                                    </Col>
-                                                                                    <Col lg="10" xs="9" style={{
-                                                                                        position: 'absolute',
-                                                                                        left: 87
-                                                                                    }}>
-                                                                                        <Input
-                                                                                            className="form-control-alternative"
-                                                                                            id="input-username"
-                                                                                            placeholder="Stake amount"
-                                                                                            value={(totalAmountFTXF / 1000000000000000000).toFixed(4)}
-                                                                                            disabled={true}
-                                                                                            style={{
-                                                                                                width: '100%',
-                                                                                                height: 48,
-                                                                                                borderTopRightRadius: 15,
-                                                                                                borderBottomRightRadius: 15,
-                                                                                                boxShadow: 'none'
-                                                                                            }}
-                                                                                            onChange={(e) => changeAmountStake(e)}
-                                                                                        />
-                                                                                    </Col>
-                                                                                </Row>
-                                                                            </FormGroup>
+                                                                                        <FormGroup>
+                                                                                            <Row style={{position: 'relative'}}>
+                                                                                                <Col lg="2" xs="3" style={{
+                                                                                                    position: 'absolute',
+                                                                                                    top: 10,
+                                                                                                    left: 45,
+                                                                                                    overflow: 'hidden'
+                                                                                                }}>
+                                                                                                    <img
+                                                                                                        className="navbar-brand-img"
+                                                                                                        src={require("../../assets/img/icons/img/logo/Asset 4.png").default}
+                                                                                                        style={{
+                                                                                                            width: 40,
+                                                                                                            height: 40
+                                                                                                        }}
+                                                                                                    />
+                                                                                                </Col>
+                                                                                                <Col lg="10" xs="7" style={{
+                                                                                                    position: 'absolute',
+                                                                                                    left: 87
+                                                                                                }}>
+                                                                                                    <Input
+                                                                                                        className="form-control-alternative"
+                                                                                                        id="input-username"
+                                                                                                        placeholder="Stake amount"
+                                                                                                        value={totalAmountFTXF}
+                                                                                                        disabled={true}
+                                                                                                        style={{
+                                                                                                            width: '100%',
+                                                                                                            height: 58,
+                                                                                                            borderTopRightRadius: 15,
+                                                                                                            borderBottomRightRadius: 15,
+                                                                                                            boxShadow: 'none',
+                                                                                                            backgroundColor: "white"
+                                                                                                        }}
+                                                                                                        onChange={(e) => changeAmountStake(e)}
+                                                                                                    />
+                                                                                                </Col>
+                                                                                            </Row>
+                                                                                        </FormGroup>
+                                                                                    </div>
+                                                                                </Col>
+                                                                                <Col lg="3" style={{
+                                                                                    marginTop: 36,
+                                                                                }}>
+                                                                                    <Button
+                                                                                        onClick={async () => {
+                                                                                            await submitAmountApprove();
+                                                                                        }}
+                                                                                        size="lg"
+                                                                                        type={'reset'}
+                                                                                        style={{background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",
+                                                                                            borderColor: "#11cdef", color: "white", borderRadius: 10, width: "100%", height: 60}}
+                                                                                    >
+                                                                                        APPROVE NOW
+                                                                                    </Button>
+                                                                                </Col>
+                                                                            </Row>
                                                                         </div>
-                                                                    </Col>
-                                                                    <Col lg="3" style={{
-                                                                        marginTop: 30,
-                                                                    }}>
-                                                                        <div className="col-2">
-                                                                            <Button
-                                                                                color="primary"
-                                                                                onClick={async () => {
-                                                                                    await submitAmountApprove();
-                                                                                }}
-                                                                                size="lg"
-                                                                                type={'reset'}
-                                                                            >
-                                                                                Approve
-                                                                            </Button>
-                                                                        </div>
-                                                                    </Col>
-                                                                </Row>
-                                                            </div>
-                                                        </Form>
-                                                    </CardBody>
-                                                </Card>
-                                            </Col>
-                                            <Col lg="3"/>
-                                        </Row> :
-                                        <Row>
-                                            <Col lg="12">
-                                                <Card className="shadow border-0">
-                                                    <CardHeader className="bg-transparent">
-                                                        <Row className="align-items-center">
-                                                            <Col lg="10" xs="6" className="text-center pl-6 ml-6">
-                                                                <h2 className="mb-0">{"Stake"}
-                                                                </h2>
-                                                            </Col>
-                                                            <Col lg="1" xs="3" className="text-center">
-                                                                <Button
-                                                                    color="primary"
-                                                                    onClick={async () => {
-                                                                        await setBackFromApprove(true)
-                                                                        await setNextFromStake(false)
-                                                                    }}
-                                                                    size="lgs"
-                                                                    type={'reset'}>
-                                                                    Approve
-                                                                </Button>
-                                                            </Col>
-                                                        </Row>
-                                                    </CardHeader>
-                                                    <CardBody>
-                                                        <Form>
-                                                            <div className="pl-lg-4">
-                                                                <Row>
-                                                                    <Col lg="6">
-                                                                        <label
-                                                                            className="form-control-label"
-                                                                        >
-                                                                            Stake amount
-                                                                        </label>
-                                                                        <Row style={{marginBottom: 60}}>
-                                                                            <div style={{
-                                                                                border: '1px solid #e0e0e0',
-                                                                                height: 50,
-                                                                                width: '100%',
-                                                                                borderRadius: 15,
-                                                                                backgroundColor: 'white'
-                                                                            }}>
-                                                                                <FormGroup>
-                                                                                    <Row style={{position: 'relative'}}>
-                                                                                        <Col lg="2" xs="2" style={{
-                                                                                            position: 'absolute',
-                                                                                            top: 10,
-                                                                                            left: 35,
-                                                                                            overflow: 'hidden'
+                                                                    </Form>
+                                                                </CardBody>
+                                                            </Card>
+                                                        </Col>
+                                                        <Col lg="2"/>
+                                                    </Row> :
+                                                    <Row>
+                                                        <Col lg="12">
+                                                            <Card className="shadow" style={{borderRadius: 15}}>
+                                                                <CardBody style={{border: "2px solid #11cdef", borderRadius: 15}}>
+                                                                    <div className="col text-center"
+                                                                         style={{
+                                                                             border: "1px solid #11cdef", width: 120,
+                                                                             height: 50, background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",
+                                                                             borderRadius:10, position: "absolute", top: -25
+                                                                         }}
+                                                                    >
+                                                                        <h2 className="pt-2" style={{color: "white"}}>
+                                                                            Stake
+                                                                        </h2>
+                                                                    </div>
+                                                                    <Form>
+                                                                        <div className="pl-lg-4 mt-4">
+                                                                            <Row>
+                                                                                <Col lg="6" xs="12" className="mb-6">
+                                                                                    <label
+                                                                                        className="form-control-label"
+                                                                                        style={{fontSize: 20, color: "#1171ef"}}
+                                                                                    >
+                                                                                        Stake amount
+                                                                                    </label>
+                                                                                    <Row >
+                                                                                        <div style={{
+                                                                                            border: '1px solid #e0e0e0',
+                                                                                            height: 60,
+                                                                                            width: '100%',
+                                                                                            borderRadius: 15,
+                                                                                            backgroundColor: 'white'
                                                                                         }}>
-                                                                                            <img
-                                                                                                className="navbar-brand-img"
-                                                                                                src={require("../../assets/img/icons/ftxf-dapps.png").default}
-                                                                                                style={{
-                                                                                                    width: 25,
-                                                                                                    height: 25
+                                                                                            <FormGroup>
+                                                                                                <Row style={{position: 'relative'}}>
+                                                                                                    <Col lg="2" xs="2" style={{
+                                                                                                        position: 'absolute',
+                                                                                                        top: 10,
+                                                                                                        left: 25,
+                                                                                                        overflow: 'hidden'
+                                                                                                    }}>
+                                                                                                        <img
+                                                                                                            className="navbar-brand-img"
+                                                                                                            src={require("../../assets/img/icons/img/logo/Asset 4.png").default}
+                                                                                                            style={{
+                                                                                                                width: 40,
+                                                                                                                height: 40
+                                                                                                            }}
+                                                                                                        />
+                                                                                                    </Col>
+                                                                                                    <Col lg="10" xs="7" style={{
+                                                                                                        position: 'absolute',
+                                                                                                        left: 90
+                                                                                                    }}>
+                                                                                                        <Input
+                                                                                                            className="form-control-alternative"
+                                                                                                            id="input-username"
+                                                                                                            placeholder="0"
+                                                                                                            type="number"
+                                                                                                            min={0}
+                                                                                                            style={{
+                                                                                                                width: '100%',
+                                                                                                                height: 58,
+                                                                                                                borderTopRightRadius: 15,
+                                                                                                                borderBottomRightRadius: 15,
+                                                                                                                boxShadow: 'none'
+                                                                                                            }}
+                                                                                                            onChange={(e) => changeAmountStake(e)}
+                                                                                                        />
+                                                                                                    </Col>
+                                                                                                </Row>
+                                                                                            </FormGroup>
+                                                                                        </div>
+                                                                                        <small  style={{color: "#1171ef"}}>Total FTXF assets: ~{totalAmountApprove}</small>
+                                                                                    </Row>
+                                                                                    <Row className="mt-3" >
+                                                                                        <Col lg="12" xs="12" className="text-right">
+                                                                                            <Button
+                                                                                                onClick={async () => {
+                                                                                                    await submitAmountStack();
                                                                                                 }}
-                                                                                            />
-                                                                                        </Col>
-                                                                                        <Col lg="10" xs="9" style={{
-                                                                                            position: 'absolute',
-                                                                                            left: 87
-                                                                                        }}>
-                                                                                            <Input
-                                                                                                className="form-control-alternative"
-                                                                                                id="input-username"
-                                                                                                placeholder="Stake amount"
-                                                                                                type="number"
-                                                                                                min={0}
-                                                                                                style={{
-                                                                                                    width: '100%',
-                                                                                                    height: 48,
-                                                                                                    borderTopRightRadius: 15,
-                                                                                                    borderBottomRightRadius: 15,
-                                                                                                    boxShadow: 'none'
-                                                                                                }}
-                                                                                                onChange={(e) => changeAmountStake(e)}
-                                                                                            />
+                                                                                                size="lgs"
+                                                                                                type={'reset'}
+                                                                                                style={{background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",
+                                                                                                    borderColor: "#11cdef", color: "white", borderRadius: 10}}
+                                                                                            >
+                                                                                                STAKE NOW
+                                                                                            </Button>
                                                                                         </Col>
                                                                                     </Row>
-                                                                                </FormGroup>
-                                                                            </div>
-                                                                            <small>Total FTXF assets: ~{totalAmountApprove}</small>
-                                                                        </Row>
-                                                                        <hr className="my-4"/>
-                                                                        <Row className="mb-5">
-                                                                            <Col lg="9"></Col>
-                                                                            <Col lg="3">
-                                                                                <Button
-                                                                                    color="primary"
-                                                                                    onClick={async () => {
-                                                                                        await submitAmountStack();
-                                                                                    }}
-                                                                                    size="lgs"
-                                                                                    type={'reset'}>
-                                                                                    Submit
-                                                                                </Button>
-                                                                            </Col>
-                                                                        </Row>
-                                                                    </Col>
-                                                                    <Col lg="6">
-                                                                        <Card className="shadow">
-                                                                            <CardHeader className="bg-transparent"  style={{borderBottom: "none"}}>
-                                                                                <Row className="align-items-center">
-                                                                                    <div className="col text-center">
-                                                                                        <h2 className="mb-0">Staking</h2>
-                                                                                    </div>
-                                                                                </Row>
-                                                                            </CardHeader>
-                                                                            <CardBody style={{
-                                                                                background: 'linear-gradient( 315deg , #00d6ff 0%, #3ab5e3 100%)',
-                                                                                borderTopRightRadius: '50%',
-                                                                                borderTopLeftRadius: '50%',
-                                                                                width: '100%',
-                                                                                top: -20,
-                                                                                left: '-50%'
-                                                                            }}>
-                                                                                <Row className="mt-5">
-                                                                                    <Col lg="9">
-                                                                                        <h3 className="mt-2" style={{color: 'white'}}>
-                                                                                            Quantity stake
-                                                                                            <span
-                                                                                                className="font-weight-light">: {quantityStake / 1000000000000000000}</span>
-                                                                                        </h3>
-                                                                                    </Col>
-                                                                                    <Col lg="3">
-                                                                                        <Button
-                                                                                            color="white"
-                                                                                            onClick={toggle}
-                                                                                            size="lgs"
-                                                                                            type={'reset'}
-                                                                                        >
-                                                                                            Unstake
-                                                                                        </Button>
-                                                                                    </Col>
-                                                                                </Row>
-                                                                                <Row className="mt-4">
-                                                                                    <Col lg="9">
-                                                                                        <h3 className="mt-2" style={{color: 'white'}}>
-                                                                                            Reward stake:
-                                                                                            <span
-                                                                                                className="font-weight-light"> {rewardStake}</span>
-                                                                                        </h3>
-                                                                                    </Col>
-                                                                                    <Col lg="3">
-                                                                                        <Button
-                                                                                            color="white"
-                                                                                            onClick={async () => {
-                                                                                                await withdrawRewardStake();
-                                                                                            }}
-                                                                                            size="lgs"
-                                                                                            type={'reset'}
-                                                                                        >
-                                                                                            Withdraw
-                                                                                        </Button>
-                                                                                    </Col>
-                                                                                </Row>
-                                                                            </CardBody>
-                                                                        </Card>
-                                                                    </Col>
-                                                                </Row>
-                                                            </div>
-                                                        </Form>
-                                                    </CardBody>
-                                                </Card>
-                                            </Col>
-                                        </Row>
-                                }
+                                                                                </Col>
+                                                                                <Col lg="6" xs="12" >
+                                                                                    <Card className="shadow">
+                                                                                        <CardHeader className="bg-transparent"  style={{borderBottom: "none"}}>
+                                                                                            <Row className="align-items-center">
+                                                                                                <Col lg="9" xs="6" className="text-center">
+                                                                                                    <div className="col text-center">
+                                                                                                        <h3 className="mb-0" style={{color: '#11cdef'}}>Staking</h3>
+                                                                                                    </div>
+                                                                                                </Col>
+                                                                                                <Col lg="1" xs="3" className="text-center">
+                                                                                                    <Button
+                                                                                                        onClick={async () => {
+                                                                                                            await setBackFromApprove(true)
+                                                                                                            await setNextFromStake(false)
+                                                                                                        }}
+                                                                                                        size="lgs"
+                                                                                                        type={'reset'}
+                                                                                                        style={{background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",
+                                                                                                            borderColor: "#11cdef", color: "white", borderRadius: 10}}
+                                                                                                    >
+
+                                                                                                        Reapprove
+                                                                                                    </Button>
+                                                                                                </Col>
+                                                                                            </Row>
+                                                                                        </CardHeader>
+                                                                                        <CardBody style={{
+                                                                                            background: 'linear-gradient(87deg, #11cdef 0, #1171ef 100%)',
+                                                                                            width: '100%',
+                                                                                            top: -20,
+                                                                                            left: '-50%'
+                                                                                        }}>
+                                                                                            <Row className="mt-4">
+                                                                                                <Col lg="8" xs="12" className="mt-2">
+                                                                                                    <h3 className="m-0 p-2 mb-sm-2" style={{color: '#11cdef',backgroundColor: 'white',borderRadius: 5}}>
+                                                                                                        Quantity stake
+                                                                                                        <span
+                                                                                                            className="font-weight-light">: {quantityStake}</span>
+                                                                                                    </h3>
+                                                                                                </Col>
+                                                                                                <Col lg="4" xs="12" className="mt-2">
+                                                                                                    <Button
+                                                                                                        color="white"
+                                                                                                        onClick={toggle}
+                                                                                                        type={'reset'}
+                                                                                                        style={{width: "100%", color: "#11cdef", height: 40}}
+                                                                                                    >
+                                                                                                        Unstake
+                                                                                                    </Button>
+                                                                                                </Col>
+                                                                                            </Row>
+                                                                                            <Row className="mt-4">
+                                                                                                <Col lg="8" xs="12" className="mt-2">
+                                                                                                    <h3 className="m-0 p-2 mb-sm-2 " style={{color: '#11cdef', backgroundColor: 'white',borderRadius: 5}}>
+                                                                                                        Reward stake:
+                                                                                                        <span
+                                                                                                            className="font-weight-light"> {rewardStake}</span>
+                                                                                                    </h3>
+                                                                                                </Col>
+                                                                                                <Col lg="4" xs="12" className="mt-2">
+                                                                                                    <Button
+                                                                                                        color="white"
+                                                                                                        onClick={async () => {
+                                                                                                            await withdrawRewardStake();
+                                                                                                        }}
+                                                                                                        type={'reset'}
+                                                                                                        style={{width: "100%", color: "#11cdef",height: 40}}
+                                                                                                    >
+                                                                                                        Withdraw
+                                                                                                    </Button>
+                                                                                                </Col>
+                                                                                            </Row>
+                                                                                        </CardBody>
+                                                                                    </Card>
+                                                                                </Col>
+                                                                            </Row>
+                                                                        </div>
+                                                                    </Form>
+                                                                </CardBody>
+                                                            </Card>
+                                                        </Col>
+                                                    </Row>
+                                            }
 
 
-                            </div>
-                        </Row>
-                        <Modal isOpen={modal} toggle={toggle}>
-                            <ModalHeader toggle={toggle}>Unstake</ModalHeader>
-                            <ModalBody>
-                                <FormGroup>
-                                    <label
-                                        className="form-control-label"
-                                        htmlFor="input-username"
-                                    >
-                                        Quantity unstake
-                                    </label>
-                                    <Input
-                                        className="form-control-alternative"
-                                        id="input-username"
-                                        placeholder="Quantity unstake"
-                                        type="number"
-                                        onChange={(e) => changeQuantityUnStake(e)}
-                                    />
-                                </FormGroup>
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button color="secondary" onClick={async () => {
-                                    await withdrawStake();
-                                }}>Unstake</Button>
-                            </ModalFooter>
-                        </Modal>
+                                        </div>
+                                    </Row>
+                                    <Modal isOpen={modal} toggle={toggle}>
+                                        <ModalHeader toggle={toggle}>Unstake</ModalHeader>
+                                        <ModalBody>
+                                            <FormGroup>
+                                                <label
+                                                    className="form-control-label"
+                                                    htmlFor="input-username"
+                                                >
+                                                    Quantity unstake
+                                                </label>
+                                                <Input
+                                                    className="form-control-alternative"
+                                                    id="input-username"
+                                                    placeholder="Quantity unstake"
+                                                    type="number"
+                                                    onChange={(e) => changeQuantityUnStake(e)}
+                                                />
+                                            </FormGroup>
+                                        </ModalBody>
+                                        <ModalFooter>
+                                            <Button style={{color: "white",background: 'linear-gradient(87deg, #11cdef 0, #1171ef 100%)'}} onClick={async () => {
+                                                await withdrawStake();
+                                            }}>Unstake</Button>
+                                        </ModalFooter>
+                                    </Modal>
+                                </div> :
+                                <Row className="mt-lg-9 mb-lg-9 mb-9 mt-9">
+                                    <Col lg="5" xs="4"/>
+                                    <Col lg="2" xs="3" className="align-items-center mb-lg-5 ml-3 ml-lg-0">
+                                        <ReactLoading type={"spin"} color="#11cdef" />
+                                    </Col>
+                                    <Col lg="5" xs="4"/>
+                                </Row>
+                        }
                     </Container>
                 )}
             </DataContext.Consumer>
         </>
     );
-};
-
+}
 export default Stake;

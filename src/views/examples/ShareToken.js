@@ -13,9 +13,10 @@ import jsonFtx from "../../json/contract/readContract.json";
 import eshareJson from "../../json/eshare/contract.json"
 import Address from "../../json/addressContract/address.json"
 import {BigNumber} from "@ethersproject/bignumber";
+import HeaderFake from "../../components/Headers/HeaderFake";
 
 const ShareToken = () => {
-
+    const divBigNumber = BigNumber.from(10).pow(18)
     const [amountShare, setAmountShare] = useState(0);
     const [addressToken, setAddressToken] = useState(Address.USDTAddess);
     const [totalUsdtEshare, setTotalUsdtEshare] = useState(0);
@@ -31,15 +32,14 @@ const ShareToken = () => {
                     console.log("get balance of eshare error.");
                     return;
                 }
-                let usdt = res / 1000000000000000000
-                setTotalUsdtEshare(usdt);
+                setTotalUsdtEshare(BigNumber.from(res).div(divBigNumber).toString());
             })
         }
     }
 
     useEffect(async () => {
         await getUsdtInEshare();
-    },[amountShare, totalUsdtEshare, addressToken])
+    })
 
     function changeAmountShare(e) {
         setAmountShare(e.target.value);
@@ -70,54 +70,55 @@ const ShareToken = () => {
 
     return (
         <>
-            <Header/>
-            <Container className="mt--5" fluid>
+            <HeaderFake/>
+            <Container className="mt-lg--5 mt--9" fluid>
                 <Row>
-                    <Col lg="3"/>
-                    <Col lg="6">
-                        <Card className="shadow border-0">
-                            <CardHeader className="bg-transparent" style={{borderBottom: 'none'}}>
-                                <Row className="align-items-center">
-                                    <div className="col text-center">
-                                        <h2 className="mb-0">
-                                            Share
-                                        </h2>
-                                    </div>
-                                </Row>
-                            </CardHeader>
-                            <CardBody>
+                    <Col lg="2"/>
+                    <Col lg="8">
+                        <Card className="shadow" style={{borderRadius: 15}}>
+                            <CardBody style={{border: "2px solid #11cdef", borderRadius: 15}}>
+                                <div className="col text-center"
+                                     style={{
+                                         border: "1px solid #11cdef", width: 120,
+                                         height: 50, background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",
+                                         borderRadius:10, position: "absolute", top: -25
+                                     }}
+                                >
+                                    <h2 className="pt-2" style={{color: "white"}}>
+                                        Share
+                                    </h2>
+                                </div>
                                 <Form>
-                                    <div className="pl-lg-4">
+                                    <div className="mt-5">
                                         <Row style={{marginBottom: 30}}>
-                                            <Col lg="1"/>
-                                            <Col lg="10">
+                                            <Col lg="12" xs="12">
                                                 <label
                                                     className="form-control-label"
-                                                    htmlFor="input-email"
+                                                    style={{fontSize: 20, color: "#1171ef"}}
                                                 >
                                                     Currency species
                                                 </label>
                                                 <div style={{
-                                                    border: '1px solid #e0e0e0',
-                                                    height: 50,
+                                                    border: '1px solid #11cdef',
+                                                    height: 60,
                                                     width: '100%',
-                                                    borderRadius: 15,
+                                                    borderRadius: 10,
                                                 }}>
-                                                    <Col lg="2" xs="2" style={{
+                                                    <Col lg="2" xs="3" style={{
                                                         position: 'absolute',
-                                                        top: 43,
-                                                        left: 35,
+                                                        top: 45,
+                                                        left: 45,
                                                         overflow: 'hidden'
                                                     }}>
                                                         <img
                                                             className="navbar-brand-img"
-                                                            src={require("../../assets/img/icons/Tether-USDT-icon.png").default}
-                                                            style={{width: 25, height: 25}}
+                                                            src={require("../../assets/img/icons/img/logo/Asset 3.png").default}
+                                                            style={{width: 40, height: 40}}
                                                         />
                                                     </Col>
-                                                    <Col lg="10" xs="9" style={{
+                                                    <Col lg="10" xs="7" style={{
                                                         position: 'absolute',
-                                                        left: 87,
+                                                        left: 120,
                                                         width: '100%'
                                                     }}>
                                                         <Input
@@ -127,7 +128,7 @@ const ShareToken = () => {
                                                             type="select"
                                                             style={{
                                                                 width: '100%',
-                                                                height: 48,
+                                                                height: 58,
                                                                 borderTopRightRadius: 15,
                                                                 borderBottomRightRadius: 15,
                                                                 boxShadow: 'none'
@@ -140,40 +141,38 @@ const ShareToken = () => {
                                                     </Col>
                                                 </div>
                                             </Col>
-                                            <Col lg="1"/>
                                         </Row>
                                         <Row>
-                                            <Col lg="1"/>
-                                            <Col lg="10" style={{marginBottom: 30}}>
+                                            <Col lg="12" style={{marginBottom: 30}}>
                                                 <label
                                                     className="form-control-label"
-                                                    htmlFor="input-username"
+                                                    style={{fontSize: 20, color: "#1171ef"}}
                                                 >
-                                                    Amount Share
+                                                    Amount share
                                                 </label>
                                                 <div style={{
-                                                    border: '1px solid #e0e0e0',
-                                                    height: 50,
+                                                    border: '1px solid #11cdef',
+                                                    height: 60,
                                                     width: '100%',
-                                                    borderRadius: 15,
+                                                    borderRadius: 10,
                                                 }}>
                                                     <FormGroup>
                                                         <Row style={{position: 'relative'}}>
-                                                            <Col lg="2" xs="2" style={{
+                                                            <Col lg="2" xs="3" style={{
                                                                 position: 'absolute',
                                                                 top: 10,
-                                                                left: 35,
+                                                                left: 45,
                                                                 overflow: 'hidden'
                                                             }}>
                                                                 <img
                                                                     className="navbar-brand-img"
-                                                                    src={require("../../assets/img/icons/Tether-USDT-icon.png").default}
-                                                                    style={{width: 25, height: 25}}
+                                                                    src={require("../../assets/img/icons/img/logo/Asset 3.png").default}
+                                                                    style={{width: 40, height: 40}}
                                                                 />
                                                             </Col>
-                                                            <Col lg="10" xs="9" style={{
+                                                            <Col lg="10" xs="7" style={{
                                                                 position: 'absolute',
-                                                                left: 87,
+                                                                left: 120,
                                                                 width: '100%'
                                                             }}>
                                                                 <Input
@@ -184,7 +183,7 @@ const ShareToken = () => {
                                                                     min={0}
                                                                     style={{
                                                                         width: '100%',
-                                                                        height: 48,
+                                                                        height: 58,
                                                                         borderTopRightRadius: 15,
                                                                         borderBottomRightRadius: 15,
                                                                         boxShadow: 'none'
@@ -195,26 +194,26 @@ const ShareToken = () => {
                                                         </Row>
                                                     </FormGroup>
                                                 </div>
-                                                <small>Total USDT assets: ~{totalUsdtEshare}</small>
+                                                <small style={{color: "#1171ef"}}>Total USDT assets: ~{totalUsdtEshare}</small>
                                                 <br/>
                                                 <small style={{color: "red"}}>{errText}</small>
                                             </Col>
-                                            <Col lg="1"/>
                                         </Row>
                                     </div>
-                                    <hr className="my-4"/>
+                                    <br/>
                                     <div>
                                         <Row>
-                                            <Col lg="7">
+                                            <Col lg="9">
 
                                             </Col>
-                                            <Col lg="4" className="mr-2">
+                                            <Col lg="3">
                                                 <Button
-                                                    color="primary"
                                                     onClick={async () => onShareToken()}
                                                     size="lg"
                                                     type={'reset'}
                                                     block
+                                                    style={{background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",
+                                                        borderColor: "#11cdef", color: "white", borderRadius: 10}}
                                                 >
                                                     EXCHANGE NOW
                                                 </Button>
@@ -225,7 +224,7 @@ const ShareToken = () => {
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col lg="3"/>
+                    <Col lg="2"/>
                 </Row>
             </Container>
         </>
