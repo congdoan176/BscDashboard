@@ -14,9 +14,10 @@ import eshareJson from "../../json/eshare/contract.json"
 import Address from "../../json/addressContract/address.json"
 import {BigNumber} from "@ethersproject/bignumber";
 import HeaderFake from "../../components/Headers/HeaderFake";
+var bigdecimal = require("bigdecimal");
 
 const ShareToken = () => {
-    const divBigNumber = BigNumber.from(10).pow(18)
+    const two = new bigdecimal.BigDecimal('1000000000000000000');
     const [amountShare, setAmountShare] = useState(0);
     const [addressToken, setAddressToken] = useState(Address.USDTAddess);
     const [totalUsdtEshare, setTotalUsdtEshare] = useState(0);
@@ -32,7 +33,8 @@ const ShareToken = () => {
                     console.log("get balance of eshare error.");
                     return;
                 }
-                setTotalUsdtEshare(BigNumber.from(res).div(divBigNumber).toString());
+                let one = new bigdecimal.BigDecimal(res);
+                setTotalUsdtEshare(Number(one.divide(two).toString()).toFixed(4));
             })
         }
     }

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
     Button,
     Card,
@@ -9,7 +9,7 @@ import {
     Input,
     Container,
     Row,
-    Col,
+    Col, Modal, ModalHeader, ModalBody, ModalFooter,
 } from "reactstrap";
 import DataContext from "../../context";
 import Verify from "../../share/verify/index"
@@ -18,7 +18,6 @@ import Login from "../../share/auth";
 import ProfileBlock from "../../share/blockProfile";
 import HeaderFake from "../../components/Headers/HeaderFake";
 import {CopyToClipboard} from 'react-copy-to-clipboard';
-
 const Profile = (props) => {
 
     const [inputVerifyCode, setInputVerifyCode] = useState(false);
@@ -28,13 +27,12 @@ const Profile = (props) => {
     const [errorMsg, setErrorMsg] = useState("");
     const [copied, setCopied] = useState(false);
 
-
-
     async function getInfoUser(data) {
         const web3 = new Web3(Web3.givenProvider);
         const accounts = await web3.eth.getAccounts();
         let dataJson = JSON.parse(await Login.addAccount(accounts[0], data.addressSponsor))
-        data.UpdateInfoUser(dataJson.linkRef, dataJson.statusVerify, dataJson.email)
+        data.UpdateInfoUser(dataJson.user.linkRef, dataJson.user.statusVerify,
+            dataJson.user.email, dataJson.user.id, dataJson.user.totalSales, dataJson.listChild, dataJson.user.totalSalesBranch)
     }
 
     async function validateEmail(type, addressAccount) {
@@ -55,9 +53,13 @@ const Profile = (props) => {
     async function sendData(type, addressAccount, context) {
         if (type === 'email') {
             let data = JSON.parse(await Verify.sendEmail(Email, addressAccount));
+            console.log(data);
             if (data.message === "success") {
                 alert("Please check your email to get the code!");
                 setInputVerifyCode(true)
+            }
+            if (data.message.indexOf("The address is already linked to another email") !== -1){
+                setErrorText("The address is already linked to another email");
             }
         } else {
             let data = JSON.parse(await Verify.sendCode(verifyCode, addressAccount));
@@ -80,7 +82,7 @@ const Profile = (props) => {
         }
     }
 
-    function coppyData(data){
+    function coppyData(){
         document.getElementById("myInput")
         document.execCommand('copy');
     }
@@ -92,10 +94,10 @@ const Profile = (props) => {
                 {data => (
                     <Container className="mt-lg--5 mt--9" fluid>
                         <Row>
-                            <Col className="order-xl-1 mb-5 mb-xl-10 " lg="7">
+                            <Col className="order-xl-1 mb-lg-5 mb-2 mb-xl-10 " lg="7">
                                 <Card className="card-profile shadow">
                                     <CardBody className="pt-0 text-center">
-                                        <Row lg="11" sm="12" className="mt-4 mb-5">
+                                        <Row lg="11" sm="12" className="mt-4 mb-lg-5">
                                             <Row style={{
                                                 height: 100,
                                                 borderRadius: 10,
@@ -113,17 +115,17 @@ const Profile = (props) => {
                                             </Row>
                                         </Row>
                                         <div>
-                                            <Row lg="11" sm="11" className="mt-2 mb-5">
+                                            <Row lg="11" sm="11" className="mt-2 mb-lg-5">
                                                 <ProfileBlock {...props}
                                                               headerTextTop={"Direct sale"}
                                                               headerTextBottom={"Total sale"}
                                                               valueTop={data.directSale}
                                                               valueBotoom={data.totalSales}/>
                                             </Row>
-                                            <Row lg="11" sm="11" className="mt-2 mb-5">
+                                            <Row lg="11" sm="11" className="mt-2 mb-lg-2">
                                                 <ProfileBlock {...props}
                                                               headerTextTop={"Referral users"}
-                                                              headerTextBottom={"Total referral sale"}
+                                                              headerTextBottom={"Total referral"}
                                                               valueTop={data.referral.length}
                                                               valueBotoom={data.totalSalesBranch}/>
                                             </Row>
@@ -131,130 +133,18 @@ const Profile = (props) => {
                                     </CardBody>
                                 </Card>
                             </Col>
-                            <Col className="order-xl-1 mb-5 mb-xl-10 " lg="5">
+                            <Col className="order-xl-1 mb-5 " lg="5">
                                 <Card className="bg-secondary shadow">
                                     <CardBody>
                                         <Form>
-                                            <div className="pl-lg-4">
-                                                { data.userVerifyStatus === "complete" ?
-                                                    <Row>
-                                                        <Col lg="12">
-                                                            <FormGroup>
-                                                                <label
-                                                                    className="form-control-label"
-                                                                    htmlFor="input-username"
-                                                                >
-                                                                    Link Reference
-                                                                </label>
-                                                                <Row>
-                                                                    <Col lg="12" className="input-group mb-3">
-                                                                        <Input type="text" className="form-control-alternative"
-                                                                               placeholder="Recipient's username"
-                                                                               aria-label="Recipient's username"
-                                                                               disabled = {true}
-                                                                               defaultValue={data.userLinkRef}
-                                                                               aria-describedby="button-addon2"
-                                                                        />
-                                                                            <div className="input-group-append">
-                                                                                <CopyToClipboard text={data.userLinkRef}
-                                                                                                 onCopy={() => setCopied(true)}>
-                                                                                    <Button
-                                                                                        onClick={() => coppyData(data)}
-                                                                                        size="lgs"
-                                                                                        style={{background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",
-                                                                                            borderColor: "#11cdef", color: "white",
-                                                                                            fontSize: 10,
-                                                                                        }}
-                                                                                    >
-                                                                                        <img
-                                                                                            className="navbar-brand-img"
-                                                                                            src={require("../../assets/img/icons/img/logo/Asset 12.png").default}
-                                                                                            style={{width: 12, height: 12}}
-                                                                                        />
-                                                                                    </Button>
-                                                                                </CopyToClipboard>
-                                                                            </div>
-                                                                    </Col>
-                                                                </Row>
-                                                                <Row className="ml-2">
-                                                                    {
-                                                                        copied ?
-                                                                        <p style={{color: '#30f222'}}>
-                                                                            Copied to clipboard
-                                                                        </p> : ""
-                                                                    }
-                                                                </Row>
-                                                            </FormGroup>
-                                                        </Col>
-                                                    </Row> : ""
-                                                }
-                                                <Row>
-                                                    <Col lg="12">
-                                                        <FormGroup>
-                                                            <label
-                                                                className="form-control-label"
-                                                                htmlFor="input-username"
-                                                            >
-                                                                Wallet address
-                                                            </label>
-                                                            <Input
-                                                                className="form-control-alternative"
-                                                                defaultValue={data.accountAddress}
-                                                                disabled = {true}
-                                                                id="input-username"
-                                                                type="text"
-                                                            />
-                                                        </FormGroup>
-                                                    </Col>
-                                                </Row>
-                                                <Row>
-                                                    <Col lg="12">
-                                                        <FormGroup>
-                                                            <label
-                                                                className="form-control-label"
-                                                                htmlFor="input-email"
-                                                            >
-                                                                Email address
-                                                            </label>
-                                                            <Input
-                                                                className="form-control-alternative"
-                                                                id="input-email"
-                                                                defaultValue={data.userEmail}
-                                                                disabled = {true}
-                                                                type="text"
-                                                            />
-                                                        </FormGroup>
-                                                    </Col>
-                                                </Row>
-                                                <Row>
-                                                    <Col lg="12">
-                                                        <FormGroup>
-                                                            <label
-                                                                className="form-control-label"
-                                                                htmlFor="input-first-name"
-                                                            >
-                                                                Verify Status
-                                                            </label>
-                                                            <Input
-                                                                className="form-control-alternative"
-                                                                defaultValue={data.userVerifyStatus}
-                                                                disabled = {true}
-                                                                id="input-first-name"
-                                                                type="text"
-                                                            />
-                                                        </FormGroup>
-                                                    </Col>
-                                                </Row>
-                                            </div>
-                                            <hr className="my-4"/>
                                             {
-                                                data.userVerifyStatus === "complete" ? "" :
-                                                    <div className="pl-lg-4">
+                                                data.userVerifyStatus === "complete" ? null :
+                                                    <div className="pl-lg-4 ">
                                                         {!inputVerifyCode ?
                                                             <FormGroup>
                                                                 <label>Verify Email</label>
                                                                 <Row>
-                                                                    <Col lg="12">
+                                                                    <Col lg="12" xs>
                                                                         <Input
                                                                             className="form-control-alternative"
                                                                             placeholder="Enter email"
@@ -311,6 +201,117 @@ const Profile = (props) => {
                                                         }
                                                     </div>
                                             }
+                                            <div className="pl-lg-4">
+                                                { data.userVerifyStatus === "complete" ?
+                                                    <Row>
+                                                        <Col lg="12">
+                                                            <FormGroup>
+                                                                <label
+                                                                    className="form-control-label"
+                                                                    htmlFor="input-username"
+                                                                >
+                                                                    Referral Link
+                                                                </label>
+                                                                <Row>
+                                                                    <Col lg="12" className="input-group mb-3">
+                                                                        <Input type="text" className="form-control-alternative"
+                                                                               placeholder="Recipient's username"
+                                                                               aria-label="Recipient's username"
+                                                                               disabled = {true}
+                                                                               defaultValue={data.userLinkRef}
+                                                                               aria-describedby="button-addon2"
+                                                                        />
+                                                                        <div className="input-group-append">
+                                                                            <CopyToClipboard text={data.userLinkRef}
+                                                                                             onCopy={() => setCopied(true)}>
+                                                                                <Button
+                                                                                    onClick={() => coppyData(data)}
+                                                                                    size="lgs"
+                                                                                    style={{background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",
+                                                                                        borderColor: "#11cdef", color: "white",
+                                                                                        fontSize: 10,
+                                                                                    }}
+                                                                                >
+                                                                                    <img
+                                                                                        className="navbar-brand-img"
+                                                                                        src={require("../../assets/img/icons/img/logo/Asset 12.png").default}
+                                                                                        style={{width: 12, height: 12}}
+                                                                                    />
+                                                                                </Button>
+                                                                            </CopyToClipboard>
+                                                                        </div>
+                                                                    </Col>
+                                                                </Row>
+                                                                <Row className="ml-2">
+                                                                    {
+                                                                        copied ?
+                                                                            <p style={{color: '#30f222'}}>
+                                                                                Copied to clipboard
+                                                                            </p> : ""
+                                                                    }
+                                                                </Row>
+                                                            </FormGroup>
+                                                        </Col>
+                                                    </Row> : null
+                                                }
+                                                <Row>
+                                                    <Col lg="12">
+                                                        <FormGroup>
+                                                            <label
+                                                                className="form-control-label"
+                                                                htmlFor="input-username"
+                                                            >
+                                                                Wallet address
+                                                            </label>
+                                                            <Input
+                                                                className="form-control-alternative"
+                                                                defaultValue={data.accountAddress}
+                                                                disabled = {true}
+                                                                id="input-username"
+                                                                type="text"
+                                                            />
+                                                        </FormGroup>
+                                                    </Col>
+                                                </Row>
+                                                <Row>
+                                                    <Col lg="12">
+                                                        <FormGroup>
+                                                            <label
+                                                                className="form-control-label"
+                                                                htmlFor="input-email"
+                                                            >
+                                                                Email address
+                                                            </label>
+                                                            <Input
+                                                                className="form-control-alternative"
+                                                                id="input-email"
+                                                                defaultValue={data.userEmail}
+                                                                disabled = {true}
+                                                                type="text"
+                                                            />
+                                                        </FormGroup>
+                                                    </Col>
+                                                </Row>
+                                                <Row>
+                                                    <Col lg="12">
+                                                        <FormGroup>
+                                                            <label
+                                                                className="form-control-label"
+                                                                htmlFor="input-first-name"
+                                                            >
+                                                                Verify Status
+                                                            </label>
+                                                            <Input
+                                                                className="form-control-alternative"
+                                                                defaultValue={ data.userVerifyStatus === "complete" ? "completed" : ""}
+                                                                disabled = {true}
+                                                                id="input-first-name"
+                                                                type="text"
+                                                            />
+                                                        </FormGroup>
+                                                    </Col>
+                                                </Row>
+                                            </div>
                                         </Form>
                                     </CardBody>
                                 </Card>

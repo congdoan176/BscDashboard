@@ -14,8 +14,9 @@ import Address from "../../json/addressContract/address.json"
 import {BigNumber} from "@ethersproject/bignumber"
 import HeaderFake from "../../components/Headers/HeaderFake";
 import ReactLoading from "react-loading";
+var bigdecimal = require("bigdecimal");
 const Stake = () => {
-    const divBigNumber = BigNumber.from(10).pow(18)
+    const two = new bigdecimal.BigDecimal('1000000000000000000');
     const [totalAmountFTXF, setTotalAmountFTXF] = useState(0);
     const [totalAmountApprove, setTotalAmountApprove] = useState(0);
 
@@ -48,7 +49,8 @@ const Stake = () => {
                     console.log("get balance FTXT of user fail", err);
                     return
                 }
-                setTotalAmountFTXF(BigNumber.from(res).div(divBigNumber).toString());
+                let one = new bigdecimal.BigDecimal(res);
+                setTotalAmountFTXF(Number(one.divide(two).toString()).toFixed(4));
             })
         }
     }
@@ -63,7 +65,8 @@ const Stake = () => {
                     console.log("get quantity stake fail", err);
                     return;
                 }
-                setQuantityStake(BigNumber.from(res.amount).div(divBigNumber).toString())
+                let one = new bigdecimal.BigDecimal(res);
+                setQuantityStake(Number(one.divide(two).toString()).toFixed(4))
             })
         }
     }
@@ -91,7 +94,8 @@ const Stake = () => {
                     console.log("get reward stake error");
                     return;
                 }
-                setRewardStake(BigNumber.from(res).div(divBigNumber).toString());
+                let one = new bigdecimal.BigDecimal(res);
+                setRewardStake(Number(one.divide(two).toString()).toFixed(4));
             })
         }
     }
@@ -107,7 +111,8 @@ const Stake = () => {
                         console.log("get amount approved of user fail", err)
                         return;
                     }
-                    setTotalAmountApprove(BigNumber.from(res).div(divBigNumber).toString());
+                    let one = new bigdecimal.BigDecimal(res);
+                    setTotalAmountApprove(Number(one.divide(two).toString()).toFixed(4));
                 })
             }
         }
@@ -126,6 +131,7 @@ const Stake = () => {
                 await setNextFromStake(true);
                 await setIsLoaded(false);
             } catch (err) {
+                await setIsLoaded(false);
                 console.log(err)
             }
         }
@@ -281,7 +287,7 @@ const Stake = () => {
                                                                                 }}>
                                                                                     <Button
                                                                                         onClick={async () => {
-                                                                                            await submitAmountApprove();
+                                                                                            // await submitAmountApprove();
                                                                                         }}
                                                                                         size="lg"
                                                                                         type={'reset'}
@@ -378,7 +384,7 @@ const Stake = () => {
                                                                                         <Col lg="12" xs="12" className="text-right">
                                                                                             <Button
                                                                                                 onClick={async () => {
-                                                                                                    await submitAmountStack();
+                                                                                                    // await submitAmountStack();
                                                                                                 }}
                                                                                                 size="lgs"
                                                                                                 type={'reset'}

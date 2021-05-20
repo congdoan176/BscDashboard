@@ -12,7 +12,7 @@ import {
     Nav,
     Container,
     Row,
-    Col, Button, Dropdown, DropdownItem, DropdownMenu
+    Col, Button, Dropdown, DropdownItem, DropdownMenu, ModalHeader, ModalBody, FormGroup, Input, ModalFooter, Modal
 } from "reactstrap";
 import Web3 from "web3";
 import DataContext from "../../context";
@@ -26,6 +26,10 @@ const Sidebar = (props) => {
     const closeCollapse = () => {
         setCollapseOpen(false);
     };
+
+    const [modal, setModal] = useState(false);
+    const toggle2 = () => setModal(!modal);
+
     const createLinks = (routes) => {
         return routes.map((prop, key) => {
             return (
@@ -40,34 +44,34 @@ const Sidebar = (props) => {
                             prop.name === "Dashboard" ?
                                 <img
                                     className="navbar-brand-img"
-                                    src={require("../../assets/img/icons/img/menu/Asset 2.png").default}
-                                    style={{width: 23, height: 23}}
+                                    src={require("../../assets/img/icons/img/menu/new/5.png").default}
+                                    style={{width: 25, height: 25}}
                                 /> : prop.name === "Public Sale" ?
                                 <img
                                     className="navbar-brand-img"
-                                    src={require("../../assets/img/icons/img/menu/Asset 4.png").default}
-                                    style={{width: 23, height: 23}}
+                                    src={require("../../assets/img/icons/img/menu/new/6.png").default}
+                                    style={{width: 25, height: 25}}
                                 /> : prop.name === "My Profile" ?
-                                    <img
-                                        className="navbar-brand-img"
-                                        src={require("../../assets/img/icons/img/menu/Asset 5.png").default}
-                                        style={{width: 23, height: 23}}
-                                    /> : prop.name === "Stake" ?
-                                        <img
-                                            className="navbar-brand-img"
-                                            src={require("../../assets/img/icons/img/menu/Asset 7.png").default}
-                                            style={{width: 23, height: 23}}
-                                        /> : prop.name === "Share token bonus" ?
-                                            <img
-                                                className="navbar-brand-img"
-                                                src={require("../../assets/img/icons/img/menu/Asset 6.png").default}
-                                                style={{width: 23, height: 23}}
-                                            /> : prop.name === "Docs" ?
-                                                <img
-                                                    className="navbar-brand-img"
-                                                    src={require("../../assets/img/icons/img/menu/Asset 8.png").default}
-                                                    style={{width: 23, height: 23}}
-                                                /> : ""
+                                <img
+                                    className="navbar-brand-img"
+                                    src={require("../../assets/img/icons/img/menu/new/4.png").default}
+                                    style={{width: 25, height: 25}}
+                                /> : prop.name === "Stake" ?
+                                <img
+                                    className="navbar-brand-img"
+                                    src={require("../../assets/img/icons/img/menu/new/3.png").default}
+                                    style={{width: 25, height: 25}}
+                                /> : prop.name === "Share token bonus" ?
+                                <img
+                                    className="navbar-brand-img"
+                                    src={require("../../assets/img/icons/img/menu/Asset 6.png").default}
+                                    style={{width: 25, height: 25}}
+                                /> : prop.name === "Docs" ?
+                                <img
+                                    className="navbar-brand-img"
+                                    src={require("../../assets/img/icons/img/menu/new/2.png").default}
+                                    style={{width: 25, height: 25}}
+                                /> : ""
                         }
                         <h4 style={{paddingLeft: 20, paddingTop: 6}}>
                             {" " + prop.name}
@@ -144,14 +148,12 @@ const Sidebar = (props) => {
                                 />
                             </NavbarBrand>
                         ) : null}
-                        <Nav className="align-items-center d-md-none mt-4 pr-4">
+                        <Nav className="align-items-center d-md-none mt-4 pr-3">
                             <UncontrolledDropdown nav>
                                 <DropdownToggle className="pr-0" nav>
                                     <Button
                                         color="white"
-                                        onClick={async () => {
-                                            await connectToMetaMask(data);
-                                        }}
+                                        onClick={toggle2}
                                         size="sm"
                                         style={{
                                             background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",
@@ -231,6 +233,61 @@ const Sidebar = (props) => {
                             </Nav>
                         </Collapse>
                     </Container>
+                    <Modal isOpen={modal} toggle={toggle2}>
+                        <ModalHeader toggle={toggle2} className="text-center">
+                            Connect to wallet
+                        </ModalHeader>
+                        <ModalBody style={{backgroundColor:"whitesmoke"}}>
+                            <Row>
+                                <Col xs={1}/>
+                                <Col xs={10}>
+                                    <div style={{backgroundColor: "white", borderRadius: 50, height: 50}}  className="mt-3">
+                                        <NavLink href="https://metamask.app.link/dapp/app.ftxfund.com">
+                                            <Row className="text-center" style={{paddingTop: 7}}>
+                                                <Col xs={4}>
+                                                    <img src="https://registry.walletconnect.org/logo/lg/c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96.jpeg"
+                                                         alt="" style={{width: 30, height: 30}}/>
+
+                                                </Col>
+                                                <Col  className="text-left" xs={6}>
+                                                    <h4>Meta Mask</h4>
+                                                </Col>
+                                            </Row>
+                                        </NavLink>
+                                    </div>
+                                    <div style={{backgroundColor: "white", borderRadius: 50, height: 50}} className="mt-3">
+                                        <NavLink href="https://link.trustwallet.com/open_url?coin_id=60&url=https://app.ftxfund.com">
+                                            <Row className="text-center" style={{paddingTop: 7}}>
+                                                <Col xs={4}>
+                                                    <img src="https://registry.walletconnect.org/logo/lg/4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0.jpeg"
+                                                         alt="" style={{width: 30, height: 30}}/>
+
+                                                </Col>
+                                                <Col  className="text-left" xs={6}>
+                                                    <h4>Trust Wallet</h4>
+                                                </Col>
+                                            </Row>
+                                        </NavLink>
+                                    </div>
+                                    <div style={{backgroundColor: "white", borderRadius: 50, height: 50}}  className="mt-3">
+                                        <NavLink href="imtokenv2://navigate/DappView?url=https://app.ftxfund.com">
+                                            <Row className="text-center" style={{paddingTop: 7}}>
+                                                <Col xs={4}>
+                                                    <img src="https://registry.walletconnect.org/logo/lg/9d373b43ad4d2cf190fb1a774ec964a1addf406d6fd24af94ab7596e58c291b2.jpeg"
+                                                         alt="" style={{width: 30, height: 30}}/>
+
+                                                </Col>
+                                                <Col  className="text-left" xs={6}>
+                                                    <h4>Im Token</h4>
+                                                </Col>
+                                            </Row>
+                                        </NavLink>
+                                    </div>
+                                </Col>
+                                <Col xs={1}/>
+                            </Row>
+                        </ModalBody>
+                    </Modal>
                 </Navbar>
             )}
         </DataContext.Consumer>

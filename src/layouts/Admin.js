@@ -13,11 +13,14 @@ import Address from "../json/addressContract/address.json"
 import Login from "../share/auth/index";
 import fdJson from "../json/founder/contract.json";
 import { BigNumber } from "@ethersproject/bignumber";
+var bigdecimal = require("bigdecimal");
 
 
 
 const Admin = (props) => {
-    const divBigNumber = BigNumber.from(10).pow(18)
+    const two = new bigdecimal.BigDecimal('1000000000000000000');
+
+    const divBigNumberBNB = BigNumber.from(10).pow(18)
     const mainContent = React.useRef(null);
     const location = useLocation();
     const [account, setAccount] = useState("")
@@ -80,24 +83,24 @@ const Admin = (props) => {
     };
 
     async function UpdateInfoUser(linkRef, verifyStatus, UserEmail, userId, totalSale, listReferral, totalSalesBranch){
-        await setUserVerifyStatus(verifyStatus);
-        await setUserEmail(UserEmail);
-        await setUserId(userId);
-        await setReferral(listReferral);
+
+        setUserVerifyStatus(verifyStatus);
+        setUserEmail(UserEmail);
+        setReferral(listReferral);
         if (totalSale === "" || totalSale === undefined){
-            await setTotalSales(0);
+            setTotalSales(0);
         }else {
-            await setTotalSales(totalSale);
+            setTotalSales(totalSale);
         }
         if (linkRef === "" || linkRef === undefined){
-            await setUserLinkRef(setLinkRefUser())
+            setUserLinkRef(setLinkRefUser(userId))
         }else {
-            await setUserLinkRef(linkRef);
+            setUserLinkRef(linkRef);
         }
         if (totalSalesBranch === "" || totalSalesBranch === undefined){
-            await setTotalSalesBranch(0)
+            setTotalSalesBranch(0)
         }else {
-            await setTotalSalesBranch(totalSalesBranch)
+            setTotalSalesBranch(totalSalesBranch)
         }
         if (listReferral > 0){
             let directSale = 0
@@ -128,7 +131,9 @@ const Admin = (props) => {
             const chain = await web3.eth.getChainId()
             setChain(chain.toString())
             const balance = (await web3.eth.getBalance(accounts[0]))
-            setBalanceBNB(BigNumber.from(balance).div(divBigNumber).toString());
+            let one = new bigdecimal.BigDecimal(balance);
+            let numberFix = Number(one.divide(two).toString()).toFixed(4);
+            setBalanceBNB(numberFix);
         }
     }
 
@@ -141,12 +146,13 @@ const Admin = (props) => {
                 return
             }
 
+            let one = new bigdecimal.BigDecimal(res);
             if (contract === "FTXF"){
-                setBalanceFTXF(BigNumber.from(res).div(divBigNumber).toString());
+                setBalanceFTXF(Number(one.divide(two).toString()).toFixed(4));
             }else if (contract === "USDT"){
-                setBalanceUSDT(BigNumber.from(res).div(divBigNumber).toString());
+                setBalanceUSDT(Number(one.divide(two).toString()).toFixed(4));
             }else if (contract === "FTXShare"){
-                setBalanceFTXFS(BigNumber.from(res).div(divBigNumber).toString());
+                setBalanceFTXFS(Number(one.divide(two).toString()).toFixed(4));
             }
         })
     }
@@ -159,7 +165,7 @@ const Admin = (props) => {
             const chain = await web3.eth.getChainId()
             setChain(chain.toString())
             const balance = (await web3.eth.getBalance(accounts[0]))
-            setBalanceBNB(BigNumber.from(balance).div(divBigNumber).toString());
+            setBalanceBNB(BigNumber.from(balance).div(divBigNumberBNB).toString());
             await getInfoContract(Address.FTXFTokenAddress, accounts[0], jsonFtx, "FTXF");
             await getInfoContract(Address.FTXFEshareAddress, accounts[0], jsonFtx, "FTXShare");
             await getInfoContract(Address.USDTAddess, accounts[0], jsonFtx, "USDT");
@@ -177,7 +183,7 @@ const Admin = (props) => {
         setAddressSponsor(addressSponsor);
     }
 
-    function setLinkRefUser(){
+    function setLinkRefUser(userId){
         let sh = window.location.href;
         let n = sh.indexOf("?");
         let sponsorHref = ""
@@ -201,7 +207,8 @@ const Admin = (props) => {
                     console.log("get full amount looked fail", err);
                     return;
                 }
-                setLookedFullAmount(BigNumber.from(res).div(divBigNumber).toString());
+                let one = new bigdecimal.BigDecimal(res);
+                setLookedFullAmount(Number(one.divide(two).toString()).toFixed(4));
             })
         }
     }
@@ -216,7 +223,8 @@ const Admin = (props) => {
                     console.log("get full amount looked fail", err);
                     return;
                 }
-                setAmountUnLook(BigNumber.from(res).div(divBigNumber).toString());
+                let one = new bigdecimal.BigDecimal(res);
+                setAmountUnLook(Number(one.divide(two).toString()).toFixed(4));
             })
         }
     }
@@ -235,7 +243,7 @@ const Admin = (props) => {
             UpdateInfoUser(dataJson.user.linkRef, dataJson.user.statusVerify,
                 dataJson.user.email, dataJson.user.id, dataJson.user.totalSales, dataJson.listChild, dataJson.user.totalSalesBranch);
         }
-    },[account, userId])
+    }, [account, userVerifyStatus])
 
 
     return (

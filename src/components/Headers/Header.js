@@ -21,10 +21,10 @@ const Header = () => {
                                             WELCOME TO FTXF DAPP PLATFORM
                                         </h4>
                                         {data.userVerifyStatus !== "complete" ?
-                                            <div>
+                                            <div className="mb-1">
                                                 {
                                                     data.accountAddress === Address.AdminAddress ?
-                                                        <a href="/admin/user_profile" style={{color: 'rgb(238, 255, 5)', fontWeight: "bold", fontSize: 19}}>Please Verify email</a> :
+                                                        <a href="/admin/user_profile" style={{color: 'rgb(238, 255, 5)', fontWeight: "bold", fontSize: 19,}}>Please Verify email</a> :
                                                         <a href="/user/user_profile" style={{color: 'rgb(238, 255, 5)', fontWeight: "bold", fontSize: 19}}>Please verify email</a>
                                                 }
                                             </div> : ""

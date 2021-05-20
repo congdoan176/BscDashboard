@@ -28,16 +28,14 @@ const Index = (props) => {
     async function getCurrentRow(){
         let arrayAmountFTXF = [0.6, 0.7, 0.75, 0.85 , 0.9, 0.95]
         let data = await Round.getRound()
-        let dataJson = JSON.parse(data);
-        setCurrentRound(dataJson.currentRound);
-        setAmountFTXF(arrayAmountFTXF[currentRound-1])
-
+        await setCurrentRound(data.currentRound);
+        await setAmountFTXF(arrayAmountFTXF[1 - 1])
     }
 
     useEffect(async () => {
-        // await getAmountBNB();
+        await getAmountBNB();
         await getCurrentRow();
-    })
+    },[])
 
 
     return (
@@ -48,24 +46,24 @@ const Index = (props) => {
                     <div>
                         {(data.balanceFTXFS > 0) ?
                             <Container className="mt-lg--5 mt--6"  fluid>
-                                <Card className="card-profile shadow">
+                                <Card className="shadow">
                                     <CardBody className="pt-0 text-center">
                                         <Row className="mt-lg-5 mt-3">
                                             <Col lg="11" xs="12">
-                                                <Contract {...props} headerText={"E-shares"} amount={0.1}
-                                                           accountBalance={data.balanceFTXFS}/>
+                                                <Contract {...props} headerText={"E-shares"} amount={1}
+                                                          accountBalance={data.balanceFTXFS}/>
                                             </Col>
                                         </Row>
                                         <Row className="mt-lg-5 mt-3">
                                             <Col lg="11" xs="12">
                                                 <Contract {...props} headerText={"FTXF"} amount={amountFTXF}
-                                                           accountBalance={data.balanceFTXF}/>
+                                                          accountBalance={data.balanceFTXF}/>
                                             </Col>
                                         </Row>
                                         <Row className="mt-lg-5 mt-3">
                                             <Col lg="11" xs="12">
                                                 <Contract {...props} headerText={"USDT"} amount={1}
-                                                           accountBalance={data.balanceUSDT}/>
+                                                          accountBalance={data.balanceUSDT}/>
                                             </Col>
                                         </Row>
                                         <Row className="mt-lg-5 mt-3">

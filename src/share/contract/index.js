@@ -89,15 +89,15 @@ const Contract = (props) => {
                             </Col>
                             <Col lg="5" xs="12">
                                 <Row>
-                                    <Col lg="12" xs="6">
+                                    <Col lg="12" xs="8">
                                         <h4>
-                                            Total Assets USDT
+                                            Total Assets ( USDT ):
                                         </h4>
                                     </Col>
-                                    <Col lg="12" xs="6">
-                                        <p style={{fontSize: 12}}>
-                                            Current price : {props.amount * props.accountBalance}
-                                        </p>
+                                    <Col lg="12" xs="4">
+                                        <h4 className="pl-lg-0 pl-2">
+                                            {props.amount * props.accountBalance}
+                                        </h4>
                                     </Col>
                                 </Row>
                             </Col>

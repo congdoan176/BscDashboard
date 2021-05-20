@@ -1,16 +1,13 @@
 import React, {useEffect, useState} from "react";
 import {Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Row} from "reactstrap";
-import Header from "../../components/Headers/Header.js";
 import DataContext from "../../context";
 import Web3 from "web3";
 import jsonFtx from "../../json/founder/contract.json";
 import Address from "../../json/addressContract/address.json"
-import {BigNumber} from "@ethersproject/bignumber";
 import HeaderFake from "../../components/Headers/HeaderFake";
 import Round from "../../share/roud/index"
 
 const BuyToken = () => {
-    const divBigNumber = BigNumber.from(10).pow(18)
     const [salePrice, setSalePrice] = useState(0);
     const [salePriceDiv, setSalePriceDiv] = useState(0);
     const [numberToken, setNumberToken] = useState("");
@@ -234,7 +231,9 @@ const BuyToken = () => {
                                                     </Col>
                                                     <Col lg="3">
                                                         <Button
-                                                            onClick={() => onBuyToken(data.balanceBNB)}
+                                                            onClick={async () => {
+                                                                 // await onBuyToken(data.balanceBNB)
+                                                            }}
                                                             size="lg"
                                                             block
                                                             style={{background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",

@@ -22,7 +22,7 @@ const ProfileBlock = (props) => {
                             className="navbar-brand-img"
                             src={require("../../assets/img/icons/img/logo/ds.png").default}
                             style={{width: 55, height: 55, }}
-                        /> : props.headerTextTop === "Referral users" && props.headerTextBottom === "Total referral sale" ?
+                        /> : props.headerTextTop === "Referral users" && props.headerTextBottom === "Total referral" ?
                         <img
                             className="navbar-brand-img"
                             src={require("../../assets/img/icons/img/logo/tru.png").default}
@@ -30,15 +30,15 @@ const ProfileBlock = (props) => {
                         /> : ""
                     }
                 </Col>
-                <Col lg="5" xs="6" className="text-left">
-                    <h5  style={{paddingTop: 20, paddingLeft: "7%"}}>
+                <Col lg="5" xs="7" className="text-left pl-lg-0" style={{paddingLeft: 30}}>
+                    <h5  style={{paddingTop: 20}}>
                         {props.headerTextTop}
                     </h5>
-                    <h5 style={{paddingTop: 20, paddingLeft: "7%"}}>
+                    <h5 style={{paddingTop: 20}}>
                         {props.headerTextBottom}
                     </h5>
                 </Col>
-                <Col lg="4" xs="4">
+                <Col lg="4" xs="3">
                     <h5 style={{paddingTop: 20}}>
                         {
                             props.headerTextTop === "Direct sale" && props.headerTextBottom === "Total sale" ? "~" : ""

@@ -1,5 +1,5 @@
 import React from "react";
-import {Container} from "reactstrap";
+import {Button, Container} from "reactstrap";
 import DataContext from "../../context/index";
 import { Col, Row } from "reactstrap";
 
@@ -17,7 +17,6 @@ const HeaderFake = () => {
                                          height: 2
                                      }}
                                 >
-
                                 </Col>
                             </Row>
                         </Container>
