@@ -43,6 +43,8 @@ const Admin = (props) => {
     const [totalSalesBranch, setTotalSalesBranch] = useState(0)
     const [referral, setReferral] = useState([])
     const [directSale, setDirectSale] = useState(0)
+    const [totalReferral, setTotalReferral] = useState(0)
+
 
     useEffect( () => {
         document.documentElement.scrollTop = 0;
@@ -145,7 +147,6 @@ const Admin = (props) => {
                 console.log("An error occured", err)
                 return
             }
-
             let one = new bigdecimal.BigDecimal(res);
             if (contract === "FTXF"){
                 setBalanceFTXF(Number(one.divide(two).toString()).toFixed(4));
@@ -229,6 +230,11 @@ const Admin = (props) => {
         }
     }
 
+    async function getAllChildren(id){
+        let dataJson = JSON.parse(await Login.getTotalCase(id))
+        setTotalReferral(dataJson.countChildren)
+    }
+
     useEffect(async () => {
         setLinkRefUser();
         getAddressSponsor();
@@ -239,9 +245,10 @@ const Admin = (props) => {
             await getInfoContract(Address.FTXFTokenAddress, account, jsonFtx, "FTXF");
             await getInfoContract(Address.FTXFEshareAddress, account, jsonFtx, "FTXShare");
             await getInfoContract(Address.USDTAddess, account, jsonFtx, "USDT");
-            let dataJson = JSON.parse(await Login.addAccount(account, addressSponsor))
+            let dataJson = JSON.parse(await Login.addAccount(account.toLowerCase(), addressSponsor.toLowerCase()))
             UpdateInfoUser(dataJson.user.linkRef, dataJson.user.statusVerify,
                 dataJson.user.email, dataJson.user.id, dataJson.user.totalSales, dataJson.listChild, dataJson.user.totalSalesBranch);
+            await getAllChildren(dataJson.user.id);
         }
     }, [account, userVerifyStatus])
 
@@ -267,7 +274,8 @@ const Admin = (props) => {
                 lookedFullAmount: lookedFullAmount,
                 amountUnLook: amountUnLook,
                 totalSalesBranch: totalSalesBranch,
-                directSale: directSale
+                directSale: directSale,
+                totalReferral: totalReferral
 
             }}>
                 {

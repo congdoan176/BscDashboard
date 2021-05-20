@@ -75,7 +75,19 @@ const Contract = (props) => {
                                             <h4 style={{paddingTop: 3}}>
                                                 {props.headerText}
                                             </h4>
-                                            <p style={{fontSize: 12}}>Current price : {props.amount}</p>
+                                            {
+                                                props.headerText === "BNB" ?
+                                                <p style={{fontSize: 12}}>{props.amount + "$ "}
+                                                    {
+                                                        props.changePercentStatus === "+" && props.headerText === "BNB"?
+                                                            <span style={{color: 'green'}}>{props.changePercent}</span> :
+                                                            <span style={{color: 'red'}}>{props.changePercent}</span>
+                                                    }
+                                                </p> :
+                                                <p style={{fontSize: 12}}>{props.amount + "$ "}
+
+                                                </p>
+                                            }
                                         </div> :
                                         <h4 style={{paddingTop: 20}}>
                                             {props.headerText}
@@ -91,7 +103,7 @@ const Contract = (props) => {
                                 <Row>
                                     <Col lg="12" xs="8">
                                         <h4>
-                                            Total Assets ( USDT ):
+                                            Total Assets ( USDT )
                                         </h4>
                                     </Col>
                                     <Col lg="12" xs="4">
@@ -114,23 +126,25 @@ const Contract = (props) => {
                                 <h4 style={{paddingTop: 18}}>
                                     {props.headerText}
                                 </h4>
+                                <p style={{fontSize: 12}}>{props.amount + "$"}</p>
                             </Col>
                             <Col lg="3" xs="8" className="text-left">
                                 <h5 style={{paddingTop: 20}}>
-                                    Total FTXF locked:
+                                    Total FTXF locked
                                     <span>
                                              {" ~" + props.totalAmountLooked}
-                                        </span>
+                                    </span>
                                 </h5>
                             </Col>
                             <Col lg="2" xs="4" className="d-none-block d-xl-none d-lg-none d-md-none">
                                 <h4 style={{paddingTop: 18}}>
                                     {props.headerText}
                                 </h4>
+                                <p style={{fontSize: 12}}>{props.amount + "$"}</p>
                             </Col>
                             <Col lg="3" xs="8" className="text-left">
                                 <h5 style={{paddingTop: 20}}>
-                                    Total FTXF unlock:
+                                    Total FTXF unlock
                                     <span>
                                             {" ~" + props.amountUnlook}
                                     </span>
@@ -158,5 +172,5 @@ const Contract = (props) => {
             </Row>
         </>
     );
-};
+}
 export default Contract;

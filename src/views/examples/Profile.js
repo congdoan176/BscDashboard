@@ -30,7 +30,7 @@ const Profile = (props) => {
     async function getInfoUser(data) {
         const web3 = new Web3(Web3.givenProvider);
         const accounts = await web3.eth.getAccounts();
-        let dataJson = JSON.parse(await Login.addAccount(accounts[0], data.addressSponsor))
+        let dataJson = JSON.parse(await Login.addAccount(accounts[0].toLowerCase(), data.addressSponsor.toLowerCase()))
         data.UpdateInfoUser(dataJson.user.linkRef, dataJson.user.statusVerify,
             dataJson.user.email, dataJson.user.id, dataJson.user.totalSales, dataJson.listChild, dataJson.user.totalSalesBranch)
     }
@@ -52,7 +52,7 @@ const Profile = (props) => {
 
     async function sendData(type, addressAccount, context) {
         if (type === 'email') {
-            let data = JSON.parse(await Verify.sendEmail(Email, addressAccount));
+            let data = JSON.parse(await Verify.sendEmail(Email.toLowerCase(), addressAccount.toLowerCase()));
             console.log(data);
             if (data.message === "success") {
                 alert("Please check your email to get the code!");
@@ -62,7 +62,7 @@ const Profile = (props) => {
                 setErrorText("The address is already linked to another email");
             }
         } else {
-            let data = JSON.parse(await Verify.sendCode(verifyCode, addressAccount));
+            let data = JSON.parse(await Verify.sendCode(verifyCode, addressAccount.toLowerCase()));
             if (data.msg === "The confirmation code is not correct, please check again.") {
                 setErrorMsg(data.msg);
             }
@@ -127,7 +127,7 @@ const Profile = (props) => {
                                                               headerTextTop={"Referral users"}
                                                               headerTextBottom={"Total referral"}
                                                               valueTop={data.referral.length}
-                                                              valueBotoom={data.totalSalesBranch}/>
+                                                              valueBotoom={data.totalReferral}/>
                                             </Row>
                                         </div>
                                     </CardBody>

@@ -59,7 +59,8 @@ const BuyToken = () => {
         await getPrice();
         await getByAmount();
         await getCurrentRound();
-    },[salePriceDiv, salePrice])
+        console.log(salePrice, salePriceDiv)
+    })
 
     function changeSaleValue(e) {
         let a = e.target.value;
@@ -77,7 +78,7 @@ const BuyToken = () => {
             setErrText("The minimum number of FTXF tokens to buy is 1000!");
             return;
         }
-        if (numberToken > 30000){
+        if (numberToken > 10000){
             setErrText("The maximum number of FTXF tokens that can be purchased is 30000!");
             return;
         }
@@ -154,7 +155,7 @@ const BuyToken = () => {
                                                                             className="form-control-alternative"
                                                                             type="number"
                                                                             min="1000"
-                                                                            max="30000"
+                                                                            max="10000"
                                                                             placeholder="0"
                                                                             style={{
 
