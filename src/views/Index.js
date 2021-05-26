@@ -51,36 +51,38 @@ const Index = (props) => {
             <DataContext.Consumer>
                 {data => (
                     <div>
-                        {(data.balanceFTXFS > 0) ?
-                            <Container className="mt-lg--5 mt--6"  fluid>
-                                <Card className="shadow">
-                                    <CardBody className="pt-0 text-center">
-                                        <Row className="mt-lg-5 mt-3">
-                                            <Col lg="11" xs="12">
-                                                <Contract {...props} headerText={"E-shares"} amount={1}
-                                                          accountBalance={data.balanceFTXFS}/>
-                                            </Col>
-                                        </Row>
-                                        <Row className="mt-lg-5 mt-3">
-                                            <Col lg="11" xs="12">
-                                                <Contract {...props} headerText={"FTXF"} amount={amountFTXF}
-                                                          accountBalance={data.balanceFTXF} changePercent={"1"}/>
-                                            </Col>
-                                        </Row>
-                                        <Row className="mt-lg-5 mt-3">
-                                            <Col lg="11" xs="12">
-                                                <Contract {...props} headerText={"USDT"} amount={1}
-                                                          accountBalance={data.balanceUSDT}/>
-                                            </Col>
-                                        </Row>
-                                        <Row className="mt-lg-5 mt-3">
-                                            <Col lg="11" xs="12">
-                                                <Contract {...props} headerText={"BNB"} amount={amountBNB}
-                                                          accountBalance={data.balanceBNB} changePercent={changePercent} changePercentStatus={changePercentStatus}/>
-                                            </Col>
-                                        </Row>
-                                        {
-                                            data.lookedFullAmount > 0 ?
+                        <Container className="mt-lg--5 mt--6"  fluid>
+                            <Card className="shadow">
+                                <CardBody className="pt-0 text-center">
+                                    {
+                                        data.balanceFTXFS > 0 ?
+                                            <Row className="mt-lg-5 mt-3">
+                                                <Col lg="11" xs="12">
+                                                    <Contract {...props} headerText={"E-shares"} amount={1}
+                                                              accountBalance={data.balanceFTXFS}/>
+                                                </Col>
+                                            </Row> : ""
+                                    }
+                                    <Row className="mt-lg-5 mt-3">
+                                        <Col lg="11" xs="12">
+                                            <Contract {...props} headerText={"FTXF"} amount={amountFTXF}
+                                                      accountBalance={data.balanceFTXF} changePercent={"1"}/>
+                                        </Col>
+                                    </Row>
+                                    <Row className="mt-lg-5 mt-3">
+                                        <Col lg="11" xs="12">
+                                            <Contract {...props} headerText={"USDT"} amount={1}
+                                                      accountBalance={data.balanceUSDT} changePercent={"-0.02"} changePercentStatus={"-"}/>
+                                        </Col>
+                                    </Row>
+                                    <Row className="mt-lg-5 mt-3">
+                                        <Col lg="11" xs="12">
+                                            <Contract {...props} headerText={"BNB"} amount={amountBNB}
+                                                      accountBalance={data.balanceBNB} changePercent={changePercent} changePercentStatus={changePercentStatus}/>
+                                        </Col>
+                                    </Row>
+                                    {
+                                        data.lookedFullAmount > 0 ?
                                             <Row className="mt-lg-5 mt-3">
                                                 <Col lg="11" xs="12">
                                                     <Contract {...props} headerText={"FTXF Lock"}
@@ -88,37 +90,40 @@ const Index = (props) => {
                                                               totalAmountLooked={data.lookedFullAmount} amountUnlook={data.amountUnLook}/>
                                                 </Col>
                                             </Row>  : ""
-                                        }
-                                    </CardBody>
-                                </Card>
-                            </Container> :
-                            <Container className="mt-lg--5 mt--6" fluid>
-                                <Card className="card-profile shadow">
-                                    <CardBody className="pt-0 text-center">
-                                        <Row className="mt-lg-5 mt-3">
-                                            <Col lg="11" xs="12">
-                                                <Contract {...props} headerText={"BNB"}
-                                                          amount={amountBNB} accountBalance={data.balanceBNB}/>
-                                            </Col>
-                                        </Row>
-                                        <Row className="mt-lg-5 mt-3">
-                                            <Col lg="11" xs="12">
-                                                <Contract {...props} headerText={"FTXF"}
-                                                          amount={amountFTXF} accountBalance={data.balanceFTXF}/>
-                                            </Col>
-                                        </Row>
-                                        <Row className="mt-lg-5 mt-3">
-                                            <Col lg="11" xs="12">
-                                                <Contract {...props} headerText={"USDT"}
-                                                          amount={1}
-                                                         accountBalance={data.balanceUSDT}/>
-                                            </Col>
-                                        </Row>
-                                    </CardBody>
-                                </Card>
-                            </Container>
-                        }
+                                    }
+                                </CardBody>
+                            </Card>
+                        </Container>
 
+
+                        {/*{(data.balanceFTXFS > 0) ?*/}
+                        {/*    */}
+                        {/*    :*/}
+                        {/*    <Container className="mt-lg--5 mt--6" fluid>*/}
+                        {/*        <Card className="card-profile shadow">*/}
+                        {/*            <CardBody className="pt-0 text-center">*/}
+                        {/*                <Row className="mt-lg-5 mt-3">*/}
+                        {/*                    <Col lg="11" xs="12">*/}
+                        {/*                        <Contract {...props} headerText={"BNB"} amount={amountBNB}*/}
+                        {/*                                  accountBalance={data.balanceBNB} changePercent={changePercent} changePercentStatus={changePercentStatus}/>*/}
+                        {/*                    </Col>*/}
+                        {/*                </Row>*/}
+                        {/*                <Row className="mt-lg-5 mt-3">*/}
+                        {/*                    <Col lg="11" xs="12">*/}
+                        {/*                        <Contract {...props} headerText={"FTXF"}*/}
+                        {/*                                  amount={amountFTXF} accountBalance={data.balanceFTXF} changePercent={"1"}/>*/}
+                        {/*                    </Col>*/}
+                        {/*                </Row>*/}
+                        {/*                <Row className="mt-lg-5 mt-3">*/}
+                        {/*                    <Col lg="11" xs="12">*/}
+                        {/*                        <Contract {...props} headerText={"USDT"} amount={1}*/}
+                        {/*                                  accountBalance={data.balanceUSDT} changePercent={"0.02"} changePercentStatus={"-"}/>*/}
+                        {/*                    </Col>*/}
+                        {/*                </Row>*/}
+                        {/*            </CardBody>*/}
+                        {/*        </Card>*/}
+                        {/*    </Container>*/}
+                        {/*}*/}
                     </div>
                 )}
             </DataContext.Consumer>

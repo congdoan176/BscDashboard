@@ -80,16 +80,24 @@ const Contract = (props) => {
                                                 <p style={{fontSize: 12}}>{props.amount + "$ "}
                                                     {
                                                         props.changePercentStatus === "+" && props.headerText === "BNB"?
-                                                            <span style={{color: 'green'}}>{props.changePercent}</span> :
-                                                            <span style={{color: 'red'}}>{props.changePercent}</span>
+                                                            <span style={{color: 'green'}}>{props.changePercent+"%"}</span> :
+                                                            <span style={{color: 'red'}}>{props.changePercent+"%"}</span>
                                                     }
                                                 </p> :
                                                 <p style={{fontSize: 12}}>{props.amount + "$ "}
 
                                                 </p>
                                             }
-                                        </div> :
-                                        <h4 style={{paddingTop: 20}}>
+                                        </div> : props.headerText === "USDT" ?
+                                        <div>
+                                            <h4 style={{paddingTop: 3}}>
+                                                {props.headerText}
+                                            </h4>
+                                            <p style={{fontSize: 12}}>
+                                                <span style={{color: 'red'}}>{props.changePercent+"%"}</span>
+                                            </p>
+                                        </div>
+                                        : <h4 style={{paddingTop: 20}}>
                                             {props.headerText}
                                         </h4>
                                 }

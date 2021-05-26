@@ -9,12 +9,11 @@ import {
     Input,
     Container,
     Row,
-    Col, Modal, ModalHeader, ModalBody, ModalFooter,
+    Col,
 } from "reactstrap";
 import DataContext from "../../context";
 import Verify from "../../share/verify/index"
 import Web3 from "web3";
-import Login from "../../share/auth";
 import ProfileBlock from "../../share/blockProfile";
 import HeaderFake from "../../components/Headers/HeaderFake";
 import {CopyToClipboard} from 'react-copy-to-clipboard';
@@ -28,11 +27,12 @@ const Profile = (props) => {
     const [copied, setCopied] = useState(false);
 
     async function getInfoUser(data) {
-        const web3 = new Web3(Web3.givenProvider);
-        const accounts = await web3.eth.getAccounts();
-        let dataJson = JSON.parse(await Login.addAccount(accounts[0].toLowerCase(), data.addressSponsor.toLowerCase()))
-        data.UpdateInfoUser(dataJson.user.linkRef, dataJson.user.statusVerify,
-            dataJson.user.email, dataJson.user.id, dataJson.user.totalSales, dataJson.listChild, dataJson.user.totalSalesBranch)
+        // const web3 = new Web3(Web3.givenProvider);
+        // const accounts = await web3.eth.getAccounts();
+        // let dataJson = JSON.parse(await Login.addAccount(accounts[0].toLowerCase(), data.addressSponsor.toLowerCase()))
+        // data.UpdateInfoUser(dataJson.user.linkRef, dataJson.user.statusVerify,
+        //     dataJson.user.email, dataJson.user.id, dataJson.user.totalSales, dataJson.listChild, dataJson.user.totalSalesBranch)
+        window.location.reload()
     }
 
     async function validateEmail(type, addressAccount) {
@@ -46,6 +46,13 @@ const Profile = (props) => {
                 setErrorText("Email is not valid.");
                 return;
             }
+            const web3 = new Web3(Web3.givenProvider)
+            const accounts = await web3.eth.getAccounts()
+            if (accounts.length <= 0){
+                setErrorText("You need to connect a wallet to make it verify email.")
+                return;
+            }
+            setEmail(Email.toLowerCase())
             await sendData("email", addressAccount)
         }
     }
@@ -53,19 +60,31 @@ const Profile = (props) => {
     async function sendData(type, addressAccount, context) {
         if (type === 'email') {
             let data = JSON.parse(await Verify.sendEmail(Email.toLowerCase(), addressAccount.toLowerCase()));
-            console.log(data);
+            if (data.message === "error send mail"){
+                alert("send email failed, please try again later.");
+                return;
+            }
             if (data.message === "success") {
                 alert("Please check your email to get the code!");
                 setInputVerifyCode(true)
             }
-            if (data.message.indexOf("The address is already linked to another email") !== -1){
-                setErrorText("The address is already linked to another email");
-            }
         } else {
-            let data = JSON.parse(await Verify.sendCode(verifyCode, addressAccount.toLowerCase()));
+            let data = JSON.parse(await Verify.sendCode(verifyCode, addressAccount.toLowerCase(), Email, context.addressSponsor));
             if (data.msg === "The confirmation code is not correct, please check again.") {
                 setErrorMsg(data.msg);
+                return;
             }
+            if (data.msg.indexOf("The address is already linked to another email") !== -1){
+                alert("The address is already linked to another email");
+                setInputVerifyCode(false);
+                return;
+            }
+            if(data.msg === "Referrer id can not be lower than you"){
+                alert("Verify email fail! Referrer id can not be lower than you.")
+                setInputVerifyCode(false);
+                return;
+            }
+
             if (data.msg === "success") {
                 alert("Verify email success.");
                 setErrorMsg("")
@@ -119,8 +138,8 @@ const Profile = (props) => {
                                                 <ProfileBlock {...props}
                                                               headerTextTop={"Direct sale"}
                                                               headerTextBottom={"Total sale"}
-                                                              valueTop={data.directSale}
-                                                              valueBotoom={data.totalSales}/>
+                                                              valueTop={Number(data.directSale).toFixed(4)}
+                                                              valueBotoom={Number(data.totalSales).toFixed(4)}/>
                                             </Row>
                                             <Row lg="11" sm="11" className="mt-2 mb-lg-2">
                                                 <ProfileBlock {...props}
@@ -138,7 +157,7 @@ const Profile = (props) => {
                                     <CardBody>
                                         <Form>
                                             {
-                                                data.userVerifyStatus === "complete" ? null :
+                                                data.userVerifyStatus === "complete" || data.accountAddress === "" ? null :
                                                     <div className="pl-lg-4 ">
                                                         {!inputVerifyCode ?
                                                             <FormGroup>

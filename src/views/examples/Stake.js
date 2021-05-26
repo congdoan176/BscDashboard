@@ -459,7 +459,7 @@ const Stake = () => {
                                                                                                     <Button
                                                                                                         color="white"
                                                                                                         onClick={async () => {
-                                                                                                            await withdrawRewardStake();
+                                                                                                            // await withdrawRewardStake();
                                                                                                         }}
                                                                                                         type={'reset'}
                                                                                                         style={{width: "100%", color: "#11cdef",height: 40}}
@@ -504,7 +504,7 @@ const Stake = () => {
                                         </ModalBody>
                                         <ModalFooter>
                                             <Button style={{color: "white",background: 'linear-gradient(87deg, #11cdef 0, #1171ef 100%)'}} onClick={async () => {
-                                                await withdrawStake();
+                                                // await withdrawStake();
                                             }}>Unstake</Button>
                                         </ModalFooter>
                                     </Modal>

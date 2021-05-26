@@ -12,7 +12,7 @@ import {
     Nav,
     Container,
     Row,
-    Col, Button, Dropdown, DropdownItem, DropdownMenu, ModalHeader, ModalBody, FormGroup, Input, ModalFooter, Modal
+    Col, Button, ModalHeader, ModalBody, Modal
 } from "reactstrap";
 import Web3 from "web3";
 import DataContext from "../../context";
@@ -107,7 +107,7 @@ const Sidebar = (props) => {
                 window.ethereum.enable().then(async function () {
                     const web3 = new Web3(Web3.givenProvider);
                     const accounts = await web3.eth.getAccounts();
-                    let dataJson = JSON.parse(await Login.addAccount(accounts[0].toLowerCase(), addressSponsor.toLowerCase()))
+                    let dataJson = JSON.parse(await Login.addAccount(accounts[0].toLowerCase(), 1))
                     data.UpdateInfoUser(dataJson.user.linkRef, dataJson.user.statusVerify,
                         dataJson.user.email, dataJson.user.id, dataJson.user.totalSales, dataJson.listChild, dataJson.user.totalSalesBranch);
                     await data.updateData();

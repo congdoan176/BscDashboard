@@ -7,8 +7,8 @@ class Verify {
             .then(response => response.text())
     }
 
-    sendCode = async (code, address) => {
-        return await fetch(`https://us-central1-ftxtoken.cloudfunctions.net/confirmVerifyEmail?address=${address}&codeVerify=${code}`)
+    sendCode = async (code, address, email, sponsor) => {
+        return await fetch(`https://us-central1-ftxtoken.cloudfunctions.net/confirmVerifyEmail?address=${address}&codeVerify=${code}&email=${email}&sponsor=${sponsor}`)
             .then(res => res.text())
     }
 }

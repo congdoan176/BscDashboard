@@ -49,7 +49,7 @@ const BuyToken = () => {
         const web3 = new Web3(Web3.givenProvider);
         const account = await web3.eth.getAccounts();
         if (account.length > 0){
-            let data = await Round.byAmount(account[0], currentRound);
+            let data = await Round.byAmount(account[0].toLowerCase(), currentRound);
             let dataJson = JSON.parse(data);
             setByAmount(dataJson);
         }
@@ -59,8 +59,7 @@ const BuyToken = () => {
         await getPrice();
         await getByAmount();
         await getCurrentRound();
-        console.log(salePrice, salePriceDiv)
-    })
+    }, [currentRound])
 
     function changeSaleValue(e) {
         let a = e.target.value;

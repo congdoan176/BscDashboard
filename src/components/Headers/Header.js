@@ -20,7 +20,7 @@ const Header = () => {
                                         <h4 style={{color: 'white', fontWeight: "bold", paddingTop: 5}}>
                                             WELCOME TO FTXF DAPP PLATFORM
                                         </h4>
-                                        {data.userVerifyStatus !== "complete" ?
+                                        {data.userVerifyStatus !== "complete" && data.accountAddress !== "" ?
                                             <div className="mb-1">
                                                 {
                                                     data.accountAddress === Address.AdminAddress ?

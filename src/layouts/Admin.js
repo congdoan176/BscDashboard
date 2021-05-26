@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from "react";
 import {useLocation, Route, Switch, Redirect} from "react-router-dom";
-import {Container} from "reactstrap";
+import {
+    Container,
+} from "reactstrap";
 import AdminNavbar from "./../components/Navbars/AdminNavbar.js";
 import AdminFooter from "./../components/Footers/AdminFooter.js";
 import Sidebar from "./../components/Sidebar/Sidebar.js";
@@ -13,6 +15,7 @@ import Address from "../json/addressContract/address.json"
 import Login from "../share/auth/index";
 import fdJson from "../json/founder/contract.json";
 import { BigNumber } from "@ethersproject/bignumber";
+import ReactLoading from "react-loading";
 var bigdecimal = require("bigdecimal");
 
 
@@ -26,6 +29,7 @@ const Admin = (props) => {
     const [account, setAccount] = useState("")
     const [chainId, setChain] = useState("")
 
+
     const [balanceBNB, setBalanceBNB] = useState(0)
     const [balanceFTXF, setBalanceFTXF] = useState(0)
     const [balanceUSDT, setBalanceUSDT] = useState(0)
@@ -33,7 +37,7 @@ const Admin = (props) => {
     const [lookedFullAmount, setLookedFullAmount] = useState(0);
     const [amountUnLook, setAmountUnLook] = useState(0);
 
-    const [addressSponsor, setAddressSponsor] = useState("")
+    const [addressSponsor, setAddressSponsor] = useState(1)
 
     const [userVerifyStatus, setUserVerifyStatus] = useState("")
     const [userLinkRef, setUserLinkRef] = useState("")
@@ -45,6 +49,8 @@ const Admin = (props) => {
     const [directSale, setDirectSale] = useState(0)
     const [totalReferral, setTotalReferral] = useState(0)
 
+
+    const [reload, setReload] = useState(false)
 
     useEffect( () => {
         document.documentElement.scrollTop = 0;
@@ -85,7 +91,6 @@ const Admin = (props) => {
     };
 
     async function UpdateInfoUser(linkRef, verifyStatus, UserEmail, userId, totalSale, listReferral, totalSalesBranch){
-
         setUserVerifyStatus(verifyStatus);
         setUserEmail(UserEmail);
         setReferral(listReferral);
@@ -129,6 +134,7 @@ const Admin = (props) => {
         const web3 = new Web3(Web3.givenProvider)
         const accounts = await web3.eth.getAccounts()
         if (accounts.length > 0){
+            setReload(false)
             setAccount(accounts[0])
             const chain = await web3.eth.getChainId()
             setChain(chain.toString())
@@ -245,7 +251,7 @@ const Admin = (props) => {
             await getInfoContract(Address.FTXFTokenAddress, account, jsonFtx, "FTXF");
             await getInfoContract(Address.FTXFEshareAddress, account, jsonFtx, "FTXShare");
             await getInfoContract(Address.USDTAddess, account, jsonFtx, "USDT");
-            let dataJson = JSON.parse(await Login.addAccount(account.toLowerCase(), addressSponsor.toLowerCase()))
+            let dataJson = JSON.parse(await Login.addAccount(account.toLowerCase(), 1))
             UpdateInfoUser(dataJson.user.linkRef, dataJson.user.statusVerify,
                 dataJson.user.email, dataJson.user.id, dataJson.user.totalSales, dataJson.listChild, dataJson.user.totalSalesBranch);
             await getAllChildren(dataJson.user.id);
@@ -255,71 +261,73 @@ const Admin = (props) => {
 
     return (
         <>
-            <DataContext.Provider value={{
-                accountAddress: account,
-                accountChain: chainId,
-                balanceUSDT: balanceUSDT,
-                balanceBNB: balanceBNB,
-                balanceFTXF: balanceFTXF,
-                balanceFTXFS: balanceFTXFS,
-                addressSponsor: addressSponsor,
-                userVerifyStatus: userVerifyStatus,
-                userEmail: userEmail,
-                userLinkRef: userLinkRef,
-                userId: userId,
-                totalSales: totalSales,
-                referral: referral,
-                updateData: updateData,
-                UpdateInfoUser: UpdateInfoUser,
-                lookedFullAmount: lookedFullAmount,
-                amountUnLook: amountUnLook,
-                totalSalesBranch: totalSalesBranch,
-                directSale: directSale,
-                totalReferral: totalReferral
+            {
+                <DataContext.Provider value={{
+                        accountAddress: account,
+                        accountChain: chainId,
+                        balanceUSDT: balanceUSDT,
+                        balanceBNB: balanceBNB,
+                        balanceFTXF: balanceFTXF,
+                        balanceFTXFS: balanceFTXFS,
+                        addressSponsor: addressSponsor,
+                        userVerifyStatus: userVerifyStatus,
+                        userEmail: userEmail,
+                        userLinkRef: userLinkRef,
+                        userId: userId,
+                        totalSales: totalSales,
+                        referral: referral,
+                        updateData: updateData,
+                        UpdateInfoUser: UpdateInfoUser,
+                        lookedFullAmount: lookedFullAmount,
+                        amountUnLook: amountUnLook,
+                        totalSalesBranch: totalSalesBranch,
+                        directSale: directSale,
+                        totalReferral: totalReferral
 
-            }}>
-                {
-                    account === Address.AdminAddress ?
-                        <Sidebar
-                            {...props}
-                            routes={routes}
-                            logo={{
-                                innerLink: "/admin/index",
-                                imgSrc: require("../assets/img/icons/img/Asset 1.png").default,
-                                imgAlt: "...",
-                            }}
-                        /> :
-                        <Sidebar
-                            {...props}
-                            routes={routesUser}
-                            logo={{
-                                innerLink: "/user/index",
-                                imgSrc: require("../assets/img/icons/img/Asset 1.png").default,
-                                imgAlt: "...",
-                            }}
-                        />
-                }
-                <div className="main-content" ref={mainContent}>
-                    <AdminNavbar
-                        {...props}
-                        brandText={getBrandText(props.location.pathname)}
-                    />
-                    <Switch>
-                        {
-                            account === Address.AdminAddress ? getRoutes(routes) : getRoutes(routesUser)
-                        }
+                    }}>
                         {
                             account === Address.AdminAddress ?
-                            <Redirect from="*" to="/admin/dashboard"/>:
-                            <Redirect from="*" to="/user/dashboard"/>
+                                <Sidebar
+                                    {...props}
+                                    routes={routes}
+                                    logo={{
+                                        innerLink: "/admin/index",
+                                        imgSrc: require("../assets/img/icons/img/Asset 1.png").default,
+                                        imgAlt: "...",
+                                    }}
+                                /> :
+                                <Sidebar
+                                    {...props}
+                                    routes={routesUser}
+                                    logo={{
+                                        innerLink: "/user/index",
+                                        imgSrc: require("../assets/img/icons/img/Asset 1.png").default,
+                                        imgAlt: "...",
+                                    }}
+                                />
                         }
-                    </Switch>
+                        <div className="main-content" ref={mainContent}>
+                            <AdminNavbar
+                                {...props}
+                                brandText={getBrandText(props.location.pathname)}
+                            />
+                            <Switch>
+                                {
+                                    account === Address.AdminAddress ? getRoutes(routes) : getRoutes(routesUser)
+                                }
+                                {
+                                    account === Address.AdminAddress ?
+                                        <Redirect from="*" to="/admin/dashboard"/>:
+                                        <Redirect from="*" to="/user/dashboard"/>
+                                }
+                            </Switch>
 
-                    <Container fluid>
-                        <AdminFooter/>
-                    </Container>
-                </div>
-            </DataContext.Provider>
+                            <Container fluid>
+                                <AdminFooter/>
+                            </Container>
+                        </div>
+                    </DataContext.Provider>
+            }
         </>
     );
 }

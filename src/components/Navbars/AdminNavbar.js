@@ -1,11 +1,11 @@
-import React, {ChildContextProvider, useState} from "react";
+import React, {useState} from "react";
 import {Link} from "react-router-dom";
 import {
     UncontrolledDropdown,
     DropdownToggle,
     Navbar,
     Nav,
-    Container, Button, Form, Col, Row, ModalHeader, ModalBody, NavLink, Modal,
+    Container, Button, Col, Row, ModalHeader, ModalBody, NavLink, Modal,
 } from "reactstrap";
 import Web3 from 'web3'
 import DataContext from "../../context";
@@ -18,12 +18,12 @@ const AdminNavbar = (props) => {
 
     async function connectToMetaMask(data, addressSponsor) {
         if (window.ethereum) {
-            const web3 = new Web3(window.ethereum);
+            // const web3 = new Web3(window.ethereum);
             try {
                 window.ethereum.enable().then(async function () {
                     const web3 = new Web3(Web3.givenProvider);
                     const accounts = await web3.eth.getAccounts();
-                    let dataJson = JSON.parse(await Login.addAccount(accounts[0].toLowerCase(), addressSponsor.toLowerCase()))
+                    let dataJson = JSON.parse(await Login.addAccount(accounts[0].toLowerCase(), 1))
                     data.UpdateInfoUser(dataJson.user.linkRef, dataJson.user.statusVerify,
                         dataJson.user.email, dataJson.user.id, dataJson.user.totalSales, dataJson.listChild, dataJson.user.totalSalesBranch);
                     await data.updateData();
@@ -32,7 +32,7 @@ const AdminNavbar = (props) => {
 
             }
         } else if (window.web3) {
-            const web3 = new Web3(window.web3.currentProvider);
+            // const web3 = new Web3(window.web3.currentProvider);
         } else {
             setModal(true)
         }
