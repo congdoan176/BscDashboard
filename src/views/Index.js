@@ -3,7 +3,7 @@ import {
     Container,
     Row,
     Col,
-    Card, CardBody
+    Card, CardBody, ModalHeader, ModalBody, FormGroup, Input, ModalFooter, Button, Modal
 } from "reactstrap";
 import Contract from "../share/contract";
 import Header from "../components/Headers/Header.js";
@@ -18,6 +18,10 @@ const Index = (props) => {
     const [changePercentStatus, setChangePercentStatus] = useState("");
     const [currentRound, setCurrentRound] = useState(0);
     const [amountFTXF, setAmountFTXF] = useState(0);
+
+    const [modal, setModal] = useState(true);
+
+    const toggle = () => setModal(false);
 
     async function getAmountBNB(){
         let data = await Round.getAmountBNB()
@@ -94,8 +98,6 @@ const Index = (props) => {
                                 </CardBody>
                             </Card>
                         </Container>
-
-
                         {/*{(data.balanceFTXFS > 0) ?*/}
                         {/*    */}
                         {/*    :*/}

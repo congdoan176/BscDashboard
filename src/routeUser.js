@@ -32,12 +32,5 @@ var routesUser = [
         component: Stake,
         layout: "/user",
     },
-    {
-        path: "/Docs",
-        name: "Docs",
-        icon: "../../assets/img/icons/img/menu/Asset 4.png",
-        component: Icons,
-        layout: "/user",
-    },
 ];
 export default routesUser;

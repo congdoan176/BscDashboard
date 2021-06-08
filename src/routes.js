@@ -41,12 +41,5 @@ var routes = [
     component: ShareToken,
     layout: "/admin",
   },
-  {
-    path: "/Docs",
-    name: "Docs",
-    icon: "../../assets/img/icons/img/menu/Asset 4.png",
-    component: Icons,
-    layout: "/user",
-  },
 ];
 export default routes;

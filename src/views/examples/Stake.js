@@ -20,7 +20,6 @@ const Stake = () => {
     const [totalAmountFTXF, setTotalAmountFTXF] = useState(0);
     const [totalAmountApprove, setTotalAmountApprove] = useState(0);
 
-
     const [amountStake, setAmountStake] = useState(0);
     const [quantityStake, setQuantityStake] = useState(0);
     const [rewardStake, setRewardStake] = useState(0);
@@ -50,7 +49,8 @@ const Stake = () => {
                     return
                 }
                 let one = new bigdecimal.BigDecimal(res);
-                setTotalAmountFTXF(Number(one.divide(two).toString()).toFixed(4));
+                setTotalAmountFTXF(Number(one.divide(two).toString()));
+
             })
         }
     }
@@ -65,8 +65,8 @@ const Stake = () => {
                     console.log("get quantity stake fail", err);
                     return;
                 }
-                let one = new bigdecimal.BigDecimal(res);
-                setQuantityStake(Number(one.divide(two).toString()).toFixed(4))
+                let one = new bigdecimal.BigDecimal(res.amount);
+                setQuantityStake(Number(one.divide(two).toString()))
             })
         }
     }
@@ -95,7 +95,7 @@ const Stake = () => {
                     return;
                 }
                 let one = new bigdecimal.BigDecimal(res);
-                setRewardStake(Number(one.divide(two).toString()).toFixed(4));
+                setRewardStake(Number(one.divide(two).toString()));
             })
         }
     }
@@ -112,7 +112,7 @@ const Stake = () => {
                         return;
                     }
                     let one = new bigdecimal.BigDecimal(res);
-                    setTotalAmountApprove(Number(one.divide(two).toString()).toFixed(4));
+                    setTotalAmountApprove(Number(one.divide(two).toString()));
                 })
             }
         }
@@ -143,7 +143,7 @@ const Stake = () => {
 
     async function submitAmountStack() {
         if (amountStake > totalAmountFTXF) {
-            alert("Amount stake must be less than or equal amount approve");
+            alert("The amount of FTXF you stake exceeds the allowed quantity.");
             return;
         }
         try {
@@ -186,7 +186,6 @@ const Stake = () => {
         if (account.length > 0) {
             const data = new web3.eth.Contract(fdJson, Address.FounderAddress);
             try {
-
                 await data.methods.unstake(BigNumber.from(10).pow(18).mul(quantityUnStake).toString()).send({
                     from: account[0],
                 })
@@ -265,7 +264,7 @@ const Stake = () => {
                                                                                                         className="form-control-alternative"
                                                                                                         id="input-username"
                                                                                                         placeholder="Stake amount"
-                                                                                                        value={totalAmountFTXF}
+                                                                                                        value={totalAmountFTXF.toFixed(4)}
                                                                                                         disabled={true}
                                                                                                         style={{
                                                                                                             width: '100%',
@@ -287,7 +286,7 @@ const Stake = () => {
                                                                                 }}>
                                                                                     <Button
                                                                                         onClick={async () => {
-                                                                                            // await submitAmountApprove();
+                                                                                           // await submitAmountApprove();
                                                                                         }}
                                                                                         size="lg"
                                                                                         type={'reset'}
@@ -378,7 +377,7 @@ const Stake = () => {
                                                                                                 </Row>
                                                                                             </FormGroup>
                                                                                         </div>
-                                                                                        <small  style={{color: "#1171ef"}}>Total FTXF assets: ~{totalAmountApprove}</small>
+                                                                                        <small  style={{color: "#1171ef"}}>Total FTXF assets: ~{totalAmountApprove.toFixed(4)}</small>
                                                                                     </Row>
                                                                                     <Row className="mt-3" >
                                                                                         <Col lg="12" xs="12" className="text-right">
@@ -433,7 +432,7 @@ const Stake = () => {
                                                                                                     <h3 className="m-0 p-2 mb-sm-2" style={{color: '#11cdef',backgroundColor: 'white',borderRadius: 5}}>
                                                                                                         Quantity stake
                                                                                                         <span
-                                                                                                            className="font-weight-light">: {quantityStake}</span>
+                                                                                                            className="font-weight-light">: {quantityStake.toFixed(4)}</span>
                                                                                                     </h3>
                                                                                                 </Col>
                                                                                                 <Col lg="4" xs="12" className="mt-2">
@@ -452,7 +451,7 @@ const Stake = () => {
                                                                                                     <h3 className="m-0 p-2 mb-sm-2 " style={{color: '#11cdef', backgroundColor: 'white',borderRadius: 5}}>
                                                                                                         Reward stake:
                                                                                                         <span
-                                                                                                            className="font-weight-light"> {rewardStake}</span>
+                                                                                                            className="font-weight-light"> {rewardStake.toFixed(4)}</span>
                                                                                                     </h3>
                                                                                                 </Col>
                                                                                                 <Col lg="4" xs="12" className="mt-2">

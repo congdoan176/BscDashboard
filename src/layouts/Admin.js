@@ -15,7 +15,6 @@ import Address from "../json/addressContract/address.json"
 import Login from "../share/auth/index";
 import fdJson from "../json/founder/contract.json";
 import { BigNumber } from "@ethersproject/bignumber";
-import ReactLoading from "react-loading";
 var bigdecimal = require("bigdecimal");
 
 

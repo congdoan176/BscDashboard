@@ -6,7 +6,6 @@ import jsonFtx from "../../json/founder/contract.json";
 import Address from "../../json/addressContract/address.json"
 import HeaderFake from "../../components/Headers/HeaderFake";
 import Round from "../../share/roud/index"
-
 const BuyToken = () => {
     const [salePrice, setSalePrice] = useState(0);
     const [salePriceDiv, setSalePriceDiv] = useState(0);
@@ -14,7 +13,8 @@ const BuyToken = () => {
     const [numberBNB, setNumberBNB] = useState(0);
     const [errText, setErrText] = useState("");
     const [currentRound, setCurrentRound] = useState(0);
-    const [buyAmount, setByAmount] = useState([]);
+    const [buyAmount, setByAmount] = useState(0);
+    const [disabled, setDisabled] = useState(false);
 
     async function getPrice() {
         const web3 = new Web3(Web3.givenProvider);
@@ -51,14 +51,19 @@ const BuyToken = () => {
         if (account.length > 0){
             let data = await Round.byAmount(account[0].toLowerCase(), currentRound);
             let dataJson = JSON.parse(data);
-            setByAmount(dataJson);
+            if (dataJson._size === undefined){
+                await setByAmount(0);
+            }else {
+                await setByAmount(dataJson._size);
+            }
+
         }
     }
 
     useEffect(async () => {
+        await getCurrentRound();
         await getPrice();
         await getByAmount();
-        await getCurrentRound();
     }, [currentRound])
 
     function changeSaleValue(e) {
@@ -70,21 +75,22 @@ const BuyToken = () => {
 
     async function onBuyToken(totalAmountBNB) {
         if (totalAmountBNB < numberBNB) {
-            setErrText("Number BNB must be less than or equal total BNB assets.")
+            alert("The amount of FTXF you buy exceeds the allowed quantity.")
             return;
         }
         if (numberToken < 1000){
-            setErrText("The minimum number of FTXF tokens to buy is 1000!");
+            alert("The minimum number of FTXF tokens to buy is 1000!");
             return;
         }
         if (numberToken > 10000){
-            setErrText("The maximum number of FTXF tokens that can be purchased is 30000!");
+            alert("The maximum number of FTXF tokens that can be purchased is 10000!");
             return;
         }
-        if (buyAmount.length > 0){
-            setErrText("you bought FTXF at this round.");
+        if (buyAmount !== 0){
+            alert("You bought FTXF at this round.");
             return;
         }
+        setDisabled(true)
         const web3 = new Web3(Web3.givenProvider);
         const accounts = await web3.eth.getAccounts()
         if (accounts.length > 0) {
@@ -95,10 +101,10 @@ const BuyToken = () => {
                     from: accounts[0],
                     value: Math.floor(amount)
                 })
-                await getByAmount();
             } catch (err) {
                 console.log("Buy token error", err);
             }
+
         }
     }
 
@@ -155,13 +161,14 @@ const BuyToken = () => {
                                                                             type="number"
                                                                             min="1000"
                                                                             max="10000"
-                                                                            placeholder="0"
+                                                                            placeholder="min 1.000 - max 10.000"
                                                                             style={{
 
                                                                                 height: 58,
                                                                                 borderTopRightRadius: 15,
                                                                                 borderBottomRightRadius: 15,
-                                                                                boxShadow: 'none'
+                                                                                boxShadow: 'none',
+                                                                                color: "black"
                                                                             }}
                                                                             onChange={(e) => {
                                                                                 changeSaleValue(e);
@@ -211,7 +218,8 @@ const BuyToken = () => {
                                                                                 borderTopRightRadius: 15,
                                                                                 borderBottomRightRadius: 15,
                                                                                 boxShadow: 'none',
-                                                                                backgroundColor: "white"
+                                                                                backgroundColor: "white",
+                                                                                color: "black"
                                                                             }}
                                                                             disabled={true}
                                                                             type="text"
@@ -232,10 +240,11 @@ const BuyToken = () => {
                                                     <Col lg="3">
                                                         <Button
                                                             onClick={async () => {
-                                                                 // await onBuyToken(data.balanceBNB)
+                                                                 await onBuyToken(data.balanceBNB)
                                                             }}
                                                             size="lg"
                                                             block
+                                                            disabled={disabled}
                                                             style={{background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",
                                                                 borderColor: "#11cdef", color: "white", borderRadius: 10}}
                                                         >
