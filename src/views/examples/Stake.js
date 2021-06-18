@@ -14,7 +14,9 @@ import Address from "../../json/addressContract/address.json"
 import {BigNumber} from "@ethersproject/bignumber"
 import HeaderFake from "../../components/Headers/HeaderFake";
 import ReactLoading from "react-loading";
+import SaveStake from '../../share/stake/stake';
 var bigdecimal = require("bigdecimal");
+
 const Stake = () => {
     const two = new bigdecimal.BigDecimal('1000000000000000000');
     const [totalAmountFTXF, setTotalAmountFTXF] = useState(0);
@@ -26,14 +28,25 @@ const Stake = () => {
     const [quantityUnStake, setQuantityUnStake] = useState(0);
 
     const [backFromApprove, setBackFromApprove] = useState(false);
-    const [nextFromStake, setNextFromStake] = useState(true);
+    const [nextFromStake, setNextFromStake] = useState(false);
     const [modal, setModal] = useState(false);
-
     const [isLoaded, setIsLoaded] = useState(false);
+
+    const [dateStake, setDateStake] = useState(70);
+
+    const [backgroundPercent25, setBackgroundPercent25] = useState(true);
+    const [backgroundPercent50, setBackgroundPercent50] = useState(true);
+    const [backgroundPercent75, setBackgroundPercent75] = useState(true);
+    const [backgroundPercent100, setBackgroundPercent100] = useState(true);
+    const [backgroundTotalPercent, setBackgroundTotalPercent] = useState(true);
+
+    const [historyStake, setHistoryStake] = useState([]);
+    const [interestPercent, setInterestPercent] = useState("15%");
+
+
     const handleIsLoadedToggle = () => {
         setIsLoaded(currentIsLoaded => !currentIsLoaded)
     };
-
 
 
     const toggle = () => setModal(!modal);
@@ -50,7 +63,6 @@ const Stake = () => {
                 }
                 let one = new bigdecimal.BigDecimal(res);
                 setTotalAmountFTXF(Number(one.divide(two).toString()));
-
             })
         }
     }
@@ -71,17 +83,51 @@ const Stake = () => {
         }
     }
 
+    async function getHistoryStake() {
+        const web3 = new Web3(Web3.givenProvider);
+        const account = await web3.eth.getAccounts();
+        let history = await SaveStake.get(account[0]);
+        let dataJson =  JSON.parse(history)
+        setHistoryStake(dataJson);
+    }
+
     useEffect(async () => {
         await getTotalAmountFTXF();
         await getTotalStakeReward();
         await geTotalQuantityStake();
-        await getTotalAmountApprove()
+        await getTotalAmountApprove();
+        await getHistoryStake();
         if (!backFromApprove){
             if (quantityStake > 0) {
                 setNextFromStake(true);
             }
+            if (totalAmountApprove > 0){
+                setNextFromStake(true);
+            }
         }
-    })
+    },[totalAmountFTXF])
+
+    async function changeDateStake(e) {
+        let value = e.target.value;
+        setDateStake(value);
+        console.log(typeof value)
+        if (value === "70"){
+            setInterestPercent("15%");
+        }else if(value === "90"){
+            setInterestPercent("20%");
+        }else if(value === "120"){
+            setInterestPercent("30%");
+        }else if(value === "180"){
+            setInterestPercent("40%");
+        }else if(value === "360"){
+            setInterestPercent("50%");
+        }else if(value === "540"){
+            setInterestPercent("65%");
+        }else if(value === "720"){
+            setInterestPercent("100%");
+        }
+
+    }
 
 
     async function getTotalStakeReward() {
@@ -125,7 +171,16 @@ const Stake = () => {
             const data = new web3.eth.Contract(jsonFtx, Address.FTXFTokenAddress);
             try {
                 handleIsLoadedToggle()
-                await data.methods.approve(Address.FounderAddress, totalAmountFTXF).send({
+                let string = totalAmountFTXF.toString().split('.')
+                let lengthDecimal = 0, totalAmount= "";
+                if (string.length === 1){
+                    lengthDecimal = 0;
+                    totalAmount = string[0] + "";
+                }else {
+                    lengthDecimal = string[1].length;
+                    totalAmount = string[0] + string[1];
+                }
+                await data.methods.approve(Address.FounderAddress, BigNumber.from(10).pow(18 - lengthDecimal).mul(totalAmount).toString()).send({
                     from: account[0]
                 })
                 await setNextFromStake(true);
@@ -142,6 +197,10 @@ const Stake = () => {
     }
 
     async function submitAmountStack() {
+        if (historyStake.length > 0){
+            alert("You already staked, please try again later.");
+            return;
+        }
         if (amountStake > totalAmountFTXF) {
             alert("The amount of FTXF you stake exceeds the allowed quantity.");
             return;
@@ -151,7 +210,16 @@ const Stake = () => {
             const account = await web3.eth.getAccounts();
             const data = new web3.eth.Contract(fdJson, Address.FounderAddress);
 
-            data.methods.stake(BigNumber.from(10).pow(18).mul(amountStake).toString()).send({
+            let string = amountStake.toString().split('.')
+            let lengthDecimal = 0, totalAmount= "";
+            if (string.length === 1){
+                lengthDecimal = 0;
+                totalAmount = string[0] + "";
+            }else {
+                lengthDecimal = string[1].length;
+                totalAmount = string[0] + string[1];
+            }
+            data.methods.stake(BigNumber.from(10).pow(18 - lengthDecimal).mul(totalAmount).toString()).send({
                 from: account[0]
             })
 
@@ -176,6 +244,134 @@ const Stake = () => {
         }
     }
 
+    async function submitDateStake(){
+        const web3 = new Web3(Web3.givenProvider);
+        const account = await web3.eth.getAccounts();
+        let res = JSON.parse(await SaveStake.save(account[0].toLowerCase(), amountStake, dateStake));
+        if (res.msg === "create history stake success"){
+            alert("Stake suceess");
+        }
+    }
+
+    function changePercentStake(percent){
+        if (percent === 25){
+            if (!backgroundPercent100 || !backgroundPercent75 || !backgroundPercent50){
+                document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
+                document.getElementById("percent50").style.background = "none"
+                document.getElementById("percent75").style.background = "none"
+                document.getElementById("percent100").style.background = "none"
+                setBackgroundPercent25(false)
+                setBackgroundPercent50(true)
+                setBackgroundPercent75(true)
+                setBackgroundPercent100(true)
+                setAmountStake(Number(totalAmountApprove) * 25 / 100);
+            }else {
+                if (backgroundPercent25){
+                    document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
+                    setBackgroundPercent25(false)
+                    setAmountStake(Number(totalAmountApprove) * 25 / 100);
+                }else {
+                    document.getElementById("percent25").style.background = "none"
+                    setBackgroundPercent25(true)
+                }
+            }
+        }else if (percent ===  50){
+            if (!backgroundPercent100 || !backgroundPercent75){
+                document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
+                document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
+                document.getElementById("percent75").style.background = "none"
+                document.getElementById("percent100").style.background = "none"
+                setBackgroundPercent25(false)
+                setBackgroundPercent50(false)
+                setBackgroundPercent75(true)
+                setBackgroundPercent100(true)
+                setAmountStake(Number(totalAmountApprove) * 50 / 100);
+            }else {
+                if (backgroundPercent50){
+                    document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
+                    document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
+                    setBackgroundPercent25(false);
+                    setBackgroundPercent50(false);
+                    setAmountStake(Number(totalAmountApprove) * 50 / 100);
+                }else {
+                    document.getElementById("percent25").style.background = "none"
+                    document.getElementById("percent50").style.background = "none"
+                    setBackgroundPercent25(true);
+                    setBackgroundPercent50(true);
+                }
+            }
+        }else if (percent ===  75){
+            if (!backgroundPercent100){
+                document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
+                document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
+                document.getElementById("percent75").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
+                document.getElementById("percent100").style.background = "none"
+                setBackgroundPercent25(false)
+                setBackgroundPercent50(false)
+                setBackgroundPercent75(false)
+                setBackgroundPercent100(true)
+                setAmountStake(Number(totalAmountApprove) * 75 / 100);
+            }else {
+                if (backgroundPercent75){
+                    document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
+                    document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
+                    document.getElementById("percent75").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
+                    setBackgroundPercent25(false)
+                    setBackgroundPercent50(false)
+                    setBackgroundPercent75(false)
+                    setAmountStake(Number(totalAmountApprove) * 75 / 100);
+                }else {
+                    document.getElementById("percent25").style.background = "none"
+                    document.getElementById("percent50").style.background = "none"
+                    document.getElementById("percent75").style.background = "none"
+                    setBackgroundPercent25(true)
+                    setBackgroundPercent50(true)
+                    setBackgroundPercent75(true)
+                }
+            }
+        }else if (percent ===  100){
+            if (!backgroundTotalPercent){
+                document.getElementById("percent25").style.background = "none"
+                document.getElementById("percent50").style.background = "none"
+                document.getElementById("percent75").style.background = "none"
+                document.getElementById("percent100").style.background = "none"
+                setBackgroundTotalPercent(true);
+            }else if (!backgroundPercent25 || !backgroundPercent50 || !backgroundPercent75){
+                document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
+                document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
+                document.getElementById("percent75").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
+                document.getElementById("percent100").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
+                setBackgroundPercent25(false)
+                setBackgroundPercent50(false)
+                setBackgroundPercent75(false)
+                setBackgroundPercent100(false)
+                setBackgroundTotalPercent(false)
+                setAmountStake(Number(totalAmountApprove) * 100 / 100);
+            }else {
+                if (backgroundPercent100){
+                    document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
+                    document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
+                    document.getElementById("percent75").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
+                    document.getElementById("percent100").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
+                    setBackgroundPercent25(false)
+                    setBackgroundPercent50(false)
+                    setBackgroundPercent75(false)
+                    setBackgroundPercent100(false)
+                    setAmountStake(Number(totalAmountApprove) * 100 / 100);
+                }else {
+                    document.getElementById("percent25").style.background = "none"
+                    document.getElementById("percent50").style.background = "none"
+                    document.getElementById("percent75").style.background = "none"
+                    document.getElementById("percent100").style.background = "none"
+                    setBackgroundPercent25(true)
+                    setBackgroundPercent50(true)
+                    setBackgroundPercent75(true)
+                    setBackgroundPercent100(true)
+                }
+            }
+        }
+    }
+
     function changeQuantityUnStake(e) {
         setQuantityUnStake(e.target.value);
     }
@@ -185,8 +381,18 @@ const Stake = () => {
         const account = await web3.eth.getAccounts();
         if (account.length > 0) {
             const data = new web3.eth.Contract(fdJson, Address.FounderAddress);
+
+            let string = quantityUnStake.toString().split('.')
+            let lengthDecimal = 0, totalAmount= "";
+            if (string.length === 1){
+                lengthDecimal = 0;
+                totalAmount = string[0] + "";
+            }else {
+                lengthDecimal = string[1].length;
+                totalAmount = string[0] + string[1];
+            }
             try {
-                await data.methods.unstake(BigNumber.from(10).pow(18).mul(quantityUnStake).toString()).send({
+                await data.methods.unstake(BigNumber.from(10).pow(18 - lengthDecimal).mul(totalAmount).toString()).send({
                     from: account[0],
                 })
             } catch (err) {
@@ -274,7 +480,6 @@ const Stake = () => {
                                                                                                             boxShadow: 'none',
                                                                                                             backgroundColor: "white"
                                                                                                         }}
-                                                                                                        onChange={(e) => changeAmountStake(e)}
                                                                                                     />
                                                                                                 </Col>
                                                                                             </Row>
@@ -361,7 +566,7 @@ const Stake = () => {
                                                                                                         <Input
                                                                                                             className="form-control-alternative"
                                                                                                             id="input-username"
-                                                                                                            placeholder="0"
+                                                                                                            value={amountStake}
                                                                                                             type="number"
                                                                                                             min={0}
                                                                                                             style={{
@@ -377,13 +582,116 @@ const Stake = () => {
                                                                                                 </Row>
                                                                                             </FormGroup>
                                                                                         </div>
-                                                                                        <small  style={{color: "#1171ef"}}>Total FTXF assets: ~{totalAmountApprove.toFixed(4)}</small>
+                                                                                        <div style={{width: '100%', marginTop: 15, justifyItems: 'center', alignContent: "center",marginLeft: 15,
+                                                                                            marginRight: 15}}>
+                                                                                            <Row>
+                                                                                                <Col
+                                                                                                    onClick={() => {
+                                                                                                        changePercentStake(25)
+                                                                                                    }}
+                                                                                                     style={{width: '20%', height: 7, border: "1px solid #d4d4d4", marginLeft: 5, marginRight: 5, textAlign: 'center'}}
+                                                                                                    id={"percent25"}
+                                                                                                >
+                                                                                                    <p style={{paddingTop: 5, fontSize: 12,fontWeight: 600}}>25%</p>
+                                                                                                </Col>
+                                                                                                <Col
+                                                                                                    onClick={() => {
+                                                                                                        changePercentStake(50)
+                                                                                                    }}
+                                                                                                    style={{width: '20%', height: 7, border: "1px solid #d4d4d4", marginLeft: 5, marginRight: 5, textAlign: 'center'}}
+                                                                                                    id={"percent50"}
+                                                                                                >
+                                                                                                    <p style={{paddingTop: 5, fontSize: 12,fontWeight: 600}}>50%</p>
+                                                                                                </Col>
+                                                                                                <Col
+                                                                                                    onClick={() => {
+                                                                                                        changePercentStake(75)
+                                                                                                    }}
+                                                                                                    style={{width: '20%', height: 7, border: "1px solid #d4d4d4", marginLeft: 5, marginRight: 5, textAlign: 'center'}}
+                                                                                                    id={"percent75"}
+                                                                                                >
+                                                                                                    <p style={{paddingTop: 5, fontSize: 12,fontWeight: 600}}>75%</p>
+                                                                                                </Col>
+                                                                                                <Col
+                                                                                                    onClick={() => {
+                                                                                                        changePercentStake(100)
+                                                                                                    }}
+                                                                                                    style={{width: '20%', height: 7, border: "1px solid #d4d4d4", marginLeft: 5, marginRight: 5, textAlign: 'center'}}
+                                                                                                    id={"percent100"}
+                                                                                                >
+                                                                                                    <p style={{paddingTop: 5, fontSize: 12,fontWeight: 600}}>100%</p>
+                                                                                                </Col>
+                                                                                            </Row>
+                                                                                        </div>
+                                                                                        {/*<small  style={{color: "#1171ef"}}>Total FTXF assets: ~{totalAmountApprove.toFixed(4)}</small>*/}
+                                                                                    </Row>
+                                                                                    <label
+                                                                                        className="form-control-label"
+                                                                                        style={{fontSize: 20, color: "#1171ef", marginTop: 20}}
+                                                                                    >
+                                                                                        Date Stake
+                                                                                    </label>
+                                                                                    <Row>
+                                                                                        <div style={{
+                                                                                            border: '1px solid #e0e0e0',
+                                                                                            height: 60,
+                                                                                            width: '100%',
+                                                                                            borderRadius: 15,
+                                                                                            backgroundColor: 'white'
+                                                                                        }}>
+                                                                                            <FormGroup>
+                                                                                                <Row style={{position: 'relative'}}>
+                                                                                                    <Col style={{
+                                                                                                        position: 'absolute',
+                                                                                                    }}>
+                                                                                                        <Input
+                                                                                                            className="form-control-alternative"
+                                                                                                            value={dateStake}
+                                                                                                            type="select"
+                                                                                                            style={{
+                                                                                                                width: '100%',
+                                                                                                                height: 58,
+                                                                                                                boxShadow: 'none',
+                                                                                                                borderRadius: 15
+                                                                                                            }}
+                                                                                                            onChange={(e) => changeDateStake(e)}
+                                                                                                        >
+                                                                                                            <option value={70}>
+                                                                                                                70 days
+                                                                                                            </option>
+                                                                                                            <option value={90}>
+                                                                                                                90 days
+                                                                                                            </option>
+                                                                                                            <option value={120}>
+                                                                                                                120 days
+                                                                                                            </option>
+                                                                                                            <option value={180}>
+                                                                                                                180 days
+                                                                                                            </option>
+                                                                                                            <option value={360}>
+                                                                                                                360 days
+                                                                                                            </option>
+                                                                                                            <option value={540}>
+                                                                                                                540 days
+                                                                                                            </option>
+                                                                                                            <option value={720}>
+                                                                                                                720 days
+                                                                                                            </option>
+                                                                                                        </Input>
+                                                                                                    </Col>
+                                                                                                </Row>
+                                                                                            </FormGroup>
+                                                                                        </div>
                                                                                     </Row>
                                                                                     <Row className="mt-3" >
-                                                                                        <Col lg="12" xs="12" className="text-right">
+                                                                                        <Col lg="6" xs="6">
+                                                                                            <p style={{fontSize: 13}}>Pestimated Annual Yield: {interestPercent}</p>
+                                                                                        </Col>
+                                                                                        <Col lg="6" xs="6" className="text-right">
                                                                                             <Button
                                                                                                 onClick={async () => {
                                                                                                     // await submitAmountStack();
+                                                                                                    await submitDateStake();
                                                                                                 }}
                                                                                                 size="lgs"
                                                                                                 type={'reset'}
@@ -436,14 +744,17 @@ const Stake = () => {
                                                                                                     </h3>
                                                                                                 </Col>
                                                                                                 <Col lg="4" xs="12" className="mt-2">
-                                                                                                    <Button
-                                                                                                        color="white"
-                                                                                                        onClick={toggle}
-                                                                                                        type={'reset'}
-                                                                                                        style={{width: "100%", color: "#11cdef", height: 40}}
-                                                                                                    >
-                                                                                                        Unstake
-                                                                                                    </Button>
+                                                                                                    {
+                                                                                                        historyStake.length === 0 ?
+                                                                                                        <Button
+                                                                                                            color="white"
+                                                                                                            onClick={toggle}
+                                                                                                            type={'reset'}
+                                                                                                            style={{width: "100%", color: "#11cdef", height: 40}}
+                                                                                                        >
+                                                                                                            Unstake
+                                                                                                        </Button> : ""
+                                                                                                    }
                                                                                                 </Col>
                                                                                             </Row>
                                                                                             <Row className="mt-4">

@@ -5,11 +5,11 @@ import {
     Col,
     Card, CardBody, ModalHeader, ModalBody, FormGroup, Input, ModalFooter, Button, Modal
 } from "reactstrap";
-import Contract from "../share/contract";
+import Contract from "../share/contract/contract";
 import Header from "../components/Headers/Header.js";
 import DataContext from "../context";
 import Address from "../json/addressContract/address.json";
-import Round from "../share/roud";
+import Round from "../share/roud/roud";
 
 const Index = (props) => {
 

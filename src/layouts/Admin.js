@@ -12,7 +12,7 @@ import DataContext from "../context";
 import Web3 from "web3";
 import jsonFtx from "../json/contract/readContract.json";
 import Address from "../json/addressContract/address.json"
-import Login from "../share/auth/index";
+import Login from "../share/auth/auth";
 import fdJson from "../json/founder/contract.json";
 import { BigNumber } from "@ethersproject/bignumber";
 var bigdecimal = require("bigdecimal");

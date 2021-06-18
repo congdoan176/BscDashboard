@@ -12,9 +12,9 @@ import {
     Col,
 } from "reactstrap";
 import DataContext from "../../context";
-import Verify from "../../share/verify/index"
+import Verify from "../../share/verify/verify"
 import Web3 from "web3";
-import ProfileBlock from "../../share/blockProfile";
+import ProfileBlock from "../../share/blockProfile/profile";
 import HeaderFake from "../../components/Headers/HeaderFake";
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 const Profile = (props) => {

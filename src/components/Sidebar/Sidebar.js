@@ -16,7 +16,7 @@ import {
 } from "reactstrap";
 import Web3 from "web3";
 import DataContext from "../../context";
-import Login from "../../share/auth/index";
+import Login from "../../share/auth/auth";
 
 const Sidebar = (props) => {
     const [collapseOpen, setCollapseOpen] = useState();
