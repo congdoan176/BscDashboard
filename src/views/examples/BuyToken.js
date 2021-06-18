@@ -240,7 +240,7 @@ const BuyToken = () => {
                                                     <Col lg="3">
                                                         <Button
                                                             onClick={async () => {
-                                                                 await onBuyToken(data.balanceBNB)
+                                                                 // await onBuyToken(data.balanceBNB)
                                                             }}
                                                             size="lg"
                                                             block

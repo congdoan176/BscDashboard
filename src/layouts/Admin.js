@@ -108,10 +108,10 @@ const Admin = (props) => {
         }else {
             setTotalSalesBranch(totalSalesBranch)
         }
-        if (listReferral > 0){
+        if (listReferral.length > 0){
             let directSale = 0
             for (let i = 0; i < listReferral.length; i++) {
-                directSale += listReferral[i].totalSales
+                directSale += Number(listReferral[i].totalInvest);
             }
             setDirectSale(directSale)
         }
@@ -250,8 +250,8 @@ const Admin = (props) => {
             await getInfoContract(Address.FTXFTokenAddress, account, jsonFtx, "FTXF");
             await getInfoContract(Address.FTXFEshareAddress, account, jsonFtx, "FTXShare");
             await getInfoContract(Address.USDTAddess, account, jsonFtx, "USDT");
-            let dataJson = JSON.parse(await Login.addAccount(account.toLowerCase(), 1))
-            UpdateInfoUser(dataJson.user.linkRef, dataJson.user.statusVerify,
+            let dataJson = JSON.parse(await Login.addAccount(account.toLowerCase(), addressSponsor.toLowerCase()))
+            await UpdateInfoUser(dataJson.user.linkRef, dataJson.user.statusVerify,
                 dataJson.user.email, dataJson.user.id, dataJson.user.totalSales, dataJson.listChild, dataJson.user.totalSalesBranch);
             await getAllChildren(dataJson.user.id);
         }

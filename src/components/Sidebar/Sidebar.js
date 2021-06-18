@@ -102,7 +102,7 @@ const Sidebar = (props) => {
                 window.ethereum.enable().then(async function () {
                     const web3 = new Web3(Web3.givenProvider);
                     const accounts = await web3.eth.getAccounts();
-                    let dataJson = JSON.parse(await Login.addAccount(accounts[0].toLowerCase(), 1))
+                    let dataJson = JSON.parse(await Login.addAccount(accounts[0].toLowerCase(), addressSponsor.toLowerCase()))
                     data.UpdateInfoUser(dataJson.user.linkRef, dataJson.user.statusVerify,
                         dataJson.user.email, dataJson.user.id, dataJson.user.totalSales, dataJson.listChild, dataJson.user.totalSalesBranch);
                     await data.updateData();
@@ -197,7 +197,7 @@ const Sidebar = (props) => {
 
                             <Nav className="mb-md-3" navbar>
                                 <NavItem className="active-pro active">
-                                    <NavLink href="https://medium.com/FTXfund" style={{color: "#11cdef"}}>
+                                    <NavLink href="https://ftxfund.medium.com/" style={{color: "#11cdef"}}>
                                         <i className="fab fa-medium"/>
                                         <h4>
                                             Medium

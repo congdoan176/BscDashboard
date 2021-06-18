@@ -26,7 +26,7 @@ const Stake = () => {
     const [quantityUnStake, setQuantityUnStake] = useState(0);
 
     const [backFromApprove, setBackFromApprove] = useState(false);
-    const [nextFromStake, setNextFromStake] = useState(false);
+    const [nextFromStake, setNextFromStake] = useState(true);
     const [modal, setModal] = useState(false);
 
     const [isLoaded, setIsLoaded] = useState(false);

@@ -23,7 +23,7 @@ const AdminNavbar = (props) => {
                 window.ethereum.enable().then(async function () {
                     const web3 = new Web3(Web3.givenProvider);
                     const accounts = await web3.eth.getAccounts();
-                    let dataJson = JSON.parse(await Login.addAccount(accounts[0].toLowerCase(), 1))
+                    let dataJson = JSON.parse(await Login.addAccount(accounts[0].toLowerCase(), addressSponsor.toLowerCase()))
                     data.UpdateInfoUser(dataJson.user.linkRef, dataJson.user.statusVerify,
                         dataJson.user.email, dataJson.user.id, dataJson.user.totalSales, dataJson.listChild, dataJson.user.totalSalesBranch);
                     await data.updateData();
