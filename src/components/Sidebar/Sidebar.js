@@ -104,7 +104,8 @@ const Sidebar = (props) => {
                     const accounts = await web3.eth.getAccounts();
                     let dataJson = JSON.parse(await Login.addAccount(accounts[0].toLowerCase(), addressSponsor.toLowerCase()))
                     data.UpdateInfoUser(dataJson.user.linkRef, dataJson.user.statusVerify,
-                        dataJson.user.email, dataJson.user.id, dataJson.user.totalSales, dataJson.listChild, dataJson.user.totalSalesBranch);
+                        dataJson.user.email, dataJson.user.id, dataJson.user.totalSales,
+                        dataJson.listChild, dataJson.user.totalSalesBranch, dataJson.sponsor.address);
                     await data.updateData();
                 });
             } catch (e) {

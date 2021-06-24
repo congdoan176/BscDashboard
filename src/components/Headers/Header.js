@@ -9,46 +9,47 @@ const Header = () => {
 
     const toggle = () => setModal(false);
 
-    // function setCookie(cname,cvalue,exdays) {
-    //     var d = new Date();
-    //     d.setTime(d.getTime() + (exdays*24*60*60*1000));
-    //     var expires = "expires=" + d.toGMTString();
-    //     document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-    // }
-    //
-    // function getCookie(cname) {
-    //     var name = cname + "=";
-    //     var decodedCookie = decodeURIComponent(document.cookie);
-    //     var ca = decodedCookie.split(';');
-    //     for(var i = 0; i < ca.length; i++) {
-    //         var c = ca[i];
-    //         while (c.charAt(0) == ' ') {
-    //             c = c.substring(1);
-    //         }
-    //         if (c.indexOf(name) == 0) {
-    //             return c.substring(name.length, c.length);
-    //         }
-    //     }
-    //     return "";
-    // }
-    //
-    // function checkCookie(){
-    //     var cookieTime = getCookie("timeStamp");
-    //     let thisTime = new Date().getTime();
-    //     if (cookieTime !== ""){
-    //         if (thisTime - cookieTime > 10800000){
-    //             setModal(true);
-    //         }
-    //     }else {
-    //         setModal(true)
-    //         let time = new Date().getTime();
-    //         setCookie("timeStamp",time, 30);
-    //     }
-    //
-    // }
+    function setCookie(cname,cvalue,exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        var expires = "expires=" + d.toGMTString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    function getCookie(cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for(var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+
+    function checkCookie(){
+        var cookieTime = getCookie("timeStamp");
+        let thisTime = new Date().getTime();
+        if (cookieTime !== ""){
+            if (thisTime - Number(cookieTime) > 10800000){
+                setModal(true);
+                setCookie("timeStamp",thisTime, 30);
+            }
+        }else {
+            setModal(true)
+            let time = new Date().getTime();
+            setCookie("timeStamp",time, 30);
+        }
+
+    }
 
     useEffect(async () => {
-        // checkCookie();
+        checkCookie();
     })
 
     return (
@@ -83,7 +84,7 @@ const Header = () => {
                         <Modal isOpen={modal} toggle={toggle} size={'xl'}>
                             <ModalHeader toggle={toggle}></ModalHeader>
                             <ModalBody>
-                                <img src="https://storage.googleapis.com/ftxtoken.appspot.com/photo_2021-06-01_19-34-15.jpg" alt="" width={'100%'} height={'100%'}/>
+                                <img src="https://storage.googleapis.com/ftxtoken.appspot.com/banner.jpg" alt="" width={'100%'} height={'100%'}/>
                             </ModalBody>
                         </Modal>
                     </div>

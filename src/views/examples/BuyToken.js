@@ -2,11 +2,15 @@ import React, {useEffect, useState} from "react";
 import {Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Row} from "reactstrap";
 import DataContext from "../../context";
 import Web3 from "web3";
-import jsonFtx from "../../json/founder/contract.json";
+import jsonFtx from "../../json/contract/readContract.json";
+import sellerJson from "../../json/seller/seller.json";
 import Address from "../../json/addressContract/address.json"
 import HeaderFake from "../../components/Headers/HeaderFake";
 import Round from "../../share/roud/roud"
+import {BigNumber} from "@ethersproject/bignumber"
+var bigdecimal = require("bigdecimal");
 const BuyToken = () => {
+    const two = new bigdecimal.BigDecimal('1000000000000000000');
     const [salePrice, setSalePrice] = useState(0);
     const [salePriceDiv, setSalePriceDiv] = useState(0);
     const [numberToken, setNumberToken] = useState("");
@@ -15,11 +19,12 @@ const BuyToken = () => {
     const [currentRound, setCurrentRound] = useState(0);
     const [buyAmount, setByAmount] = useState(0);
     const [disabled, setDisabled] = useState(false);
+    const [balanceSeller, setBalanceSeller] = useState(0);
 
     async function getPrice() {
         const web3 = new Web3(Web3.givenProvider);
         try {
-            const daiToken = new web3.eth.Contract(jsonFtx, Address.FounderAddress);
+            const daiToken = new web3.eth.Contract(sellerJson, Address.SellerAddress);
             daiToken.methods._salePrice().call(function (err, res) {
                 if (err) {
                     console.log("An error occured", err)
@@ -64,6 +69,7 @@ const BuyToken = () => {
         await getCurrentRound();
         await getPrice();
         await getByAmount();
+        await getBalanceOfSellerAddress()
     }, [currentRound])
 
     function changeSaleValue(e) {
@@ -73,38 +79,70 @@ const BuyToken = () => {
         setNumberBNB(number);
     }
 
-    async function onBuyToken(totalAmountBNB) {
-        if (totalAmountBNB < numberBNB) {
-            alert("The amount of FTXF you buy exceeds the allowed quantity.")
-            return;
-        }
-        if (numberToken < 1000){
-            alert("The minimum number of FTXF tokens to buy is 1000!");
-            return;
-        }
-        if (numberToken > 10000){
-            alert("The maximum number of FTXF tokens that can be purchased is 10000!");
-            return;
-        }
-        if (buyAmount !== 0){
-            alert("You bought FTXF at this round.");
-            return;
-        }
-        setDisabled(true)
+    async function getBalanceOfSellerAddress(){
         const web3 = new Web3(Web3.givenProvider);
-        const accounts = await web3.eth.getAccounts()
+        const daiToken = new web3.eth.Contract(jsonFtx, Address.FTXFTokenAddress);
+        daiToken.methods.balanceOf(Address.SellerAddress).call(function (err, res) {
+            if (err) {
+                console.log("An error occured", err)
+                return
+            }
+            let one = new bigdecimal.BigDecimal(res);
+            setBalanceSeller(Number(one.divide(two).toString()).toFixed(4));
+        })
+    }
+
+    async function onBuyToken(totalAmountBNB, sponsorAddress) {
+        // if (numberToken > balanceSeller){
+        //     alert("The amount of tokens you bought exceeds the amount of tokens available.");
+        //     return;
+        // }
+        // if (totalAmountBNB < numberBNB) {
+        //     alert("The amount of FTXF you buy exceeds the allowed quantity.")
+        //     return;
+        // }
+        // if (numberToken < 1000){
+        //     alert("The minimum number of FTXF tokens to buy is 1000!");
+        //     return;
+        // }
+        // if (numberToken > 10000){
+        //     alert("The maximum number of FTXF tokens that can be purchased is 10000!");
+        //     return;
+        // }
+        // if (buyAmount !== 0){
+        //     alert("You bought FTXF at this round.");
+        //     return;
+        // }
+        // setDisabled(true)
+        const web3 = new Web3(Web3.givenProvider);
+        const accounts = await web3.eth.getAccounts();
         if (accounts.length > 0) {
             try {
-                let amount = numberBNB * 1000000000000000000;
-                const daiToken = new web3.eth.Contract(jsonFtx, Address.FounderAddress);
-                daiToken.methods.buy().send({
+                let string = numberBNB.toString().split('.');
+                let lengthDecimal = 0, totalAmount= "";
+                if (string.length === 1){
+                    lengthDecimal = 0;
+                    totalAmount = string[0] + "";
+                }else {
+                    lengthDecimal = string[1].length;
+                    totalAmount = string[0] + string[1];
+                }
+                const daiToken = new web3.eth.Contract(sellerJson, Address.SellerAddress, {
+                    gas: 100000
+                });
+                daiToken.methods.buy(sponsorAddress).send({
                     from: accounts[0],
-                    value: Math.floor(amount)
+                    value: BigNumber.from(10).pow(18 - lengthDecimal).mul(totalAmount).toString()
+                }).then(async (data) => {
+                    console.log(data)
+                    alert("Buy Successful.")
+                }).catch(err => {
+                    alert("An error occurred, please try again later.")
                 })
+
             } catch (err) {
                 console.log("Buy token error", err);
             }
-
         }
     }
 
@@ -131,6 +169,7 @@ const BuyToken = () => {
                                             <div className="mt-5">
                                                 <Row style={{marginBottom: 40}}>
                                                     <Col lg="12" xs="12">
+                                                        <small style={{color: "#1171ef"}}>Remaining amount of tokens: ~{balanceSeller}</small>
                                                         <div style={{
                                                             border: '1px solid #11cdef',
                                                             height: 60,
@@ -240,7 +279,7 @@ const BuyToken = () => {
                                                     <Col lg="3">
                                                         <Button
                                                             onClick={async () => {
-                                                                 // await onBuyToken(data.balanceBNB)
+                                                                 // await onBuyToken(data.balanceBNB, data.addSponsor)
                                                             }}
                                                             size="lg"
                                                             block

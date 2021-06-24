@@ -47,6 +47,7 @@ const Admin = (props) => {
     const [referral, setReferral] = useState([])
     const [directSale, setDirectSale] = useState(0)
     const [totalReferral, setTotalReferral] = useState(0)
+    const [addSponsor, setAddSponsor] = useState(0)
 
 
     const [reload, setReload] = useState(false)
@@ -89,7 +90,7 @@ const Admin = (props) => {
         }
     };
 
-    async function UpdateInfoUser(linkRef, verifyStatus, UserEmail, userId, totalSale, listReferral, totalSalesBranch){
+    async function UpdateInfoUser(linkRef, verifyStatus, UserEmail, userId, totalSale, listReferral, totalSalesBranch, addressSponsor){
         setUserVerifyStatus(verifyStatus);
         setUserEmail(UserEmail);
         setReferral(listReferral);
@@ -115,6 +116,7 @@ const Admin = (props) => {
             }
             setDirectSale(directSale)
         }
+        setAddSponsor(addressSponsor);
     }
 
     const getBrandText = (path) => {
@@ -252,7 +254,8 @@ const Admin = (props) => {
             await getInfoContract(Address.USDTAddess, account, jsonFtx, "USDT");
             let dataJson = JSON.parse(await Login.addAccount(account.toLowerCase(), addressSponsor.toLowerCase()))
             await UpdateInfoUser(dataJson.user.linkRef, dataJson.user.statusVerify,
-                dataJson.user.email, dataJson.user.id, dataJson.user.totalSales, dataJson.listChild, dataJson.user.totalSalesBranch);
+                dataJson.user.email, dataJson.user.id, dataJson.user.totalSales,
+                dataJson.listChild, dataJson.user.totalSalesBranch, dataJson.sponsor.address);
             await getAllChildren(dataJson.user.id);
         }
     }, [account, userVerifyStatus])
@@ -281,8 +284,8 @@ const Admin = (props) => {
                         amountUnLook: amountUnLook,
                         totalSalesBranch: totalSalesBranch,
                         directSale: directSale,
-                        totalReferral: totalReferral
-
+                        totalReferral: totalReferral,
+                        addSponsor: addSponsor
                     }}>
                         {
                             account === Address.AdminAddress ?

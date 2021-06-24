@@ -15,41 +15,36 @@ import {BigNumber} from "@ethersproject/bignumber"
 import HeaderFake from "../../components/Headers/HeaderFake";
 import ReactLoading from "react-loading";
 import SaveStake from '../../share/stake/stake';
+
 var bigdecimal = require("bigdecimal");
 
 const Stake = () => {
     const two = new bigdecimal.BigDecimal('1000000000000000000');
     const [totalAmountFTXF, setTotalAmountFTXF] = useState(0);
     const [totalAmountApprove, setTotalAmountApprove] = useState(0);
-
     const [amountStake, setAmountStake] = useState(0);
     const [quantityStake, setQuantityStake] = useState(0);
     const [rewardStake, setRewardStake] = useState(0);
     const [quantityUnStake, setQuantityUnStake] = useState(0);
-
     const [backFromApprove, setBackFromApprove] = useState(false);
     const [nextFromStake, setNextFromStake] = useState(false);
     const [modal, setModal] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
-
-    const [dateStake, setDateStake] = useState(70);
-
+    const [dateStake, setDateStake] = useState(90);
     const [backgroundPercent25, setBackgroundPercent25] = useState(true);
     const [backgroundPercent50, setBackgroundPercent50] = useState(true);
     const [backgroundPercent75, setBackgroundPercent75] = useState(true);
     const [backgroundPercent100, setBackgroundPercent100] = useState(true);
     const [backgroundTotalPercent, setBackgroundTotalPercent] = useState(true);
-
     const [historyStake, setHistoryStake] = useState([]);
-    const [interestPercent, setInterestPercent] = useState("15%");
-
+    const [interestPercent, setInterestPercent] = useState("31.5%");
 
     const handleIsLoadedToggle = () => {
         setIsLoaded(currentIsLoaded => !currentIsLoaded)
     };
 
-
     const toggle = () => setModal(!modal);
+
 
     async function getTotalAmountFTXF() {
         const web3 = new Web3(Web3.givenProvider);
@@ -72,8 +67,8 @@ const Stake = () => {
         const account = await web3.eth.getAccounts();
         if (account.length > 0) {
             const data = new web3.eth.Contract(fdJson, Address.FounderAddress);
-            data.methods._stakers(account[0]).call(function (err, res){
-                if(err){
+            data.methods._stakers(account[0]).call(function (err, res) {
+                if (err) {
                     console.log("get quantity stake fail", err);
                     return;
                 }
@@ -87,7 +82,7 @@ const Stake = () => {
         const web3 = new Web3(Web3.givenProvider);
         const account = await web3.eth.getAccounts();
         let history = await SaveStake.get(account[0]);
-        let dataJson =  JSON.parse(history)
+        let dataJson = JSON.parse(history);
         setHistoryStake(dataJson);
     }
 
@@ -97,38 +92,32 @@ const Stake = () => {
         await geTotalQuantityStake();
         await getTotalAmountApprove();
         await getHistoryStake();
-        if (!backFromApprove){
+        if (!backFromApprove) {
             if (quantityStake > 0) {
                 setNextFromStake(true);
             }
-            if (totalAmountApprove > 0){
+            if (totalAmountApprove > 0) {
                 setNextFromStake(true);
             }
         }
-    },[totalAmountFTXF])
+    }, [totalAmountFTXF])
 
     async function changeDateStake(e) {
         let value = e.target.value;
         setDateStake(value);
-        console.log(typeof value)
-        if (value === "70"){
-            setInterestPercent("15%");
-        }else if(value === "90"){
-            setInterestPercent("20%");
-        }else if(value === "120"){
-            setInterestPercent("30%");
-        }else if(value === "180"){
-            setInterestPercent("40%");
-        }else if(value === "360"){
-            setInterestPercent("50%");
-        }else if(value === "540"){
-            setInterestPercent("65%");
-        }else if(value === "720"){
-            setInterestPercent("100%");
+        if (value === "90") {
+            setInterestPercent("31.5%");
+        } else if (value === "180") {
+            setInterestPercent("72%");
+        } else if (value === "360") {
+            setInterestPercent("180%");
+        } else if (value === "540") {
+            setInterestPercent("297%");
+        } else if (value === "720") {
+            setInterestPercent("432%");
         }
 
     }
-
 
     async function getTotalStakeReward() {
         const web3 = new Web3(Web3.givenProvider);
@@ -172,16 +161,20 @@ const Stake = () => {
             try {
                 handleIsLoadedToggle()
                 let string = totalAmountFTXF.toString().split('.')
-                let lengthDecimal = 0, totalAmount= "";
-                if (string.length === 1){
+                let lengthDecimal = 0, totalAmount = "";
+                if (string.length === 1) {
                     lengthDecimal = 0;
                     totalAmount = string[0] + "";
-                }else {
+                } else {
                     lengthDecimal = string[1].length;
                     totalAmount = string[0] + string[1];
                 }
                 await data.methods.approve(Address.FounderAddress, BigNumber.from(10).pow(18 - lengthDecimal).mul(totalAmount).toString()).send({
                     from: account[0]
+                }).then((data) => {
+                    alert("Approve Successful.");
+                }).catch(err => {
+                    alert("An error occurred, please try again later.");
                 })
                 await setNextFromStake(true);
                 await setIsLoaded(false);
@@ -197,7 +190,7 @@ const Stake = () => {
     }
 
     async function submitAmountStack() {
-        if (historyStake.length > 0){
+        if (historyStake.length > 0) {
             alert("You already staked, please try again later.");
             return;
         }
@@ -205,22 +198,31 @@ const Stake = () => {
             alert("The amount of FTXF you stake exceeds the allowed quantity.");
             return;
         }
+        handleIsLoadedToggle()
         try {
             const web3 = new Web3(Web3.givenProvider);
             const account = await web3.eth.getAccounts();
             const data = new web3.eth.Contract(fdJson, Address.FounderAddress);
 
             let string = amountStake.toString().split('.')
-            let lengthDecimal = 0, totalAmount= "";
-            if (string.length === 1){
+            let lengthDecimal = 0, totalAmount = "";
+            if (string.length === 1) {
                 lengthDecimal = 0;
                 totalAmount = string[0] + "";
-            }else {
+            } else {
                 lengthDecimal = string[1].length;
                 totalAmount = string[0] + string[1];
             }
             data.methods.stake(BigNumber.from(10).pow(18 - lengthDecimal).mul(totalAmount).toString()).send({
                 from: account[0]
+            }).then(async (data) => {
+                let res = JSON.parse(await SaveStake.save(account[0].toLowerCase(), amountStake, dateStake, data.transactionHash));
+                if (res.msg === "create history stake success") {
+                    alert("Stake Successful.");
+                }
+                setIsLoaded(false);
+            }).catch(err => {
+                alert("An error occurred, please try again later.")
             })
 
         } catch (err) {
@@ -237,6 +239,8 @@ const Stake = () => {
             try {
                 await data.methods.redeemStakeReward().send({
                     from: account[0],
+                }).then(data => {
+                    console.log("Withdraw reward Successful.")
                 })
             } catch (err) {
                 console.log("withdraw reward stake error", err)
@@ -244,18 +248,9 @@ const Stake = () => {
         }
     }
 
-    async function submitDateStake(){
-        const web3 = new Web3(Web3.givenProvider);
-        const account = await web3.eth.getAccounts();
-        let res = JSON.parse(await SaveStake.save(account[0].toLowerCase(), amountStake, dateStake));
-        if (res.msg === "create history stake success"){
-            alert("Stake suceess");
-        }
-    }
-
-    function changePercentStake(percent){
-        if (percent === 25){
-            if (!backgroundPercent100 || !backgroundPercent75 || !backgroundPercent50){
+    function changePercentStake(percent) {
+        if (percent === 25) {
+            if (!backgroundPercent100 || !backgroundPercent75 || !backgroundPercent50) {
                 document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
                 document.getElementById("percent50").style.background = "none"
                 document.getElementById("percent75").style.background = "none"
@@ -265,18 +260,19 @@ const Stake = () => {
                 setBackgroundPercent75(true)
                 setBackgroundPercent100(true)
                 setAmountStake(Number(totalAmountApprove) * 25 / 100);
-            }else {
-                if (backgroundPercent25){
+            } else {
+                if (backgroundPercent25) {
                     document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
                     setBackgroundPercent25(false)
                     setAmountStake(Number(totalAmountApprove) * 25 / 100);
-                }else {
+                } else {
                     document.getElementById("percent25").style.background = "none"
                     setBackgroundPercent25(true)
+                    setAmountStake(0);
                 }
             }
-        }else if (percent ===  50){
-            if (!backgroundPercent100 || !backgroundPercent75){
+        } else if (percent === 50) {
+            if (!backgroundPercent100 || !backgroundPercent75) {
                 document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
                 document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
                 document.getElementById("percent75").style.background = "none"
@@ -286,22 +282,23 @@ const Stake = () => {
                 setBackgroundPercent75(true)
                 setBackgroundPercent100(true)
                 setAmountStake(Number(totalAmountApprove) * 50 / 100);
-            }else {
-                if (backgroundPercent50){
+            } else {
+                if (backgroundPercent50) {
                     document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
                     document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
                     setBackgroundPercent25(false);
                     setBackgroundPercent50(false);
                     setAmountStake(Number(totalAmountApprove) * 50 / 100);
-                }else {
+                } else {
                     document.getElementById("percent25").style.background = "none"
                     document.getElementById("percent50").style.background = "none"
                     setBackgroundPercent25(true);
                     setBackgroundPercent50(true);
+                    setAmountStake(0);
                 }
             }
-        }else if (percent ===  75){
-            if (!backgroundPercent100){
+        } else if (percent === 75) {
+            if (!backgroundPercent100) {
                 document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
                 document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
                 document.getElementById("percent75").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
@@ -311,8 +308,8 @@ const Stake = () => {
                 setBackgroundPercent75(false)
                 setBackgroundPercent100(true)
                 setAmountStake(Number(totalAmountApprove) * 75 / 100);
-            }else {
-                if (backgroundPercent75){
+            } else {
+                if (backgroundPercent75) {
                     document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
                     document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
                     document.getElementById("percent75").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
@@ -320,23 +317,25 @@ const Stake = () => {
                     setBackgroundPercent50(false)
                     setBackgroundPercent75(false)
                     setAmountStake(Number(totalAmountApprove) * 75 / 100);
-                }else {
+                } else {
                     document.getElementById("percent25").style.background = "none"
                     document.getElementById("percent50").style.background = "none"
                     document.getElementById("percent75").style.background = "none"
                     setBackgroundPercent25(true)
                     setBackgroundPercent50(true)
                     setBackgroundPercent75(true)
+                    setAmountStake(0);
                 }
             }
-        }else if (percent ===  100){
-            if (!backgroundTotalPercent){
+        } else if (percent === 100) {
+            if (!backgroundTotalPercent) {
                 document.getElementById("percent25").style.background = "none"
                 document.getElementById("percent50").style.background = "none"
                 document.getElementById("percent75").style.background = "none"
                 document.getElementById("percent100").style.background = "none"
+                setAmountStake(0);
                 setBackgroundTotalPercent(true);
-            }else if (!backgroundPercent25 || !backgroundPercent50 || !backgroundPercent75){
+            } else if (!backgroundPercent25 || !backgroundPercent50 || !backgroundPercent75) {
                 document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
                 document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
                 document.getElementById("percent75").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
@@ -347,8 +346,8 @@ const Stake = () => {
                 setBackgroundPercent100(false)
                 setBackgroundTotalPercent(false)
                 setAmountStake(Number(totalAmountApprove) * 100 / 100);
-            }else {
-                if (backgroundPercent100){
+            } else {
+                if (backgroundPercent100) {
                     document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
                     document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
                     document.getElementById("percent75").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
@@ -358,7 +357,7 @@ const Stake = () => {
                     setBackgroundPercent75(false)
                     setBackgroundPercent100(false)
                     setAmountStake(Number(totalAmountApprove) * 100 / 100);
-                }else {
+                } else {
                     document.getElementById("percent25").style.background = "none"
                     document.getElementById("percent50").style.background = "none"
                     document.getElementById("percent75").style.background = "none"
@@ -367,9 +366,11 @@ const Stake = () => {
                     setBackgroundPercent50(true)
                     setBackgroundPercent75(true)
                     setBackgroundPercent100(true)
+                    setAmountStake(0);
                 }
             }
         }
+
     }
 
     function changeQuantityUnStake(e) {
@@ -383,11 +384,11 @@ const Stake = () => {
             const data = new web3.eth.Contract(fdJson, Address.FounderAddress);
 
             let string = quantityUnStake.toString().split('.')
-            let lengthDecimal = 0, totalAmount= "";
-            if (string.length === 1){
+            let lengthDecimal = 0, totalAmount = "";
+            if (string.length === 1) {
                 lengthDecimal = 0;
                 totalAmount = string[0] + "";
-            }else {
+            } else {
                 lengthDecimal = string[1].length;
                 totalAmount = string[0] + string[1];
             }
@@ -419,14 +420,22 @@ const Stake = () => {
                                                         <Col lg="2"/>
                                                         <Col lg="8">
                                                             <Card className="shadow" style={{borderRadius: 15}}>
-                                                                <CardBody style={{border: "2px solid #11cdef", borderRadius: 15}}>
+                                                                <CardBody style={{
+                                                                    border: "2px solid #11cdef",
+                                                                    borderRadius: 15
+                                                                }}>
                                                                     <div className="col text-center"
                                                                          style={{
-                                                                             border: "1px solid #11cdef", width: 120,
-                                                                             height: 50, background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",
-                                                                             borderRadius:10, position: "absolute", top: -25
+                                                                             border: "1px solid #11cdef",
+                                                                             width: 120,
+                                                                             height: 50,
+                                                                             background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",
+                                                                             borderRadius: 10,
+                                                                             position: "absolute",
+                                                                             top: -25
                                                                          }}>
-                                                                        <h2 className="pt-2" style={{color: "white"}}>Stake</h2>
+                                                                        <h2 className="pt-2"
+                                                                            style={{color: "white"}}>Stake</h2>
                                                                     </div>
                                                                     <Form>
                                                                         <div className="mt-5">
@@ -434,7 +443,10 @@ const Stake = () => {
                                                                                 <Col lg="9">
                                                                                     <label
                                                                                         className="form-control-label"
-                                                                                        style={{fontSize: 20, color: "#1171ef"}}
+                                                                                        style={{
+                                                                                            fontSize: 20,
+                                                                                            color: "#1171ef"
+                                                                                        }}
                                                                                     >
                                                                                         FTXF amount
                                                                                     </label>
@@ -446,13 +458,15 @@ const Stake = () => {
                                                                                         backgroundColor: 'white'
                                                                                     }}>
                                                                                         <FormGroup>
-                                                                                            <Row style={{position: 'relative'}}>
-                                                                                                <Col lg="2" xs="3" style={{
-                                                                                                    position: 'absolute',
-                                                                                                    top: 10,
-                                                                                                    left: 45,
-                                                                                                    overflow: 'hidden'
-                                                                                                }}>
+                                                                                            <Row
+                                                                                                style={{position: 'relative'}}>
+                                                                                                <Col lg="2" xs="3"
+                                                                                                     style={{
+                                                                                                         position: 'absolute',
+                                                                                                         top: 10,
+                                                                                                         left: 45,
+                                                                                                         overflow: 'hidden'
+                                                                                                     }}>
                                                                                                     <img
                                                                                                         className="navbar-brand-img"
                                                                                                         src={require("../../assets/img/icons/img/logo/Asset 4.png").default}
@@ -462,10 +476,11 @@ const Stake = () => {
                                                                                                         }}
                                                                                                     />
                                                                                                 </Col>
-                                                                                                <Col lg="10" xs="7" style={{
-                                                                                                    position: 'absolute',
-                                                                                                    left: 87
-                                                                                                }}>
+                                                                                                <Col lg="10" xs="7"
+                                                                                                     style={{
+                                                                                                         position: 'absolute',
+                                                                                                         left: 87
+                                                                                                     }}>
                                                                                                     <Input
                                                                                                         className="form-control-alternative"
                                                                                                         id="input-username"
@@ -491,12 +506,18 @@ const Stake = () => {
                                                                                 }}>
                                                                                     <Button
                                                                                         onClick={async () => {
-                                                                                           // await submitAmountApprove();
+                                                                                            // await submitAmountApprove();
                                                                                         }}
                                                                                         size="lg"
                                                                                         type={'reset'}
-                                                                                        style={{background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",
-                                                                                            borderColor: "#11cdef", color: "white", borderRadius: 10, width: "100%", height: 60}}
+                                                                                        style={{
+                                                                                            background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",
+                                                                                            borderColor: "#11cdef",
+                                                                                            color: "white",
+                                                                                            borderRadius: 10,
+                                                                                            width: "100%",
+                                                                                            height: 60
+                                                                                        }}
                                                                                     >
                                                                                         APPROVE NOW
                                                                                     </Button>
@@ -512,12 +533,19 @@ const Stake = () => {
                                                     <Row>
                                                         <Col lg="12">
                                                             <Card className="shadow" style={{borderRadius: 15}}>
-                                                                <CardBody style={{border: "2px solid #11cdef", borderRadius: 15}}>
+                                                                <CardBody style={{
+                                                                    border: "2px solid #11cdef",
+                                                                    borderRadius: 15
+                                                                }}>
                                                                     <div className="col text-center"
                                                                          style={{
-                                                                             border: "1px solid #11cdef", width: 120,
-                                                                             height: 50, background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",
-                                                                             borderRadius:10, position: "absolute", top: -25
+                                                                             border: "1px solid #11cdef",
+                                                                             width: 120,
+                                                                             height: 50,
+                                                                             background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",
+                                                                             borderRadius: 10,
+                                                                             position: "absolute",
+                                                                             top: -25
                                                                          }}
                                                                     >
                                                                         <h2 className="pt-2" style={{color: "white"}}>
@@ -530,11 +558,14 @@ const Stake = () => {
                                                                                 <Col lg="6" xs="12" className="mb-6">
                                                                                     <label
                                                                                         className="form-control-label"
-                                                                                        style={{fontSize: 20, color: "#1171ef"}}
+                                                                                        style={{
+                                                                                            fontSize: 20,
+                                                                                            color: "#1171ef"
+                                                                                        }}
                                                                                     >
                                                                                         Stake amount
                                                                                     </label>
-                                                                                    <Row >
+                                                                                    <Row>
                                                                                         <div style={{
                                                                                             border: '1px solid #e0e0e0',
                                                                                             height: 60,
@@ -543,13 +574,15 @@ const Stake = () => {
                                                                                             backgroundColor: 'white'
                                                                                         }}>
                                                                                             <FormGroup>
-                                                                                                <Row style={{position: 'relative'}}>
-                                                                                                    <Col lg="2" xs="2" style={{
-                                                                                                        position: 'absolute',
-                                                                                                        top: 10,
-                                                                                                        left: 25,
-                                                                                                        overflow: 'hidden'
-                                                                                                    }}>
+                                                                                                <Row
+                                                                                                    style={{position: 'relative'}}>
+                                                                                                    <Col lg="2" xs="2"
+                                                                                                         style={{
+                                                                                                             position: 'absolute',
+                                                                                                             top: 10,
+                                                                                                             left: 25,
+                                                                                                             overflow: 'hidden'
+                                                                                                         }}>
                                                                                                         <img
                                                                                                             className="navbar-brand-img"
                                                                                                             src={require("../../assets/img/icons/img/logo/Asset 4.png").default}
@@ -559,10 +592,11 @@ const Stake = () => {
                                                                                                             }}
                                                                                                         />
                                                                                                     </Col>
-                                                                                                    <Col lg="10" xs="7" style={{
-                                                                                                        position: 'absolute',
-                                                                                                        left: 90
-                                                                                                    }}>
+                                                                                                    <Col lg="10" xs="7"
+                                                                                                         style={{
+                                                                                                             position: 'absolute',
+                                                                                                             left: 90
+                                                                                                         }}>
                                                                                                         <Input
                                                                                                             className="form-control-alternative"
                                                                                                             id="input-username"
@@ -582,44 +616,94 @@ const Stake = () => {
                                                                                                 </Row>
                                                                                             </FormGroup>
                                                                                         </div>
-                                                                                        <div style={{width: '100%', marginTop: 15, justifyItems: 'center', alignContent: "center",marginLeft: 15,
-                                                                                            marginRight: 15}}>
+                                                                                        <div style={{
+                                                                                            width: '100%',
+                                                                                            marginTop: 15,
+                                                                                            justifyItems: 'center',
+                                                                                            alignContent: "center",
+                                                                                            marginLeft: 15,
+                                                                                            marginRight: 15
+                                                                                        }}>
                                                                                             <Row>
                                                                                                 <Col
                                                                                                     onClick={() => {
                                                                                                         changePercentStake(25)
                                                                                                     }}
-                                                                                                     style={{width: '20%', height: 7, border: "1px solid #d4d4d4", marginLeft: 5, marginRight: 5, textAlign: 'center'}}
+                                                                                                    style={{
+                                                                                                        width: '20%',
+                                                                                                        height: 7,
+                                                                                                        border: "1px solid #d4d4d4",
+                                                                                                        marginLeft: 5,
+                                                                                                        marginRight: 5,
+                                                                                                        textAlign: 'center'
+                                                                                                    }}
                                                                                                     id={"percent25"}
                                                                                                 >
-                                                                                                    <p style={{paddingTop: 5, fontSize: 12,fontWeight: 600}}>25%</p>
+                                                                                                    <p style={{
+                                                                                                        paddingTop: 5,
+                                                                                                        fontSize: 12,
+                                                                                                        fontWeight: 600
+                                                                                                    }}>25%</p>
                                                                                                 </Col>
                                                                                                 <Col
                                                                                                     onClick={() => {
                                                                                                         changePercentStake(50)
                                                                                                     }}
-                                                                                                    style={{width: '20%', height: 7, border: "1px solid #d4d4d4", marginLeft: 5, marginRight: 5, textAlign: 'center'}}
+                                                                                                    style={{
+                                                                                                        width: '20%',
+                                                                                                        height: 7,
+                                                                                                        border: "1px solid #d4d4d4",
+                                                                                                        marginLeft: 5,
+                                                                                                        marginRight: 5,
+                                                                                                        textAlign: 'center'
+                                                                                                    }}
                                                                                                     id={"percent50"}
                                                                                                 >
-                                                                                                    <p style={{paddingTop: 5, fontSize: 12,fontWeight: 600}}>50%</p>
+                                                                                                    <p style={{
+                                                                                                        paddingTop: 5,
+                                                                                                        fontSize: 12,
+                                                                                                        fontWeight: 600
+                                                                                                    }}>50%</p>
                                                                                                 </Col>
                                                                                                 <Col
                                                                                                     onClick={() => {
                                                                                                         changePercentStake(75)
                                                                                                     }}
-                                                                                                    style={{width: '20%', height: 7, border: "1px solid #d4d4d4", marginLeft: 5, marginRight: 5, textAlign: 'center'}}
+                                                                                                    style={{
+                                                                                                        width: '20%',
+                                                                                                        height: 7,
+                                                                                                        border: "1px solid #d4d4d4",
+                                                                                                        marginLeft: 5,
+                                                                                                        marginRight: 5,
+                                                                                                        textAlign: 'center'
+                                                                                                    }}
                                                                                                     id={"percent75"}
                                                                                                 >
-                                                                                                    <p style={{paddingTop: 5, fontSize: 12,fontWeight: 600}}>75%</p>
+                                                                                                    <p style={{
+                                                                                                        paddingTop: 5,
+                                                                                                        fontSize: 12,
+                                                                                                        fontWeight: 600
+                                                                                                    }}>75%</p>
                                                                                                 </Col>
                                                                                                 <Col
                                                                                                     onClick={() => {
                                                                                                         changePercentStake(100)
                                                                                                     }}
-                                                                                                    style={{width: '20%', height: 7, border: "1px solid #d4d4d4", marginLeft: 5, marginRight: 5, textAlign: 'center'}}
+                                                                                                    style={{
+                                                                                                        width: '20%',
+                                                                                                        height: 7,
+                                                                                                        border: "1px solid #d4d4d4",
+                                                                                                        marginLeft: 5,
+                                                                                                        marginRight: 5,
+                                                                                                        textAlign: 'center'
+                                                                                                    }}
                                                                                                     id={"percent100"}
                                                                                                 >
-                                                                                                    <p style={{paddingTop: 5, fontSize: 12,fontWeight: 600}}>100%</p>
+                                                                                                    <p style={{
+                                                                                                        paddingTop: 5,
+                                                                                                        fontSize: 12,
+                                                                                                        fontWeight: 600
+                                                                                                    }}>100%</p>
                                                                                                 </Col>
                                                                                             </Row>
                                                                                         </div>
@@ -627,7 +711,11 @@ const Stake = () => {
                                                                                     </Row>
                                                                                     <label
                                                                                         className="form-control-label"
-                                                                                        style={{fontSize: 20, color: "#1171ef", marginTop: 20}}
+                                                                                        style={{
+                                                                                            fontSize: 20,
+                                                                                            color: "#1171ef",
+                                                                                            marginTop: 20
+                                                                                        }}
                                                                                     >
                                                                                         Date Stake
                                                                                     </label>
@@ -640,7 +728,8 @@ const Stake = () => {
                                                                                             backgroundColor: 'white'
                                                                                         }}>
                                                                                             <FormGroup>
-                                                                                                <Row style={{position: 'relative'}}>
+                                                                                                <Row
+                                                                                                    style={{position: 'relative'}}>
                                                                                                     <Col style={{
                                                                                                         position: 'absolute',
                                                                                                     }}>
@@ -656,25 +745,24 @@ const Stake = () => {
                                                                                                             }}
                                                                                                             onChange={(e) => changeDateStake(e)}
                                                                                                         >
-                                                                                                            <option value={70}>
-                                                                                                                70 days
-                                                                                                            </option>
-                                                                                                            <option value={90}>
+                                                                                                            <option
+                                                                                                                value={90}>
                                                                                                                 90 days
                                                                                                             </option>
-                                                                                                            <option value={120}>
-                                                                                                                120 days
-                                                                                                            </option>
-                                                                                                            <option value={180}>
+                                                                                                            <option
+                                                                                                                value={180}>
                                                                                                                 180 days
                                                                                                             </option>
-                                                                                                            <option value={360}>
+                                                                                                            <option
+                                                                                                                value={360}>
                                                                                                                 360 days
                                                                                                             </option>
-                                                                                                            <option value={540}>
+                                                                                                            <option
+                                                                                                                value={540}>
                                                                                                                 540 days
                                                                                                             </option>
-                                                                                                            <option value={720}>
+                                                                                                            <option
+                                                                                                                value={720}>
                                                                                                                 720 days
                                                                                                             </option>
                                                                                                         </Input>
@@ -683,36 +771,49 @@ const Stake = () => {
                                                                                             </FormGroup>
                                                                                         </div>
                                                                                     </Row>
-                                                                                    <Row className="mt-3" >
+                                                                                    <Row className="mt-3">
                                                                                         <Col lg="6" xs="6">
-                                                                                            <p style={{fontSize: 13}}>Pestimated Annual Yield: {interestPercent}</p>
+                                                                                            <p style={{fontSize: 13}}>Pestimated
+                                                                                                Annual
+                                                                                                Yield: {interestPercent}</p>
                                                                                         </Col>
-                                                                                        <Col lg="6" xs="6" className="text-right">
+                                                                                        <Col lg="6" xs="6"
+                                                                                             className="text-right">
                                                                                             <Button
                                                                                                 onClick={async () => {
                                                                                                     // await submitAmountStack();
-                                                                                                    await submitDateStake();
                                                                                                 }}
                                                                                                 size="lgs"
                                                                                                 type={'reset'}
-                                                                                                style={{background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",
-                                                                                                    borderColor: "#11cdef", color: "white", borderRadius: 10}}
+                                                                                                style={{
+                                                                                                    background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",
+                                                                                                    borderColor: "#11cdef",
+                                                                                                    color: "white",
+                                                                                                    borderRadius: 10
+                                                                                                }}
                                                                                             >
                                                                                                 STAKE NOW
                                                                                             </Button>
                                                                                         </Col>
                                                                                     </Row>
                                                                                 </Col>
-                                                                                <Col lg="6" xs="12" >
+                                                                                <Col lg="6" xs="12">
                                                                                     <Card className="shadow">
-                                                                                        <CardHeader className="bg-transparent"  style={{borderBottom: "none"}}>
-                                                                                            <Row className="align-items-center">
-                                                                                                <Col lg="9" xs="6" className="text-center">
-                                                                                                    <div className="col text-center">
-                                                                                                        <h3 className="mb-0" style={{color: '#11cdef'}}>Staking</h3>
+                                                                                        <CardHeader
+                                                                                            className="bg-transparent"
+                                                                                            style={{borderBottom: "none"}}>
+                                                                                            <Row
+                                                                                                className="align-items-center">
+                                                                                                <Col lg="9" xs="6"
+                                                                                                     className="text-center">
+                                                                                                    <div
+                                                                                                        className="col text-center">
+                                                                                                        <h3 className="mb-0"
+                                                                                                            style={{color: '#11cdef'}}>Staking</h3>
                                                                                                     </div>
                                                                                                 </Col>
-                                                                                                <Col lg="1" xs="3" className="text-center">
+                                                                                                <Col lg="1" xs="3"
+                                                                                                     className="text-center">
                                                                                                     <Button
                                                                                                         onClick={async () => {
                                                                                                             await setBackFromApprove(true)
@@ -720,8 +821,12 @@ const Stake = () => {
                                                                                                         }}
                                                                                                         size="lgs"
                                                                                                         type={'reset'}
-                                                                                                        style={{background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",
-                                                                                                            borderColor: "#11cdef", color: "white", borderRadius: 10}}
+                                                                                                        style={{
+                                                                                                            background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",
+                                                                                                            borderColor: "#11cdef",
+                                                                                                            color: "white",
+                                                                                                            borderRadius: 10
+                                                                                                        }}
                                                                                                     >
 
                                                                                                         Reapprove
@@ -736,43 +841,65 @@ const Stake = () => {
                                                                                             left: '-50%'
                                                                                         }}>
                                                                                             <Row className="mt-4">
-                                                                                                <Col lg="8" xs="12" className="mt-2">
-                                                                                                    <h3 className="m-0 p-2 mb-sm-2" style={{color: '#11cdef',backgroundColor: 'white',borderRadius: 5}}>
+                                                                                                <Col lg="8" xs="12"
+                                                                                                     className="mt-2">
+                                                                                                    <h3 className="m-0 p-2 mb-sm-2"
+                                                                                                        style={{
+                                                                                                            color: '#11cdef',
+                                                                                                            backgroundColor: 'white',
+                                                                                                            borderRadius: 5
+                                                                                                        }}>
                                                                                                         Quantity stake
                                                                                                         <span
                                                                                                             className="font-weight-light">: {quantityStake.toFixed(4)}</span>
                                                                                                     </h3>
                                                                                                 </Col>
-                                                                                                <Col lg="4" xs="12" className="mt-2">
+                                                                                                <Col lg="4" xs="12"
+                                                                                                     className="mt-2">
                                                                                                     {
                                                                                                         historyStake.length === 0 ?
-                                                                                                        <Button
-                                                                                                            color="white"
-                                                                                                            onClick={toggle}
-                                                                                                            type={'reset'}
-                                                                                                            style={{width: "100%", color: "#11cdef", height: 40}}
-                                                                                                        >
-                                                                                                            Unstake
-                                                                                                        </Button> : ""
+                                                                                                            <Button
+                                                                                                                color="white"
+                                                                                                                onClick={toggle}
+                                                                                                                type={'reset'}
+                                                                                                                style={{
+                                                                                                                    width: "100%",
+                                                                                                                    color: "#11cdef",
+                                                                                                                    height: 40
+                                                                                                                }}
+                                                                                                            >
+                                                                                                                Unstake
+                                                                                                            </Button> : ""
                                                                                                     }
                                                                                                 </Col>
                                                                                             </Row>
                                                                                             <Row className="mt-4">
-                                                                                                <Col lg="8" xs="12" className="mt-2">
-                                                                                                    <h3 className="m-0 p-2 mb-sm-2 " style={{color: '#11cdef', backgroundColor: 'white',borderRadius: 5}}>
+                                                                                                <Col lg="8" xs="12"
+                                                                                                     className="mt-2">
+                                                                                                    <h3 className="m-0 p-2 mb-sm-2 "
+                                                                                                        style={{
+                                                                                                            color: '#11cdef',
+                                                                                                            backgroundColor: 'white',
+                                                                                                            borderRadius: 5
+                                                                                                        }}>
                                                                                                         Reward stake:
                                                                                                         <span
                                                                                                             className="font-weight-light"> {rewardStake.toFixed(4)}</span>
                                                                                                     </h3>
                                                                                                 </Col>
-                                                                                                <Col lg="4" xs="12" className="mt-2">
+                                                                                                <Col lg="4" xs="12"
+                                                                                                     className="mt-2">
                                                                                                     <Button
                                                                                                         color="white"
                                                                                                         onClick={async () => {
                                                                                                             // await withdrawRewardStake();
                                                                                                         }}
                                                                                                         type={'reset'}
-                                                                                                        style={{width: "100%", color: "#11cdef",height: 40}}
+                                                                                                        style={{
+                                                                                                            width: "100%",
+                                                                                                            color: "#11cdef",
+                                                                                                            height: 40
+                                                                                                        }}
                                                                                                     >
                                                                                                         Withdraw
                                                                                                     </Button>
@@ -813,7 +940,10 @@ const Stake = () => {
                                             </FormGroup>
                                         </ModalBody>
                                         <ModalFooter>
-                                            <Button style={{color: "white",background: 'linear-gradient(87deg, #11cdef 0, #1171ef 100%)'}} onClick={async () => {
+                                            <Button style={{
+                                                color: "white",
+                                                background: 'linear-gradient(87deg, #11cdef 0, #1171ef 100%)'
+                                            }} onClick={async () => {
                                                 // await withdrawStake();
                                             }}>Unstake</Button>
                                         </ModalFooter>
@@ -822,7 +952,7 @@ const Stake = () => {
                                 <Row className="mt-lg-9 mb-lg-9 mb-9 mt-9">
                                     <Col lg="5" xs="4"/>
                                     <Col lg="2" xs="3" className="align-items-center mb-lg-5 ml-3 ml-lg-0">
-                                        <ReactLoading type={"spin"} color="#11cdef" />
+                                        <ReactLoading type={"spin"} color="#11cdef"/>
                                     </Col>
                                     <Col lg="5" xs="4"/>
                                 </Row>

@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {
     Button,
     Card,
@@ -12,6 +12,9 @@ import fdJson from "../../json/founder/contract.json";
 import Address from "../../json/addressContract/address.json";
 
 const Contract = (props) => {
+    const [date, setDate] = useState(0);
+    const [house, setHouse] = useState(0);
+    const [hiddenButton, setHiddenButton] = useState(true);
 
     async function withdrawBlockUnLook() {
         const web3 = new Web3(Web3.givenProvider);
@@ -27,6 +30,32 @@ const Contract = (props) => {
             }
         }
     }
+
+    function getDateTime(){
+        setDate(new Date().getDate())
+        setHouse(new Date().getHours())
+        if (date >= 10 && date < 20  && house === 16){
+            if (date !== 10){
+                setHiddenButton(false);
+            }else{
+                if (house === 16){
+                    setHiddenButton(false);
+                }
+            }
+        }else if (date >= 20 && date < 10 && house === 16){
+            if (date !== 20){
+                setHiddenButton(true);
+            }else{
+                if (house === 16){
+                    setHiddenButton(true);
+                }
+            }
+        }
+    }
+
+    useEffect(() => {
+        getDateTime();
+    },[date])
 
     return (
         <>
@@ -160,7 +189,7 @@ const Contract = (props) => {
                             </Col>
                             <Col lg="2" xs="12" className="mt-2 mb-3">
                                 {
-                                    props.amountUnlook > 0 ?
+                                    props.amountUnlook > 0 && !hiddenButton ?
                                         <Button
                                             color="white"
                                             onClick={async () => {
