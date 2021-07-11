@@ -34,23 +34,28 @@ const Contract = (props) => {
     function getDateTime(){
         setDate(new Date().getDate())
         setHouse(new Date().getHours())
-        if (date >= 10 && date < 20  && house === 16){
-            if (date !== 10){
-                setHiddenButton(false);
-            }else{
-                if (house === 16){
+        if (date >= 10 && date < 20){
+            if (date === 10){
+                if (house >= 16){
                     setHiddenButton(false);
-                }
-            }
-        }else if (date >= 20 && date < 10 && house === 16){
-            if (date !== 20){
-                setHiddenButton(true);
-            }else{
-                if (house === 16){
+                }else {
                     setHiddenButton(true);
                 }
+            }else{
+                setHiddenButton(false);
+            }
+        }else if (date >= 20 && date < 10){
+            if (date === 20){
+                if(house >= 16){
+                    setHiddenButton(true);
+                }else {
+                    setHiddenButton(false);
+                }
+            }else{
+                setHiddenButton(true);
             }
         }
+        console.log(hiddenButton)
     }
 
     useEffect(() => {

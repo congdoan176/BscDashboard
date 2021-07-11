@@ -93,14 +93,14 @@ const BuyToken = () => {
     }
 
     async function onBuyToken(totalAmountBNB, sponsorAddress) {
-        // if (numberToken > balanceSeller){
-        //     alert("The amount of tokens you bought exceeds the amount of tokens available.");
-        //     return;
-        // }
-        // if (totalAmountBNB < numberBNB) {
-        //     alert("The amount of FTXF you buy exceeds the allowed quantity.")
-        //     return;
-        // }
+        if (numberToken > Number(balanceSeller)){
+            alert("The amount of tokens you bought exceeds the amount of tokens available.");
+            return;
+        }
+        if (totalAmountBNB < numberBNB) {
+            alert("The amount of FTXF you buy exceeds the allowed quantity.")
+            return;
+        }
         // if (numberToken < 1000){
         //     alert("The minimum number of FTXF tokens to buy is 1000!");
         //     return;
@@ -133,8 +133,7 @@ const BuyToken = () => {
                 daiToken.methods.buy(sponsorAddress).send({
                     from: accounts[0],
                     value: BigNumber.from(10).pow(18 - lengthDecimal).mul(totalAmount).toString()
-                }).then(async (data) => {
-                    console.log(data)
+                }).then((data) => {
                     alert("Buy Successful.")
                 }).catch(err => {
                     alert("An error occurred, please try again later.")
@@ -163,7 +162,7 @@ const BuyToken = () => {
                                                  height: 50, background: "linear-gradient(87deg, #11cdef 0, #1171ef 100%)",
                                                  borderRadius:10, position: "absolute", top: -25
                                              }}>
-                                            <h2 className="pt-2" style={{color: "white"}}>Public Sale</h2>
+                                            <h2 className="pt-2" style={{color: "white"}}>Sale</h2>
                                         </div>
                                         <Form>
                                             <div className="mt-5">
@@ -198,9 +197,7 @@ const BuyToken = () => {
                                                                         <Input
                                                                             className="form-control-alternative"
                                                                             type="number"
-                                                                            min="1000"
-                                                                            max="10000"
-                                                                            placeholder="min 1.000 - max 10.000"
+                                                                            placeholder="0"
                                                                             style={{
 
                                                                                 height: 58,
@@ -279,7 +276,7 @@ const BuyToken = () => {
                                                     <Col lg="3">
                                                         <Button
                                                             onClick={async () => {
-                                                                 // await onBuyToken(data.balanceBNB, data.addSponsor)
+                                                                 await onBuyToken(data.balanceBNB, data.addSponsor)
                                                             }}
                                                             size="lg"
                                                             block

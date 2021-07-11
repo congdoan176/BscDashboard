@@ -74,6 +74,11 @@ const Stake = () => {
                 }
                 let one = new bigdecimal.BigDecimal(res.amount);
                 setQuantityStake(Number(one.divide(two).toString()))
+                if (!backFromApprove) {
+                    if (Number(one.divide(two).toString()) > 0) {
+                        setNextFromStake(true);
+                    }
+                }
             })
         }
     }
@@ -90,24 +95,14 @@ const Stake = () => {
         await getTotalAmountFTXF();
         await getTotalStakeReward();
         await geTotalQuantityStake();
-        await getTotalAmountApprove();
         await getHistoryStake();
-        if (!backFromApprove) {
-            if (quantityStake > 0) {
-                setNextFromStake(true);
-            }
-            if (totalAmountApprove > 0) {
-                setNextFromStake(true);
-            }
-        }
+        await getTotalAmountApprove();
     }, [totalAmountFTXF])
 
     async function changeDateStake(e) {
         let value = e.target.value;
         setDateStake(value);
-        if (value === "90") {
-            setInterestPercent("31.5%");
-        } else if (value === "180") {
+        if (value === "180") {
             setInterestPercent("72%");
         } else if (value === "360") {
             setInterestPercent("180%");
@@ -136,20 +131,18 @@ const Stake = () => {
     }
 
     async function getTotalAmountApprove() {
-        if (nextFromStake) {
-            const web3 = new Web3(Web3.givenProvider);
-            const account = await web3.eth.getAccounts();
-            if (account.length > 0) {
-                const data = new web3.eth.Contract(jsonFtx, Address.FTXFTokenAddress);
-                data.methods.allowance(account[0], Address.FounderAddress).call(function (err, res) {
-                    if (err) {
-                        console.log("get amount approved of user fail", err)
-                        return;
-                    }
-                    let one = new bigdecimal.BigDecimal(res);
-                    setTotalAmountApprove(Number(one.divide(two).toString()));
-                })
-            }
+        const web3 = new Web3(Web3.givenProvider);
+        const account = await web3.eth.getAccounts();
+        if (account.length > 0) {
+            const data = new web3.eth.Contract(jsonFtx, Address.FTXFTokenAddress);
+            data.methods.allowance(account[0], Address.FounderAddress).call(function (err, res) {
+                if (err) {
+                    console.log("get amount approved of user fail", err)
+                    return;
+                }
+                let one = new bigdecimal.BigDecimal(res);
+                setTotalAmountApprove(Number(one.divide(two).toString()));
+            })
         }
     }
 
@@ -187,24 +180,35 @@ const Stake = () => {
 
     function changeAmountStake(e) {
         setAmountStake(e.target.value);
+        document.getElementById("percent25").style.background = "none";
+        document.getElementById("percent50").style.background = "none";
+        document.getElementById("percent75").style.background = "none";
+        document.getElementById("percent100").style.background = "none";
+        setBackgroundPercent25(true);
+        setBackgroundPercent50(true);
+        setBackgroundPercent75(true);
+        setBackgroundPercent100(true);
     }
 
     async function submitAmountStack() {
-        if (historyStake.length > 0) {
-            alert("You already staked, please try again later.");
+        // if (historyStake.length > 0) {
+        //     alert("You already staked, please try again later.");
+        //     return;
+        // }
+        if(amountStake <= 0){
+            alert("Number of stakes must be greater than zero.");
             return;
         }
         if (amountStake > totalAmountFTXF) {
             alert("The amount of FTXF you stake exceeds the allowed quantity.");
             return;
         }
-        handleIsLoadedToggle()
+        let amountBuy = amountStake - 1;
         try {
             const web3 = new Web3(Web3.givenProvider);
             const account = await web3.eth.getAccounts();
             const data = new web3.eth.Contract(fdJson, Address.FounderAddress);
-
-            let string = amountStake.toString().split('.')
+            let string = amountBuy.toString().split('.')
             let lengthDecimal = 0, totalAmount = "";
             if (string.length === 1) {
                 lengthDecimal = 0;
@@ -216,12 +220,12 @@ const Stake = () => {
             data.methods.stake(BigNumber.from(10).pow(18 - lengthDecimal).mul(totalAmount).toString()).send({
                 from: account[0]
             }).then(async (data) => {
-                let res = JSON.parse(await SaveStake.save(account[0].toLowerCase(), amountStake, dateStake, data.transactionHash));
+                let res = JSON.parse(await SaveStake.save(account[0].toLowerCase(), amountBuy, dateStake, data.transactionHash));
                 if (res.msg === "create history stake success") {
                     alert("Stake Successful.");
                 }
-                setIsLoaded(false);
             }).catch(err => {
+                console.log(err)
                 alert("An error occurred, please try again later.")
             })
 
@@ -251,47 +255,47 @@ const Stake = () => {
     function changePercentStake(percent) {
         if (percent === 25) {
             if (!backgroundPercent100 || !backgroundPercent75 || !backgroundPercent50) {
-                document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
-                document.getElementById("percent50").style.background = "none"
-                document.getElementById("percent75").style.background = "none"
-                document.getElementById("percent100").style.background = "none"
-                setBackgroundPercent25(false)
-                setBackgroundPercent50(true)
-                setBackgroundPercent75(true)
-                setBackgroundPercent100(true)
+                document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)";
+                document.getElementById("percent50").style.background = "none";
+                document.getElementById("percent75").style.background = "none";
+                document.getElementById("percent100").style.background = "none";
+                setBackgroundPercent25(false);
+                setBackgroundPercent50(true);
+                setBackgroundPercent75(true);
+                setBackgroundPercent100(true);
                 setAmountStake(Number(totalAmountApprove) * 25 / 100);
             } else {
                 if (backgroundPercent25) {
-                    document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
-                    setBackgroundPercent25(false)
-                    setAmountStake(Number(totalAmountApprove) * 25 / 100);
+                    document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)";
+                    setBackgroundPercent25(false);
+                    setAmountStake(Number(totalAmountApprove) * 25 / 100);;
                 } else {
-                    document.getElementById("percent25").style.background = "none"
-                    setBackgroundPercent25(true)
-                    setAmountStake(0);
+                    document.getElementById("percent25").style.background = "none";
+                    setBackgroundPercent25(true);
+                    setAmountStake(0);;
                 }
             }
         } else if (percent === 50) {
             if (!backgroundPercent100 || !backgroundPercent75) {
-                document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
-                document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
-                document.getElementById("percent75").style.background = "none"
-                document.getElementById("percent100").style.background = "none"
-                setBackgroundPercent25(false)
-                setBackgroundPercent50(false)
-                setBackgroundPercent75(true)
-                setBackgroundPercent100(true)
+                document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)";
+                document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)";
+                document.getElementById("percent75").style.background = "none";
+                document.getElementById("percent100").style.background = "none";
+                setBackgroundPercent25(false);
+                setBackgroundPercent50(false);
+                setBackgroundPercent75(true);
+                setBackgroundPercent100(true);
                 setAmountStake(Number(totalAmountApprove) * 50 / 100);
             } else {
                 if (backgroundPercent50) {
-                    document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
-                    document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
+                    document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)";
+                    document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)";
                     setBackgroundPercent25(false);
                     setBackgroundPercent50(false);
                     setAmountStake(Number(totalAmountApprove) * 50 / 100);
                 } else {
-                    document.getElementById("percent25").style.background = "none"
-                    document.getElementById("percent50").style.background = "none"
+                    document.getElementById("percent25").style.background = "none";
+                    document.getElementById("percent50").style.background = "none";
                     setBackgroundPercent25(true);
                     setBackgroundPercent50(true);
                     setAmountStake(0);
@@ -299,73 +303,73 @@ const Stake = () => {
             }
         } else if (percent === 75) {
             if (!backgroundPercent100) {
-                document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
-                document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
-                document.getElementById("percent75").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
-                document.getElementById("percent100").style.background = "none"
-                setBackgroundPercent25(false)
-                setBackgroundPercent50(false)
-                setBackgroundPercent75(false)
-                setBackgroundPercent100(true)
+                document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)";
+                document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)";
+                document.getElementById("percent75").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)";
+                document.getElementById("percent100").style.background = "none";
+                setBackgroundPercent25(false);
+                setBackgroundPercent50(false);
+                setBackgroundPercent75(false);
+                setBackgroundPercent100(true);
                 setAmountStake(Number(totalAmountApprove) * 75 / 100);
             } else {
                 if (backgroundPercent75) {
-                    document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
-                    document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
-                    document.getElementById("percent75").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
-                    setBackgroundPercent25(false)
-                    setBackgroundPercent50(false)
-                    setBackgroundPercent75(false)
+                    document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)";
+                    document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)";
+                    document.getElementById("percent75").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)";
+                    setBackgroundPercent25(false);
+                    setBackgroundPercent50(false);
+                    setBackgroundPercent75(false);
                     setAmountStake(Number(totalAmountApprove) * 75 / 100);
                 } else {
-                    document.getElementById("percent25").style.background = "none"
-                    document.getElementById("percent50").style.background = "none"
-                    document.getElementById("percent75").style.background = "none"
-                    setBackgroundPercent25(true)
-                    setBackgroundPercent50(true)
-                    setBackgroundPercent75(true)
+                    document.getElementById("percent25").style.background = "none";
+                    document.getElementById("percent50").style.background = "none";
+                    document.getElementById("percent75").style.background = "none";
+                    setBackgroundPercent25(true);
+                    setBackgroundPercent50(true);
+                    setBackgroundPercent75(true);
                     setAmountStake(0);
                 }
             }
         } else if (percent === 100) {
             if (!backgroundTotalPercent) {
-                document.getElementById("percent25").style.background = "none"
-                document.getElementById("percent50").style.background = "none"
-                document.getElementById("percent75").style.background = "none"
-                document.getElementById("percent100").style.background = "none"
+                document.getElementById("percent25").style.background = "none";
+                document.getElementById("percent50").style.background = "none";
+                document.getElementById("percent75").style.background = "none";
+                document.getElementById("percent100").style.background = "none";
                 setAmountStake(0);
                 setBackgroundTotalPercent(true);
             } else if (!backgroundPercent25 || !backgroundPercent50 || !backgroundPercent75) {
-                document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
-                document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
-                document.getElementById("percent75").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
-                document.getElementById("percent100").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
-                setBackgroundPercent25(false)
-                setBackgroundPercent50(false)
-                setBackgroundPercent75(false)
-                setBackgroundPercent100(false)
-                setBackgroundTotalPercent(false)
+                document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)";
+                document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)";
+                document.getElementById("percent75").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)";
+                document.getElementById("percent100").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)";
+                setBackgroundPercent25(false);
+                setBackgroundPercent50(false);
+                setBackgroundPercent75(false);
+                setBackgroundPercent100(false);
+                setBackgroundTotalPercent(false);
                 setAmountStake(Number(totalAmountApprove) * 100 / 100);
             } else {
                 if (backgroundPercent100) {
-                    document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
-                    document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
-                    document.getElementById("percent75").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
-                    document.getElementById("percent100").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)"
-                    setBackgroundPercent25(false)
-                    setBackgroundPercent50(false)
-                    setBackgroundPercent75(false)
-                    setBackgroundPercent100(false)
+                    document.getElementById("percent25").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)";
+                    document.getElementById("percent50").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)";
+                    document.getElementById("percent75").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)";
+                    document.getElementById("percent100").style.background = "linear-gradient(" + "87deg\n" + ", rgb(17, 205, 239) 0px, rgb(17, 113, 239) 100%)";
+                    setBackgroundPercent25(false);
+                    setBackgroundPercent50(false);
+                    setBackgroundPercent75(false);
+                    setBackgroundPercent100(false);
                     setAmountStake(Number(totalAmountApprove) * 100 / 100);
                 } else {
-                    document.getElementById("percent25").style.background = "none"
-                    document.getElementById("percent50").style.background = "none"
-                    document.getElementById("percent75").style.background = "none"
-                    document.getElementById("percent100").style.background = "none"
-                    setBackgroundPercent25(true)
-                    setBackgroundPercent50(true)
-                    setBackgroundPercent75(true)
-                    setBackgroundPercent100(true)
+                    document.getElementById("percent25").style.background = "none";
+                    document.getElementById("percent50").style.background = "none";
+                    document.getElementById("percent75").style.background = "none";
+                    document.getElementById("percent100").style.background = "none";
+                    setBackgroundPercent25(true);
+                    setBackgroundPercent50(true);
+                    setBackgroundPercent75(true);
+                    setBackgroundPercent100(true);
                     setAmountStake(0);
                 }
             }
@@ -506,7 +510,7 @@ const Stake = () => {
                                                                                 }}>
                                                                                     <Button
                                                                                         onClick={async () => {
-                                                                                            // await submitAmountApprove();
+                                                                                            await submitAmountApprove();
                                                                                         }}
                                                                                         size="lg"
                                                                                         type={'reset'}
@@ -746,10 +750,6 @@ const Stake = () => {
                                                                                                             onChange={(e) => changeDateStake(e)}
                                                                                                         >
                                                                                                             <option
-                                                                                                                value={90}>
-                                                                                                                90 days
-                                                                                                            </option>
-                                                                                                            <option
                                                                                                                 value={180}>
                                                                                                                 180 days
                                                                                                             </option>
@@ -781,7 +781,7 @@ const Stake = () => {
                                                                                              className="text-right">
                                                                                             <Button
                                                                                                 onClick={async () => {
-                                                                                                    // await submitAmountStack();
+                                                                                                    await submitAmountStack();
                                                                                                 }}
                                                                                                 size="lgs"
                                                                                                 type={'reset'}
@@ -849,10 +849,12 @@ const Stake = () => {
                                                                                                             backgroundColor: 'white',
                                                                                                             borderRadius: 5
                                                                                                         }}>
-                                                                                                        Quantity stake
-                                                                                                        <span
-                                                                                                            className="font-weight-light">: {quantityStake.toFixed(4)}</span>
+                                                                                                        Quantity stake:
+                                                                                                        <span className="font-weight-light"  style={{
+                                                                                                            color: 'black',
+                                                                                                        }}> {quantityStake.toFixed(4)}</span>
                                                                                                     </h3>
+
                                                                                                 </Col>
                                                                                                 <Col lg="4" xs="12"
                                                                                                      className="mt-2">
@@ -884,15 +886,19 @@ const Stake = () => {
                                                                                                         }}>
                                                                                                         Reward stake:
                                                                                                         <span
-                                                                                                            className="font-weight-light"> {rewardStake.toFixed(4)}</span>
+                                                                                                            className="font-weight-light"
+                                                                                                            style={{
+                                                                                                                color: 'black',
+                                                                                                            }}> {rewardStake.toFixed(4)}</span>
                                                                                                     </h3>
+
                                                                                                 </Col>
                                                                                                 <Col lg="4" xs="12"
                                                                                                      className="mt-2">
                                                                                                     <Button
                                                                                                         color="white"
                                                                                                         onClick={async () => {
-                                                                                                            // await withdrawRewardStake();
+                                                                                                            await withdrawRewardStake();
                                                                                                         }}
                                                                                                         type={'reset'}
                                                                                                         style={{
@@ -944,7 +950,7 @@ const Stake = () => {
                                                 color: "white",
                                                 background: 'linear-gradient(87deg, #11cdef 0, #1171ef 100%)'
                                             }} onClick={async () => {
-                                                // await withdrawStake();
+                                                await withdrawStake();
                                             }}>Unstake</Button>
                                         </ModalFooter>
                                     </Modal>

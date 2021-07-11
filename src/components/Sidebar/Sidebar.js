@@ -46,7 +46,7 @@ const Sidebar = (props) => {
                                     className="navbar-brand-img"
                                     src={require("../../assets/img/icons/img/menu/new/5.png").default}
                                     style={{width: 25, height: 25}}
-                                /> : prop.name === "Public Sale" ?
+                                /> : prop.name === "Buy Token" ?
                                 <img
                                     className="navbar-brand-img"
                                     src={require("../../assets/img/icons/img/menu/new/6.png").default}

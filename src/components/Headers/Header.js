@@ -45,11 +45,39 @@ const Header = () => {
             let time = new Date().getTime();
             setCookie("timeStamp",time, 30);
         }
+    }
 
+    function add(){
+        var cookieAdd = getCookie("add")
+        if (cookieAdd === ""){
+            try {
+                const wasAdded  = window.ethereum.request({
+                    method: 'wallet_watchAsset',
+                    params: {
+                        type: 'ERC20',
+                        options: {
+                            address: Address.FTXFTokenAddress,
+                            symbol: "FTXF",
+                            decimals: 18,
+                            image: "https://storage.googleapis.com/ftxtoken.appspot.com/Asset%204.png",
+                        }
+                    }
+                })
+                if (wasAdded){
+                    setCookie('add','added', 360);
+                    console.log("add success");
+                }else{
+                    console.log("err");
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
     }
 
     useEffect(async () => {
-        checkCookie();
+        await checkCookie();
+        await add();
     })
 
     return (
@@ -81,12 +109,12 @@ const Header = () => {
                                 </Row>
                             </Container>
                         </div>
-                        <Modal isOpen={modal} toggle={toggle} size={'xl'}>
-                            <ModalHeader toggle={toggle}></ModalHeader>
-                            <ModalBody>
-                                <img src="https://storage.googleapis.com/ftxtoken.appspot.com/banner.jpg" alt="" width={'100%'} height={'100%'}/>
-                            </ModalBody>
-                        </Modal>
+                        {/*<Modal isOpen={modal} toggle={toggle} size={'xl'}>*/}
+                        {/*    <ModalHeader toggle={toggle}></ModalHeader>*/}
+                        {/*    <ModalBody>*/}
+                        {/*        <img src="https://storage.googleapis.com/ftxtoken.appspot.com/photo_2021-06-25_15-50-36.jpg" alt="" width={'100%'} height={'100%'}/>*/}
+                        {/*    </ModalBody>*/}
+                        {/*</Modal>*/}
                     </div>
                 )}
             </DataContext.Consumer>

@@ -22,7 +22,7 @@ var routes = [
   },
   {
     path: "/Public_Sale",
-    name: "Public Sale",
+    name: "Buy Token",
     icon: "fas fa-cart-arrow-down text-blue",
     component: BuyToken,
     layout: "/admin",

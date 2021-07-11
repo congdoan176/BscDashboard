@@ -10,7 +10,7 @@ import {
 import Web3 from 'web3'
 import DataContext from "../../context";
 import Login from "../../share/auth/auth";
-
+import Address from "../../json/addressContract/address.json"
 const AdminNavbar = (props) => {
 
     const [modal, setModal] = useState(false);

@@ -20,7 +20,7 @@ var routesUser = [
     },
     {
         path: "/Public_Sale",
-        name: "Public Sale",
+        name: "Buy Token",
         icon: "../../assets/img/icons/img/menu/Asset 4.png",
         component: BuyToken,
         layout: "/user",
