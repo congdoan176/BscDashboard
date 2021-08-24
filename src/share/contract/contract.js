@@ -12,8 +12,8 @@ import fdJson from "../../json/founder/contract.json";
 import Address from "../../json/addressContract/address.json";
 
 const Contract = (props) => {
-    const [date, setDate] = useState(0);
-    const [house, setHouse] = useState(0);
+    const [date, setDate] = useState();
+    const [house, setHouse] = useState();
     const [hiddenButton, setHiddenButton] = useState(true);
 
     async function withdrawBlockUnLook() {
@@ -34,6 +34,7 @@ const Contract = (props) => {
     function getDateTime(){
         setDate(new Date().getDate())
         setHouse(new Date().getHours())
+        console.log(date)
         if (date >= 10 && date < 20){
             if (date === 10){
                 if (house >= 16){
@@ -44,7 +45,7 @@ const Contract = (props) => {
             }else{
                 setHiddenButton(false);
             }
-        }else if (date >= 20 && date < 10){
+        }else if (date >= 20 || date < 10){
             if (date === 20){
                 if(house >= 16){
                     setHiddenButton(true);
@@ -55,7 +56,6 @@ const Contract = (props) => {
                 setHiddenButton(true);
             }
         }
-        console.log(hiddenButton)
     }
 
     useEffect(() => {

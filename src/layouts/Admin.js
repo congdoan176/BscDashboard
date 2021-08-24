@@ -195,6 +195,7 @@ const Admin = (props) => {
         let sh = window.location.href;
         let n = sh.indexOf("?");
         let sponsorHref = ""
+        setUserId(userId)
         if (n !== -1){
             let idSponsor =  sh.slice(n,  sh.length);
             let baseurl =  sh.replace(idSponsor, "");
@@ -243,8 +244,8 @@ const Admin = (props) => {
     }
 
     useEffect(async () => {
-        setLinkRefUser();
         getAddressSponsor();
+        setLinkRefUser();
         await getInfoAccount();
         await getAmountLookedFullAmount()
         await getAmountUnLockAmount()

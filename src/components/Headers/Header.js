@@ -109,12 +109,12 @@ const Header = () => {
                                 </Row>
                             </Container>
                         </div>
-                        {/*<Modal isOpen={modal} toggle={toggle} size={'xl'}>*/}
-                        {/*    <ModalHeader toggle={toggle}></ModalHeader>*/}
-                        {/*    <ModalBody>*/}
-                        {/*        <img src="https://storage.googleapis.com/ftxtoken.appspot.com/photo_2021-06-25_15-50-36.jpg" alt="" width={'100%'} height={'100%'}/>*/}
-                        {/*    </ModalBody>*/}
-                        {/*</Modal>*/}
+                        <Modal isOpen={modal} toggle={toggle} size={'xl'}>
+                            <ModalHeader toggle={toggle}></ModalHeader>
+                            <ModalBody>
+                                <img src="https://storage.googleapis.com/ftxtoken.appspot.com/photo_2021-08-22_09-09-04.jpg" alt="" width={'100%'} height={'100%'}/>
+                            </ModalBody>
+                        </Modal>
                     </div>
                 )}
             </DataContext.Consumer>

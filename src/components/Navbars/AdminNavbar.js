@@ -83,7 +83,7 @@ const AdminNavbar = (props) => {
                                     <Col lg={1}/>
                                     <Col lg={10}>
                                         <div style={{backgroundColor: "white", borderRadius: 50, height: 50}}  className="mt-3">
-                                            <NavLink href="https://metamask.app.link/dapp/app.ftxfund.com">
+                                            <NavLink href={"https://metamask.app.link/dapp/app.ftxfund.com/user/user_profile?ref=" + data.addressSponsor}>
                                                 <Row className="text-center" style={{paddingTop: 7}}>
                                                     <Col lg={4}>
                                                         <img src="https://registry.walletconnect.org/logo/lg/c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96.jpeg"
@@ -111,7 +111,7 @@ const AdminNavbar = (props) => {
                                             </NavLink>
                                         </div>
                                         <div style={{backgroundColor: "white", borderRadius: 50, height: 50}}  className="mt-3">
-                                            <NavLink href="imtokenv2://navigate/DappView?url=https://app.ftxfund.com">
+                                            <NavLink href={"imtokenv2://navigate/DappView?url=https://app.ftxfund.com/user/user_profile?ref=" + data.addressSponsor}>
                                                 <Row className="text-center" style={{paddingTop: 7}}>
                                                     <Col lg={4}>
                                                         <img src="https://registry.walletconnect.org/logo/lg/9d373b43ad4d2cf190fb1a774ec964a1addf406d6fd24af94ab7596e58c291b2.jpeg"
