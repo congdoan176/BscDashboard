@@ -75,7 +75,7 @@ const BuyToken = () => {
     function changeSaleValue(e) {
         let a = e.target.value;
         setNumberToken(a);
-        let number = a / salePrice * salePriceDiv;
+            let number = a / salePrice * salePriceDiv;
         setNumberBNB(number);
     }
 

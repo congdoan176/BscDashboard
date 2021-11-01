@@ -184,16 +184,16 @@ const Sidebar = (props) => {
                             </div>
                             <Nav navbar style={{marginTop: -24}}>
                                 {createLinks(routes)}
-                                <NavLink href="https://docs.ftxfund.com/" style={{color: "#11cdef"}}>
-                                    <img
-                                        className="navbar-brand-img"
-                                        src={require("../../assets/img/icons/img/menu/new/2.png").default}
-                                        style={{width: 25, height: 25}}
-                                    />
-                                    <h4 style={{paddingLeft: 20, paddingTop: 6}}>
-                                        Docs
-                                    </h4>
-                                </NavLink>
+                                {/*<NavLink href="https://docs.ftxfund.com/" style={{color: "#11cdef"}}>*/}
+                                {/*    <img*/}
+                                {/*        className="navbar-brand-img"*/}
+                                {/*        src={require("../../assets/img/icons/img/menu/new/2.png").default}*/}
+                                {/*        style={{width: 25, height: 25}}*/}
+                                {/*    />*/}
+                                {/*    <h4 style={{paddingLeft: 20, paddingTop: 6}}>*/}
+                                {/*        Docs*/}
+                                {/*    </h4>*/}
+                                {/*</NavLink>*/}
                             </Nav>
 
                             <Nav className="mb-md-3" navbar>
