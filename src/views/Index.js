@@ -37,7 +37,6 @@ const Index = (props) => {
     }
 
     async function getCurrentRow(){
-        let arrayAmountFTXF = [0.6, 0.7, 0.75, 0.85 , 0.9, 0.95]
         let data = JSON.parse(await Round.getRound())
         await setCurrentRound(data.currentRound);
         await setAmountFTXF(Number(data.tokenPrice).toFixed(2))
