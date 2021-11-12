@@ -85,7 +85,7 @@ const BuyToken = () => {
         daiToken.methods.balanceOf(Address.SellerAddress).call(function (err, res) {
             if (err) {
                 console.log("An error occured", err)
-                return
+                return;
             }
             let one = new bigdecimal.BigDecimal(res);
             setBalanceSeller(Number(one.divide(two).toString()).toFixed(4));
